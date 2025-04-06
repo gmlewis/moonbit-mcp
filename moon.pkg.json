@@ -1,6 +1,13 @@
 {
   "import": [
+    "gmlewis/base64",
     "gmlewis/jsonrpc2",
     "gmlewis/io"
-  ]
+  ],
+  "native-stub": [ "termio.c" ],
+  "targets": {
+    "ffi-native": [
+      "native"
+    ]
+  }
 }
