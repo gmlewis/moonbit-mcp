@@ -1,0 +1,6 @@
+{
+  "import": [
+    "gmlewis/jsonrpc2",
+    "gmlewis/io"
+  ]
+}

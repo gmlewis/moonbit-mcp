@@ -1,0 +1,18 @@
+{
+  "name": "gmlewis/mcp",
+  "version": "0.0.1",
+  "deps": {
+    "gmlewis/io": "0.22.0",
+    "gmlewis/jsonrpc2": "0.0.2"
+  },
+  "readme": "README.md",
+  "repository": "https://github.com/gmlewis/moonbit-jsonrpc2",
+  "license": "Apache-2.0",
+  "keywords": [
+    "json-rpc2",
+    "mcp",
+    "model context protocol",
+    "modelcontextprotocol"
+  ],
+  "description": "MoonBit mcp: provide simple mcp server abstractions."
+}
