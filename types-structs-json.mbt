@@ -84,3 +84,45 @@ pub impl @json.FromJson for AudioContent with from_json(json, path) {
     _ => raise @json.JsonDecodeError((path, "expected type, data and mimeType"))
   }
 }
+
+///|
+pub fn BlobResourceContents::new(
+  raw_data : FixedArray[Byte],
+  uri : String,
+  mime_type? : String
+) -> BlobResourceContents {
+  let blob = @base64.std_encode2str(raw_data)
+  { blob, mimeType: mime_type, uri }
+}
+
+///|
+pub fn raw_data(self : BlobResourceContents) -> Bytes!Error {
+  @base64.std_decode2bytes!(self.blob)
+}
+
+///|
+pub impl ToJson for BlobResourceContents with to_json(self) {
+  let obj = { "blob": self.blob.to_json(), "uri": self.uri.to_json() }
+  if self.mimeType is Some(mime_type) {
+    obj["mimeType"] = mime_type.to_json()
+  }
+  obj.to_json()
+}
+
+///|
+pub impl @json.FromJson for BlobResourceContents with from_json(json, path) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
+  }
+  match obj {
+    { "blob": String(blob), "uri": String(uri), .. } => {
+      let mime_type : String? = if obj["mimeType"] is Some(String(mime_type)) {
+        Some(mime_type)
+      } else {
+        None
+      }
+      { blob, mimeType: mime_type, uri }
+    }
+    _ => raise @json.JsonDecodeError((path, "expected blob, uri and mimeType"))
+  }
+}
