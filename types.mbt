@@ -3,13 +3,13 @@ pub(all) struct Annotations {
   /// Describes who the intended customer of this object or data is.
   ///
   /// It can include multiple entries to indicate content useful for multiple audiences (e.g., `["user", "assistant"]`).
-  audience : Array[Role]
+  audience : Array[Role]?
   /// Describes how important this data is for operating the server.
   ///
   /// A value of 1 means "most important," and indicates that the data is
   /// effectively required, while 0 means "least important," and indicates that
   /// the data is entirely optional.
-  priority : Double
+  priority : Double?
 } derive(Show, Eq)
 
 ///| AudioContent: Audio provided to or from an LLM.
@@ -58,7 +58,7 @@ pub(all) struct CallToolRequestParams {
 pub(all) struct CallToolResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  content : Array[CallToolResultContent] // TextContent | ImageContent | AudioContent | EmbeddedResource
+  content : Array[CallToolResultContent] // TextContent? | ImageContent? | AudioContent? | EmbeddedResource?
   /// Whether the tool call ended in an error.
   ///
   /// If not set, this is assumed to be false (the call was successful).
@@ -98,17 +98,17 @@ pub(all) struct CancelledNotificationParams {
 ///| ClientCapabilities: Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
 pub(all) struct ClientCapabilities {
   /// Experimental, non-standard capabilities that the client supports.
-  experimental : Json
+  experimental : Json?
   /// Present if the client supports listing roots.
-  roots : ClientCapabilitiesRoots
+  roots : ClientCapabilitiesRoots?
   /// Present if the client supports sampling from an LLM.
-  sampling : Json
+  sampling : Json?
 } derive(Show, Eq)
 
 ///| ClientCapabilitiesRoots: Present if the client supports listing roots.
 pub(all) struct ClientCapabilitiesRoots {
   /// Whether the client supports notifications for changes to the roots list.
-  listChanged : Bool
+  listChanged : Bool?
 } derive(Show, Eq)
 
 ///|
@@ -137,7 +137,7 @@ pub enum ClientRequest {
 
 ///|
 pub enum ClientResult {
-  Result(Result)
+  CustomResult(CustomResult)
   CreateMessageResult(CreateMessageResult)
   ListRootsResult(ListRootsResult)
 } derive(Show, Eq)
@@ -195,7 +195,7 @@ pub(all) struct CreateMessageRequest {
 ///|
 pub(all) struct CreateMessageRequestParams {
   /// A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
-  includeContext : String?
+  includeContext : IncludeContext?
   /// The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
   maxTokens : Int64
   messages : Array[SamplingMessage]
@@ -207,6 +207,13 @@ pub(all) struct CreateMessageRequestParams {
   /// An optional system prompt the server wants to use for sampling. The client MAY modify or omit this prompt.
   systemPrompt : String?
   temperature : Double?
+} derive(Show, Eq)
+
+///|
+pub enum IncludeContext {
+  AllServers // = "allServers"
+  None // = "none"
+  ThisServer // = "thisServer"
 } derive(Show, Eq)
 
 ///| CreateMessageResult: The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.
@@ -247,9 +254,6 @@ pub enum EmbeddedResourceResource {
   TextResourceContents(TextResourceContents)
   BlobResourceContents(BlobResourceContents)
 } derive(Show, Eq)
-
-///|
-pub(all) struct EmptyResult {} derive(Show, Eq)
 
 ///| GetPromptRequest: Used by the client to get a prompt provided by the server.
 pub(all) struct GetPromptRequest {
@@ -328,7 +332,7 @@ pub(all) struct InitializedNotification {
 ///|
 pub(all) struct InitializedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///| ListPromptsRequest: Sent from the client to request a list of prompts and prompt templates the server has.
@@ -341,7 +345,7 @@ pub(all) struct ListPromptsRequest {
 pub(all) struct ListPromptsRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor : String
+  cursor : String?
 } derive(Show, Eq)
 
 ///| ListPromptsResult: The server's response to a prompts/list request from the client.
@@ -364,7 +368,7 @@ pub(all) struct ListResourceTemplatesRequest {
 pub(all) struct ListResourceTemplatesRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor : String
+  cursor : String?
 } derive(Show, Eq)
 
 ///| ListResourceTemplatesResult: The server's response to a resources/templates/list request from the client.
@@ -387,7 +391,7 @@ pub(all) struct ListResourcesRequest {
 pub(all) struct ListResourcesRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor : String
+  cursor : String?
 } derive(Show, Eq)
 
 ///| ListResourcesResult: The server's response to a resources/list request from the client.
@@ -414,13 +418,13 @@ pub(all) struct ListRootsRequest {
 
 ///|
 pub(all) struct ListRootsRequestParams {
-  _meta : ListRootsRequestParams_meta
+  _meta : ListRootsRequestParams_meta?
 } derive(Show, Eq)
 
 ///|
 pub(all) struct ListRootsRequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken
+  progressToken : ProgressToken?
 } derive(Show, Eq)
 
 ///| ListRootsResult: The client's response to a roots/list request from the server.
@@ -442,7 +446,7 @@ pub(all) struct ListToolsRequest {
 pub(all) struct ListToolsRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor : String
+  cursor : String?
 } derive(Show, Eq)
 
 ///| ListToolsResult: The server's response to a tools/list request from the client.
@@ -455,11 +459,17 @@ pub(all) struct ListToolsResult {
   tools : Array[Tool]
 } derive(Show, Eq)
 
-///| LoggingLevel: The severity of a log message.
-///
-/// These map to syslog message severities, as specified in RFC-5424:
-/// https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
-pub(all) struct LoggingLevel {} derive(Show, Eq)
+///|
+pub enum LoggingLevel {
+  Alert // = "alert"
+  Critical // = "critical"
+  Debug // = "debug"
+  Emergency // = "emergency"
+  Error // = "error"
+  Info // = "info"
+  Notice // = "notice"
+  Warning // = "warning"
+} derive(Show, Eq)
 
 ///| LoggingMessageNotification: Notification of a log message passed from server to client. If no logging/setLevel request has been sent from the client, the server MAY decide which messages to send automatically.
 pub(all) struct LoggingMessageNotification {
@@ -491,7 +501,7 @@ pub(all) struct ModelHint {
   ///
   /// The client MAY also map the string to a different provider's model name or a different model family, as long as it fills a similar niche; for example:
   ///  - `gemini-1.5-flash` could match `claude-3-haiku-20240307`
-  name : String
+  name : String?
 } derive(Show, Eq)
 
 ///| ModelPreferences: The server's preferences for model selection, requested of the client during sampling.
@@ -509,7 +519,7 @@ pub(all) struct ModelPreferences {
   /// How much to prioritize cost when selecting a model. A value of 0 means cost
   /// is not important, while a value of 1 means cost is the most important
   /// factor.
-  costPriority : Double
+  costPriority : Double?
   /// Optional hints to use for model selection.
   ///
   /// If multiple hints are specified, the client MUST evaluate them in order
@@ -517,15 +527,15 @@ pub(all) struct ModelPreferences {
   ///
   /// The client SHOULD prioritize these hints over the numeric priorities, but
   /// MAY still use the priorities to select from ambiguous matches.
-  hints : Array[ModelHint]
+  hints : Array[ModelHint]?
   /// How much to prioritize intelligence and capabilities when selecting a
   /// model. A value of 0 means intelligence is not important, while a value of 1
   /// means intelligence is the most important factor.
-  intelligencePriority : Double
+  intelligencePriority : Double?
   /// How much to prioritize sampling speed (latency) when selecting a model. A
   /// value of 0 means speed is not important, while a value of 1 means speed is
   /// the most important factor.
-  speedPriority : Double
+  speedPriority : Double?
 } derive(Show, Eq)
 
 ///|
@@ -537,7 +547,7 @@ pub(all) struct Notification {
 ///|
 pub(all) struct NotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///|
@@ -550,16 +560,16 @@ pub(all) struct PaginatedRequest {
 pub(all) struct PaginatedRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor : String
+  cursor : String?
 } derive(Show, Eq)
 
 ///|
 pub(all) struct PaginatedResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json
+  _meta : Json?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
-  nextCursor : String
+  nextCursor : String?
 } derive(Show, Eq)
 
 ///| PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
@@ -570,13 +580,13 @@ pub(all) struct PingRequest {
 
 ///|
 pub(all) struct PingRequestParams {
-  _meta : PingRequestParams_meta
+  _meta : PingRequestParams_meta?
 } derive(Show, Eq)
 
 ///|
 pub(all) struct PingRequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken
+  progressToken : ProgressToken?
 } derive(Show, Eq)
 
 ///| ProgressNotification: An out-of-band notification used to inform the receiver of a progress update for a long-running request.
@@ -629,7 +639,7 @@ pub(all) struct PromptListChangedNotification {
 ///|
 pub(all) struct PromptListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///| PromptMessage: Describes a message returned as part of a prompt.
@@ -672,7 +682,7 @@ pub(all) struct ReadResourceRequestParams {
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  contents : Array[ReadResourceResultContents] // TextResourceContents | BlobResourceContents
+  contents : Array[ReadResourceResultContents] // TextResourceContents? | BlobResourceContents?
 } derive(Show, Eq)
 
 ///|
@@ -689,13 +699,13 @@ pub(all) struct Request {
 
 ///|
 pub(all) struct RequestParams {
-  _meta : RequestParams_meta
+  _meta : RequestParams_meta?
 } derive(Show, Eq)
 
 ///|
 pub(all) struct RequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken
+  progressToken : ProgressToken?
 } derive(Show, Eq)
 
 ///| RequestId: A uniquely identifying ID for a request in JSON-RPC.
@@ -740,7 +750,7 @@ pub(all) struct ResourceListChangedNotification {
 ///|
 pub(all) struct ResourceListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///| ResourceReference: A reference to a resource or resource template definition.
@@ -781,13 +791,16 @@ pub(all) struct ResourceUpdatedNotificationParams {
 } derive(Show, Eq)
 
 ///|
-pub(all) struct Result {
+pub(all) struct CustomResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
-///| Role: The sender or recipient of messages and data in a conversation.
-pub(all) struct Role {} derive(Show, Eq)
+///|
+pub enum Role {
+  Assistant // = "assistant"
+  User // = "user"
+} derive(Show, Eq)
 
 ///| Root: Represents a root directory or file that the server can operate on.
 pub(all) struct Root {
@@ -812,7 +825,7 @@ pub(all) struct RootsListChangedNotification {
 ///|
 pub(all) struct RootsListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///| SamplingMessage: Describes a message issued to or received from an LLM API.
@@ -831,37 +844,37 @@ pub enum SamplingMessageContent {
 ///| ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
 pub(all) struct ServerCapabilities {
   /// Present if the server supports argument autocompletion suggestions.
-  completions : Json
+  completions : Json?
   /// Experimental, non-standard capabilities that the server supports.
-  experimental : Json
+  experimental : Json?
   /// Present if the server supports sending log messages to the client.
-  logging : Json
+  logging : Json?
   /// Present if the server offers any prompt templates.
-  prompts : ServerCapabilitiesPrompts
+  prompts : ServerCapabilitiesPrompts?
   /// Present if the server offers any resources to read.
-  resources : ServerCapabilitiesResources
+  resources : ServerCapabilitiesResources?
   /// Present if the server offers any tools to call.
-  tools : ServerCapabilitiesTools
+  tools : ServerCapabilitiesTools?
 } derive(Show, Eq)
 
 ///| ServerCapabilitiesPrompts: Present if the server offers any prompt templates.
 pub(all) struct ServerCapabilitiesPrompts {
   /// Whether this server supports notifications for changes to the prompt list.
-  listChanged : Bool
+  listChanged : Bool?
 } derive(Show, Eq)
 
 ///| ServerCapabilitiesResources: Present if the server offers any resources to read.
 pub(all) struct ServerCapabilitiesResources {
   /// Whether this server supports notifications for changes to the resource list.
-  listChanged : Bool
+  listChanged : Bool?
   /// Whether this server supports subscribing to resource updates.
-  subscribe : Bool
+  subscribe : Bool?
 } derive(Show, Eq)
 
 ///| ServerCapabilitiesTools: Present if the server offers any tools to call.
 pub(all) struct ServerCapabilitiesTools {
   /// Whether this server supports notifications for changes to the tool list.
-  listChanged : Bool
+  listChanged : Bool?
 } derive(Show, Eq)
 
 ///|
@@ -884,7 +897,7 @@ pub enum ServerRequest {
 
 ///|
 pub enum ServerResult {
-  Result(Result)
+  CustomResult(CustomResult)
   InitializeResult(InitializeResult)
   ListResourcesResult(ListResourcesResult)
   ReadResourceResult(ReadResourceResult)
@@ -974,27 +987,27 @@ pub(all) struct ToolAnnotations {
   /// (This property is meaningful only when `readOnlyHint == false`)
   ///
   /// Default: true
-  destructiveHint : Bool
+  destructiveHint : Bool?
   /// If true, calling the tool repeatedly with the same arguments
   /// will have no additional effect on the its environment.
   ///
   /// (This property is meaningful only when `readOnlyHint == false`)
   ///
   /// Default: false
-  idempotentHint : Bool
+  idempotentHint : Bool?
   /// If true, this tool may interact with an "open world" of external
   /// entities. If false, the tool's domain of interaction is closed.
   /// For example, the world of a web search tool is open, whereas that
   /// of a memory tool is not.
   ///
   /// Default: true
-  openWorldHint : Bool
+  openWorldHint : Bool?
   /// If true, the tool does not modify its environment.
   ///
   /// Default: false
-  readOnlyHint : Bool
+  readOnlyHint : Bool?
   /// A human-readable title for the tool.
-  title : String
+  title : String?
 } derive(Show, Eq)
 
 ///| ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
@@ -1006,7 +1019,7 @@ pub(all) struct ToolListChangedNotification {
 ///|
 pub(all) struct ToolListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json
+  _meta : Json?
 } derive(Show, Eq)
 
 ///| UnsubscribeRequest: Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.

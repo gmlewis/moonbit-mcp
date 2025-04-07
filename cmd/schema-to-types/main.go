@@ -82,6 +82,7 @@ var structsToSkip = map[string]skipType{
 	// "ClientResult":         skipButComment,
 	// "CompleteRequest":      skipButComment,
 	// "CompleteResult":       skipButComment,
+	"EmptyResult":          totallyIgnore,
 	"JSONRPCBatchRequest":  totallyIgnore,
 	"JSONRPCBatchResponse": totallyIgnore,
 	"JSONRPCError":         totallyIgnore,
@@ -92,6 +93,7 @@ var structsToSkip = map[string]skipType{
 }
 
 func (d *Definition) convert(name string) string {
+	name = safeStructName(name)
 	d.name = name
 	var prefix string
 	if v, ok := structsToSkip[name]; ok {
@@ -101,7 +103,7 @@ func (d *Definition) convert(name string) string {
 		prefix = "// "
 	}
 
-	if len(d.Properties) == 0 && len(d.AnyOf) > 0 {
+	if len(d.Properties) == 0 && len(d.AnyOf) > 0 || len(d.Enum) > 0 {
 		return d.convertEnum(name, prefix)
 	}
 
@@ -142,9 +144,19 @@ func (d *Definition) convertEnum(name, prefix string) string {
 		fmt.Sprintf(prefix+"pub enum %v {", name),
 	}
 
+	// two different kinds of enums: anyOf:
 	for _, def := range d.AnyOf {
 		refType, _ := def.refType(name, nil)
+		refType = strings.TrimSuffix(refType, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"  %v(%[1]v)", refType))
+	}
+	// or explicit enum:
+	for _, rawEnum := range d.Enum {
+		enumBuf, err := json.Marshal(rawEnum)
+		must(err)
+		noQuotesValue := strings.ReplaceAll(string(enumBuf), `"`, "")
+		// lines = append(lines, fmt.Sprintf(prefix+"  %v_%v // = %v", name, titleCase(noQuotesValue), string(enumBuf)))
+		lines = append(lines, fmt.Sprintf(prefix+"  %v // = %v", titleCase(noQuotesValue), string(enumBuf)))
 	}
 
 	lines = append(lines, prefix+"} derive(Show, Eq)")
@@ -157,6 +169,15 @@ var reservedKeywords = map[string]string{
 	"type":   "type_",
 }
 
+func safeStructName(s string) string {
+	switch s {
+	case "Result":
+		return "CustomResult"
+	default:
+		return s
+	}
+}
+
 func safePropName(s string) string {
 	if v, ok := reservedKeywords[s]; ok {
 		return v
@@ -166,7 +187,7 @@ func safePropName(s string) string {
 
 func (d *Definition) moonBitType(propName string, prop *Definition) string {
 	var suffix string
-	if len(d.Required) == 0 || slices.Contains(d.Required, propName) {
+	if slices.Contains(d.Required, propName) {
 		d.isRequired = true
 	} else {
 		suffix = "?"
@@ -189,13 +210,22 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 				enumName := d.name + titleCase(propName)
 				enumBody := prop.Items.convertEnum(enumName, "")
 				d.helperStructs = append(d.helperStructs, enumBody)
-				return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
+				// return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
+				return fmt.Sprintf("Array[%v]", enumName) + " // " + strings.Join(anyOf, " | ")
 			}
-			return fmt.Sprintf("Array[%v]", arrayType) + suffix + " // " + strings.Join(anyOf, " | ")
+			// return fmt.Sprintf("Array[%v]", arrayType) + suffix + " // " + strings.Join(anyOf, " | ")
+			return fmt.Sprintf("Array[%v]", arrayType) + " // " + strings.Join(anyOf, " | ")
 		}
-		arrayType := prop.moonBitType(propName, prop.Items)
+		// arrayType := prop.moonBitType(propName, prop.Items)
+		arrayType := strings.TrimSuffix(prop.moonBitType(propName, prop.Items), "?")
 		return fmt.Sprintf("Array[%v]", arrayType) + suffix
 	case `"string"`:
+		if len(prop.Enum) > 0 {
+			enumName := titleCase(propName)
+			enumBody := prop.convertEnum(enumName, "")
+			d.helperStructs = append(d.helperStructs, enumBody)
+			return enumName + suffix
+		}
 		return "String" + suffix
 	case `"object"`:
 		if len(prop.Properties) == 0 {
@@ -237,8 +267,8 @@ func (d *Definition) refType(propName string, required []string) (refType string
 		log.Fatalf("nil definition or missing refType for propName %q", propName)
 	}
 	parts := strings.Split(d.Ref, "/")
-	typeName := parts[len(parts)-1]
-	if len(required) == 0 || slices.Contains(required, propName) {
+	typeName := safeStructName(parts[len(parts)-1])
+	if slices.Contains(required, propName) {
 		d.isRequired = true
 		return typeName, anyOf
 	}
