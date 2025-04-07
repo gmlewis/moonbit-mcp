@@ -7,10 +7,11 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
+	"sort"
 	"strings"
 )
 
@@ -45,16 +46,64 @@ func main() {
 	must(json.Unmarshal(body, &schema))
 
 	// Generate types from the schema
-	// for _, def := range schema.Definitions {
-	// }
-
-	buf, err := json.MarshalIndent(schema, "", "    ")
-	must(err)
-	if err := os.WriteFile("schema.json", buf, 0644); err != nil {
-		log.Fatal(err)
+	keys := make([]string, 0, len(schema.Definitions))
+	for key := range schema.Definitions {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		def := schema.Definitions[key]
+		fmt.Printf("\n%v\n", def.convert(key))
 	}
 
 	log.Printf("Done.")
+}
+
+func (d *Definition) convert(name string) string {
+	lines := []string{
+		fmt.Sprintf("///| %v: %v", name, strings.Replace(d.Description, "\n", "\n/// ", -1)),
+		fmt.Sprintf("pub(all) struct %v {", name),
+	}
+
+	props := make([]string, 0, len(d.Properties))
+	for key := range d.Properties {
+		props = append(props, key)
+	}
+	sort.Strings(props)
+	for _, propName := range props {
+		prop := d.Properties[propName]
+		lines = append(lines, fmt.Sprintf("  // %v", strings.Replace(prop.Description, "\n", "\n  // ", -1)))
+		lines = append(lines, fmt.Sprintf("  %v : %v", propName, moonBitType(propName, prop)))
+	}
+
+	lines = append(lines, "} derive(Show, Eq, FromJson, ToJson)")
+	return strings.Join(lines, "\n")
+}
+
+func moonBitType(propName string, prop *Definition) string {
+	typ := prop.Type
+	v, err := json.Marshal(typ)
+	must(err)
+	switch string(v) {
+	case `"boolean"`:
+		return "Bool"
+	case `"number"`:
+		return "Double"
+	case `"array"`:
+		return "Array[]" // todo
+	case `"string"`:
+		return "String"
+	case `"object"`:
+		return "Object" // todo
+	case "null":
+		if prop.Ref != "" {
+			return prop.Ref
+		}
+		log.Fatalf("missing type and $ref for '%v'", propName)
+	default:
+		log.Fatalf("unhandled mooonBitType: %v", string(v))
+	}
+	return ""
 }
 
 func must(err error) {
