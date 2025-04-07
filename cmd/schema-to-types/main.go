@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -53,17 +54,64 @@ func main() {
 	sort.Strings(keys)
 	for _, key := range keys {
 		def := schema.Definitions[key]
-		fmt.Printf("\n%v\n", def.convert(key))
+		mbt := def.convert(key)
+		if mbt == "" {
+			continue
+		}
+		fmt.Printf("\n%v\n", mbt)
+		for _, helper := range def.helperStructs {
+			fmt.Printf("\n%v\n", helper)
+		}
 	}
 
 	log.Printf("Done.")
 }
 
+type skipType int
+
+const (
+	skipButComment = iota
+	totallyIgnore
+)
+
+var structsToSkip = map[string]skipType{
+	// "CallToolRequest": skipButComment,
+	// "CallToolResult":       skipButComment,
+	// "ClientNotification":   skipButComment,
+	// "ClientRequest":        skipButComment,
+	// "ClientResult":         skipButComment,
+	// "CompleteRequest":      skipButComment,
+	// "CompleteResult":       skipButComment,
+	"JSONRPCBatchRequest":  totallyIgnore,
+	"JSONRPCBatchResponse": totallyIgnore,
+	"JSONRPCError":         totallyIgnore,
+	"JSONRPCMessage":       totallyIgnore,
+	"JSONRPCNotification":  totallyIgnore,
+	"JSONRPCRequest":       totallyIgnore,
+	"JSONRPCResponse":      totallyIgnore,
+}
+
 func (d *Definition) convert(name string) string {
-	lines := []string{
-		fmt.Sprintf("///| %v: %v", name, strings.Replace(d.Description, "\n", "\n/// ", -1)),
-		fmt.Sprintf("pub(all) struct %v {", name),
+	d.name = name
+	var prefix string
+	if v, ok := structsToSkip[name]; ok {
+		if v == totallyIgnore {
+			return ""
+		}
+		prefix = "// "
 	}
+
+	if len(d.Properties) == 0 && len(d.AnyOf) > 0 {
+		return d.convertEnum(name, prefix)
+	}
+
+	lines := []string{}
+	if d.Description != "" {
+		lines = append(lines, fmt.Sprintf(prefix+"///| %v: %v", name, strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)))
+	} else {
+		lines = append(lines, "///|")
+	}
+	lines = append(lines, fmt.Sprintf(prefix+"pub(all) struct %v {", name))
 
 	props := make([]string, 0, len(d.Properties))
 	for key := range d.Properties {
@@ -72,38 +120,137 @@ func (d *Definition) convert(name string) string {
 	sort.Strings(props)
 	for _, propName := range props {
 		prop := d.Properties[propName]
-		lines = append(lines, fmt.Sprintf("  // %v", strings.Replace(prop.Description, "\n", "\n  // ", -1)))
-		lines = append(lines, fmt.Sprintf("  %v : %v", propName, moonBitType(propName, prop)))
+		if prop.Description != "" {
+			lines = append(lines, fmt.Sprintf(prefix+"  /// %v", strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1)))
+		}
+		if len(prop.Const) > 0 {
+			typ, err := json.Marshal(prop.Const)
+			must(err)
+			lines = append(lines, fmt.Sprintf(prefix+`  /// JSON-RPC: %q = %s`, propName, typ))
+			continue
+		}
+		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safePropName(propName), d.moonBitType(propName, prop)))
 	}
 
-	lines = append(lines, "} derive(Show, Eq, FromJson, ToJson)")
+	lines = append(lines, prefix+"} derive(Show, Eq)")
 	return strings.Join(lines, "\n")
 }
 
-func moonBitType(propName string, prop *Definition) string {
+func (d *Definition) convertEnum(name, prefix string) string {
+	lines := []string{
+		prefix + "///|",
+		fmt.Sprintf(prefix+"pub enum %v {", name),
+	}
+
+	for _, def := range d.AnyOf {
+		refType, _ := def.refType(name, nil)
+		lines = append(lines, fmt.Sprintf(prefix+"  %v(%[1]v)", refType))
+	}
+
+	lines = append(lines, prefix+"} derive(Show, Eq)")
+	return strings.Join(lines, "\n")
+}
+
+var reservedKeywords = map[string]string{
+	"method": "method_",
+	"ref":    "ref_",
+	"type":   "type_",
+}
+
+func safePropName(s string) string {
+	if v, ok := reservedKeywords[s]; ok {
+		return v
+	}
+	return s
+}
+
+func (d *Definition) moonBitType(propName string, prop *Definition) string {
+	var suffix string
+	if len(d.Required) == 0 || slices.Contains(d.Required, propName) {
+		d.isRequired = true
+	} else {
+		suffix = "?"
+	}
+
 	typ := prop.Type
 	v, err := json.Marshal(typ)
 	must(err)
 	switch string(v) {
 	case `"boolean"`:
-		return "Bool"
+		return "Bool" + suffix
 	case `"number"`:
-		return "Double"
+		return "Double" + suffix
+	case `"integer"`:
+		return "Int64" + suffix
 	case `"array"`:
-		return "Array[]" // todo
-	case `"string"`:
-		return "String"
-	case `"object"`:
-		return "Object" // todo
-	case "null":
-		if prop.Ref != "" {
-			return prop.Ref
+		if len(prop.Items.AnyOf) > 0 {
+			arrayType, anyOf := prop.Items.refType(propName, nil)
+			if len(anyOf) > 0 {
+				enumName := d.name + titleCase(propName)
+				enumBody := prop.Items.convertEnum(enumName, "")
+				d.helperStructs = append(d.helperStructs, enumBody)
+				return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
+			}
+			return fmt.Sprintf("Array[%v]", arrayType) + suffix + " // " + strings.Join(anyOf, " | ")
 		}
-		log.Fatalf("missing type and $ref for '%v'", propName)
+		arrayType := prop.moonBitType(propName, prop.Items)
+		return fmt.Sprintf("Array[%v]", arrayType) + suffix
+	case `"string"`:
+		return "String" + suffix
+	case `"object"`:
+		if len(prop.Properties) == 0 {
+			return "Json" + suffix
+		}
+		subTypeName := d.name + titleCase(propName)
+		subType := prop.convert(subTypeName)
+		d.helperStructs = append(d.helperStructs, subType)
+		for _, helper := range prop.helperStructs {
+			d.helperStructs = append(d.helperStructs, helper)
+		}
+		return subTypeName + suffix
+	case "null":
+		refType, anyOf := prop.refType(propName, d.Required)
+		if len(anyOf) > 0 {
+			enumName := d.name + titleCase(propName)
+			enumBody := prop.convertEnum(enumName, "")
+			d.helperStructs = append(d.helperStructs, enumBody)
+			return enumName
+		}
+		return refType
 	default:
 		log.Fatalf("unhandled mooonBitType: %v", string(v))
 	}
 	return ""
+}
+
+func (d *Definition) refType(propName string, required []string) (refType string, anyOf []string) {
+	if d != nil && len(d.AnyOf) > 0 {
+		for _, def := range d.AnyOf {
+			typ, _ := def.refType(propName, nil)
+			anyOf = append(anyOf, typ)
+		}
+	} else if d == nil || d.Ref == "" {
+		// special exception: "data" => Json
+		if propName == "data" {
+			return "Json", nil
+		}
+		log.Fatalf("nil definition or missing refType for propName %q", propName)
+	}
+	parts := strings.Split(d.Ref, "/")
+	typeName := parts[len(parts)-1]
+	if len(required) == 0 || slices.Contains(required, propName) {
+		d.isRequired = true
+		return typeName, anyOf
+	}
+	// optional - not required
+	return typeName + "?", anyOf
+}
+
+func titleCase(s string) string {
+	if s == "" {
+		return s
+	}
+	return strings.ToUpper(s[0:1]) + s[1:]
 }
 
 func must(err error) {
@@ -134,6 +281,11 @@ type Definition struct {
 	// Handle specific cases where 'additionalProperties' is a boolean
 	AdditionalPropertiesSchema *Definition     `json:"-"`
 	Type                       json.RawMessage `json:"type,omitempty"`
+
+	// these are used internally for generating FromJson and ToJson
+	name          string   `json:"-"`
+	isRequired    bool     `json:"-"`
+	helperStructs []string `json:"-"`
 }
 
 // MarshalJSON handles the serialization of AdditionalProperties which can be a bool or a schema

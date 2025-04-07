@@ -6,8 +6,6 @@
   ],
   "native-stub": [ "termio.c" ],
   "targets": {
-    "ffi-native": [
-      "native"
-    ]
+    "ffi-native": [ "native" ]
   }
 }
