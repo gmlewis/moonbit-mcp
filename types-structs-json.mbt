@@ -126,3 +126,55 @@ pub impl @json.FromJson for BlobResourceContents with from_json(json, path) {
     _ => raise @json.JsonDecodeError((path, "expected blob, uri and mimeType"))
   }
 }
+
+///|
+priv type! MessageError String derive(Show, Eq)
+
+///|
+pub fn CallToolRequest::new_call(
+  self : CallToolRequest,
+  id : @jsonrpc2.ID
+) -> @jsonrpc2.Message {
+  @jsonrpc2.new_call(id, "tools/call", self.params.to_json())
+}
+
+///|
+pub fn CallToolRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> CallToolRequest!Error {
+  guard msg is @jsonrpc2.Request(req) else {
+    raise MessageError("expected request")
+  }
+  guard req.method_ == "tools/call" else {
+    raise MessageError("expected method tools/call")
+  }
+  let params : CallToolRequestParams = @json.from_json!(req.params)
+  { params, }
+}
+
+///|
+pub impl ToJson for CallToolRequestParams with to_json(self) {
+  let obj = { "name": self.name.to_json() }
+  if self.arguments is Some(arguments) {
+    obj["arguments"] = arguments.to_json()
+  }
+  obj.to_json()
+}
+
+///|
+pub impl @json.FromJson for CallToolRequestParams with from_json(json, path) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
+  }
+  match obj {
+    { "name": String(name), .. } => {
+      let arguments : Json? = if obj["arguments"] is Some(json) {
+        Some(json)
+      } else {
+        None
+      }
+      { arguments, name }
+    }
+    _ => raise @json.JsonDecodeError((path, "expected name and arguments"))
+  }
+}
