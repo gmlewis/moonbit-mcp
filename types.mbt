@@ -10,7 +10,7 @@ pub(all) struct Annotations {
   /// effectively required, while 0 means "least important," and indicates that
   /// the data is entirely optional.
   priority : Double?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| AudioContent: Audio provided to or from an LLM.
 pub(all) struct AudioContent {
@@ -21,7 +21,7 @@ pub(all) struct AudioContent {
   /// The MIME type of the audio. Different providers may support different audio types.
   mimeType : String
   /// JSON-RPC: "type" = "audio"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct BlobResourceContents {
@@ -31,19 +31,19 @@ pub(all) struct BlobResourceContents {
   mimeType : String?
   /// The URI of this resource.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| CallToolRequest: Used by the client to invoke a tool provided by the server.
 pub(all) struct CallToolRequest {
   /// JSON-RPC: "method" = "tools/call"
   params : CallToolRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct CallToolRequestParams {
   arguments : Json?
   name : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for CallToolRequest with to_call(self, id) {
@@ -81,7 +81,7 @@ pub(all) struct CallToolResult {
   ///
   /// If not set, this is assumed to be false (the call was successful).
   isError : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum CallToolResultContent {
@@ -117,7 +117,7 @@ pub fn CallToolResult::from_message(
 pub(all) struct CancelledNotification {
   /// JSON-RPC: "method" = "notifications/cancelled"
   params : CancelledNotificationParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct CancelledNotificationParams {
@@ -127,7 +127,7 @@ pub(all) struct CancelledNotificationParams {
   ///
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : RequestId
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for CancelledNotification with to_notification(self) {
@@ -155,13 +155,13 @@ pub(all) struct ClientCapabilities {
   roots : ClientCapabilitiesRoots?
   /// Present if the client supports sampling from an LLM.
   sampling : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ClientCapabilitiesRoots: Present if the client supports listing roots.
 pub(all) struct ClientCapabilitiesRoots {
   /// Whether the client supports notifications for changes to the roots list.
   listChanged : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum ClientNotification {
@@ -198,14 +198,14 @@ pub enum ClientResult {
 pub(all) struct CompleteRequest {
   /// JSON-RPC: "method" = "completion/complete"
   params : CompleteRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct CompleteRequestParams {
   /// The argument's information
   argument : CompleteRequestParamsArgument
   ref_ : CompleteRequestParamsRef
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| CompleteRequestParamsArgument: The argument's information
 pub(all) struct CompleteRequestParamsArgument {
@@ -213,7 +213,7 @@ pub(all) struct CompleteRequestParamsArgument {
   name : String
   /// The value of the argument to use for completion matching.
   value : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum CompleteRequestParamsRef {
@@ -244,7 +244,7 @@ pub(all) struct CompleteResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
   completion : CompleteResultCompletion
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct CompleteResultCompletion {
@@ -254,7 +254,7 @@ pub(all) struct CompleteResultCompletion {
   total : Int64?
   /// An array of completion values. Must not exceed 100 items.
   values : Array[String]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for CompleteResult with to_response(self, id) {
@@ -276,7 +276,7 @@ pub fn CompleteResult::from_message(
 pub(all) struct CreateMessageRequest {
   /// JSON-RPC: "method" = "sampling/createMessage"
   params : CreateMessageRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct CreateMessageRequestParams {
@@ -293,7 +293,7 @@ pub(all) struct CreateMessageRequestParams {
   /// An optional system prompt the server wants to use for sampling. The client MAY modify or omit this prompt.
   systemPrompt : String?
   temperature : Double?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum IncludeContext {
@@ -330,7 +330,7 @@ pub(all) struct CreateMessageResult {
   role : Role
   /// The reason why sampling stopped, if known.
   stopReason : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum CreateMessageResultContent {
@@ -356,7 +356,7 @@ pub fn CreateMessageResult::from_message(
 }
 
 ///| Cursor: An opaque token used to represent a cursor for pagination.
-pub(all) struct Cursor {} derive(Show, Eq)
+pub(all) struct Cursor {} derive(Show, Eq, FromJson, ToJson)
 
 ///| EmbeddedResource: The contents of a resource, embedded into a prompt or tool call result.
 ///
@@ -367,7 +367,7 @@ pub(all) struct EmbeddedResource {
   annotations : Annotations?
   resource : EmbeddedResourceResource
   /// JSON-RPC: "type" = "resource"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum EmbeddedResourceResource {
@@ -379,7 +379,7 @@ pub enum EmbeddedResourceResource {
 pub(all) struct GetPromptRequest {
   /// JSON-RPC: "method" = "prompts/get"
   params : GetPromptRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct GetPromptRequestParams {
@@ -387,7 +387,7 @@ pub(all) struct GetPromptRequestParams {
   arguments : Json?
   /// The name of the prompt or prompt template.
   name : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for GetPromptRequest with to_call(self, id) {
@@ -414,7 +414,7 @@ pub(all) struct GetPromptResult {
   /// An optional description for the prompt.
   description : String?
   messages : Array[PromptMessage]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for GetPromptResult with to_response(self, id) {
@@ -441,19 +441,19 @@ pub(all) struct ImageContent {
   /// The MIME type of the image. Different providers may support different image types.
   mimeType : String
   /// JSON-RPC: "type" = "image"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| Implementation: Describes the name and version of an MCP implementation.
 pub(all) struct Implementation {
   name : String
   version : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| InitializeRequest: This request is sent from the client to the server when it first connects, asking it to begin initialization.
 pub(all) struct InitializeRequest {
   /// JSON-RPC: "method" = "initialize"
   params : InitializeRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct InitializeRequestParams {
@@ -461,7 +461,7 @@ pub(all) struct InitializeRequestParams {
   clientInfo : Implementation
   /// The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
   protocolVersion : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for InitializeRequest with to_call(self, id) {
@@ -493,7 +493,7 @@ pub(all) struct InitializeResult {
   /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
   protocolVersion : String
   serverInfo : Implementation
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for InitializeResult with to_response(self, id) {
@@ -515,13 +515,13 @@ pub fn InitializeResult::from_message(
 pub(all) struct InitializedNotification {
   /// JSON-RPC: "method" = "notifications/initialized"
   params : InitializedNotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct InitializedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for InitializedNotification with to_notification(self) {
@@ -545,14 +545,14 @@ pub fn InitializedNotification::from_message(
 pub(all) struct ListPromptsRequest {
   /// JSON-RPC: "method" = "prompts/list"
   params : ListPromptsRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListPromptsRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
   cursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ListPromptsRequest with to_call(self, id) {
@@ -580,7 +580,7 @@ pub(all) struct ListPromptsResult {
   /// If present, there may be more results available.
   nextCursor : String?
   prompts : Array[Prompt]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for ListPromptsResult with to_response(self, id) {
@@ -602,14 +602,14 @@ pub fn ListPromptsResult::from_message(
 pub(all) struct ListResourceTemplatesRequest {
   /// JSON-RPC: "method" = "resources/templates/list"
   params : ListResourceTemplatesRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListResourceTemplatesRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
   cursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ListResourceTemplatesRequest with to_call(self, id) {
@@ -637,7 +637,7 @@ pub(all) struct ListResourceTemplatesResult {
   /// If present, there may be more results available.
   nextCursor : String?
   resourceTemplates : Array[ResourceTemplate]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for ListResourceTemplatesResult with to_response(self, id) {
@@ -659,14 +659,14 @@ pub fn ListResourceTemplatesResult::from_message(
 pub(all) struct ListResourcesRequest {
   /// JSON-RPC: "method" = "resources/list"
   params : ListResourcesRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListResourcesRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
   cursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ListResourcesRequest with to_call(self, id) {
@@ -694,7 +694,7 @@ pub(all) struct ListResourcesResult {
   /// If present, there may be more results available.
   nextCursor : String?
   resources : Array[Resource]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for ListResourcesResult with to_response(self, id) {
@@ -722,18 +722,18 @@ pub fn ListResourcesResult::from_message(
 pub(all) struct ListRootsRequest {
   /// JSON-RPC: "method" = "roots/list"
   params : ListRootsRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListRootsRequestParams {
   _meta : ListRootsRequestParams_meta?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListRootsRequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken : ProgressToken?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ListRootsRequest with to_call(self, id) {
@@ -760,7 +760,7 @@ pub(all) struct ListRootsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
   roots : Array[Root]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for ListRootsResult with to_response(self, id) {
@@ -782,14 +782,14 @@ pub fn ListRootsResult::from_message(
 pub(all) struct ListToolsRequest {
   /// JSON-RPC: "method" = "tools/list"
   params : ListToolsRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ListToolsRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
   cursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ListToolsRequest with to_call(self, id) {
@@ -817,7 +817,7 @@ pub(all) struct ListToolsResult {
   /// If present, there may be more results available.
   nextCursor : String?
   tools : Array[Tool]
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for ListToolsResult with to_response(self, id) {
@@ -851,7 +851,7 @@ pub enum LoggingLevel {
 pub(all) struct LoggingMessageNotification {
   /// JSON-RPC: "method" = "notifications/message"
   params : LoggingMessageNotificationParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct LoggingMessageNotificationParams {
@@ -861,7 +861,7 @@ pub(all) struct LoggingMessageNotificationParams {
   level : LoggingLevel
   /// An optional name of the logger issuing this message.
   logger : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for LoggingMessageNotification with to_notification(
@@ -898,7 +898,7 @@ pub(all) struct ModelHint {
   /// The client MAY also map the string to a different provider's model name or a different model family, as long as it fills a similar niche; for example:
   ///  - `gemini-1.5-flash` could match `claude-3-haiku-20240307`
   name : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ModelPreferences: The server's preferences for model selection, requested of the client during sampling.
 ///
@@ -932,19 +932,19 @@ pub(all) struct ModelPreferences {
   /// value of 0 means speed is not important, while a value of 1 means speed is
   /// the most important factor.
   speedPriority : Double?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct Notification {
   method_ : String
   params : NotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct NotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for Notification with to_notification(self) {
@@ -965,14 +965,14 @@ pub fn Notification::from_message(msg : @jsonrpc2.Message) -> Notification? {
 pub(all) struct PaginatedRequest {
   method_ : String
   params : PaginatedRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct PaginatedRequestParams {
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
   cursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for PaginatedRequest with to_call(self, id) {
@@ -998,7 +998,7 @@ pub(all) struct PaginatedResult {
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for PaginatedResult with to_response(self, id) {
@@ -1020,18 +1020,18 @@ pub fn PaginatedResult::from_message(
 pub(all) struct PingRequest {
   /// JSON-RPC: "method" = "ping"
   params : PingRequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct PingRequestParams {
   _meta : PingRequestParams_meta?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct PingRequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken : ProgressToken?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for PingRequest with to_call(self, id) {
@@ -1055,7 +1055,7 @@ pub fn PingRequest::from_message(
 pub(all) struct ProgressNotification {
   /// JSON-RPC: "method" = "notifications/progress"
   params : ProgressNotificationParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ProgressNotificationParams {
@@ -1067,7 +1067,7 @@ pub(all) struct ProgressNotificationParams {
   progressToken : ProgressToken
   /// Total number of items to process (or total progress required), if known.
   total : Double?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for ProgressNotification with to_notification(self) {
@@ -1088,7 +1088,7 @@ pub fn ProgressNotification::from_message(
 }
 
 ///| ProgressToken: A progress token, used to associate progress notifications with the original request.
-pub(all) struct ProgressToken {} derive(Show, Eq)
+pub(all) struct ProgressToken {} derive(Show, Eq, FromJson, ToJson)
 
 ///| Prompt: A prompt or prompt template that the server offers.
 pub(all) struct Prompt {
@@ -1098,7 +1098,7 @@ pub(all) struct Prompt {
   description : String?
   /// The name of the prompt or prompt template.
   name : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| PromptArgument: Describes an argument that a prompt can accept.
 pub(all) struct PromptArgument {
@@ -1108,19 +1108,19 @@ pub(all) struct PromptArgument {
   name : String
   /// Whether this argument must be provided.
   required : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| PromptListChangedNotification: An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct PromptListChangedNotification {
   /// JSON-RPC: "method" = "notifications/prompts/list_changed"
   params : PromptListChangedNotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct PromptListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for PromptListChangedNotification with to_notification(
@@ -1152,7 +1152,7 @@ pub fn PromptListChangedNotification::from_message(
 pub(all) struct PromptMessage {
   content : PromptMessageContent
   role : Role
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum PromptMessageContent {
@@ -1167,19 +1167,19 @@ pub(all) struct PromptReference {
   /// The name of the prompt or prompt template
   name : String
   /// JSON-RPC: "type" = "ref/prompt"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ReadResourceRequest: Sent from the client to the server, to read a specific resource URI.
 pub(all) struct ReadResourceRequest {
   /// JSON-RPC: "method" = "resources/read"
   params : ReadResourceRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ReadResourceRequestParams {
   /// The URI of the resource to read. The URI can use any protocol; it is up to the server how to interpret it.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for ReadResourceRequest with to_call(self, id) {
@@ -1204,7 +1204,7 @@ pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
   contents : Array[ReadResourceResultContents] // TextResourceContents? | BlobResourceContents?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum ReadResourceResultContents {
@@ -1232,18 +1232,18 @@ pub fn ReadResourceResult::from_message(
 pub(all) struct Request {
   method_ : String
   params : RequestParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct RequestParams {
   _meta : RequestParams_meta?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct RequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken : ProgressToken?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for Request with to_call(self, id) {
@@ -1263,7 +1263,7 @@ pub fn Request::from_message(
 }
 
 ///| RequestId: A uniquely identifying ID for a request in JSON-RPC.
-pub(all) struct RequestId {} derive(Show, Eq)
+pub(all) struct RequestId {} derive(Show, Eq, FromJson, ToJson)
 
 ///| Resource: A known resource that the server is capable of reading.
 pub(all) struct Resource {
@@ -1285,7 +1285,7 @@ pub(all) struct Resource {
   size : Int64?
   /// The URI of this resource.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ResourceContents: The contents of a specific resource or sub-resource.
 pub(all) struct ResourceContents {
@@ -1293,19 +1293,19 @@ pub(all) struct ResourceContents {
   mimeType : String?
   /// The URI of this resource.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ResourceListChangedNotification: An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ResourceListChangedNotification {
   /// JSON-RPC: "method" = "notifications/resources/list_changed"
   params : ResourceListChangedNotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ResourceListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for ResourceListChangedNotification with to_notification(
@@ -1337,7 +1337,7 @@ pub(all) struct ResourceReference {
   /// JSON-RPC: "type" = "ref/resource"
   /// The URI or URI template of the resource.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ResourceTemplate: A template description for resources available on the server.
 pub(all) struct ResourceTemplate {
@@ -1355,19 +1355,19 @@ pub(all) struct ResourceTemplate {
   name : String
   /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
   uriTemplate : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ResourceUpdatedNotification: A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
 pub(all) struct ResourceUpdatedNotification {
   /// JSON-RPC: "method" = "notifications/resources/updated"
   params : ResourceUpdatedNotificationParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ResourceUpdatedNotificationParams {
   /// The URI of the resource that has been updated. This might be a sub-resource of the one that the client actually subscribed to.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for ResourceUpdatedNotification with to_notification(
@@ -1396,7 +1396,7 @@ pub fn ResourceUpdatedNotification::from_message(
 pub(all) struct CustomResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for CustomResult with to_response(self, id) {
@@ -1430,7 +1430,7 @@ pub(all) struct Root {
   /// This restriction may be relaxed in future versions of the protocol to allow
   /// other URI schemes.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| RootsListChangedNotification: A notification from the client to the server, informing it that the list of roots has changed.
 /// This notification should be sent whenever the client adds, removes, or modifies any root.
@@ -1438,13 +1438,13 @@ pub(all) struct Root {
 pub(all) struct RootsListChangedNotification {
   /// JSON-RPC: "method" = "notifications/roots/list_changed"
   params : RootsListChangedNotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct RootsListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for RootsListChangedNotification with to_notification(
@@ -1473,7 +1473,7 @@ pub fn RootsListChangedNotification::from_message(
 pub(all) struct SamplingMessage {
   content : SamplingMessageContent
   role : Role
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum SamplingMessageContent {
@@ -1496,13 +1496,13 @@ pub(all) struct ServerCapabilities {
   resources : ServerCapabilitiesResources?
   /// Present if the server offers any tools to call.
   tools : ServerCapabilitiesTools?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ServerCapabilitiesPrompts: Present if the server offers any prompt templates.
 pub(all) struct ServerCapabilitiesPrompts {
   /// Whether this server supports notifications for changes to the prompt list.
   listChanged : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ServerCapabilitiesResources: Present if the server offers any resources to read.
 pub(all) struct ServerCapabilitiesResources {
@@ -1510,13 +1510,13 @@ pub(all) struct ServerCapabilitiesResources {
   listChanged : Bool?
   /// Whether this server supports subscribing to resource updates.
   subscribe : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ServerCapabilitiesTools: Present if the server offers any tools to call.
 pub(all) struct ServerCapabilitiesTools {
   /// Whether this server supports notifications for changes to the tool list.
   listChanged : Bool?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub enum ServerNotification {
@@ -1553,13 +1553,13 @@ pub enum ServerResult {
 pub(all) struct SetLevelRequest {
   /// JSON-RPC: "method" = "logging/setLevel"
   params : SetLevelRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct SetLevelRequestParams {
   /// The level of logging that the client wants to receive from the server. The server should send all logs at this level and higher (i.e., more severe) to the client as notifications/message.
   level : LoggingLevel
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for SetLevelRequest with to_call(self, id) {
@@ -1583,13 +1583,13 @@ pub fn SetLevelRequest::from_message(
 pub(all) struct SubscribeRequest {
   /// JSON-RPC: "method" = "resources/subscribe"
   params : SubscribeRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct SubscribeRequestParams {
   /// The URI of the resource to subscribe to. The URI can use any protocol; it is up to the server how to interpret it.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for SubscribeRequest with to_call(self, id) {
@@ -1616,7 +1616,7 @@ pub(all) struct TextContent {
   /// The text content of the message.
   text : String
   /// JSON-RPC: "type" = "text"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct TextResourceContents {
@@ -1626,7 +1626,7 @@ pub(all) struct TextResourceContents {
   text : String
   /// The URI of this resource.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| Tool: Definition for a tool the client can call.
 pub(all) struct Tool {
@@ -1640,14 +1640,14 @@ pub(all) struct Tool {
   inputSchema : ToolInputSchema
   /// The name of the tool.
   name : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ToolInputSchema: A JSON Schema object defining the expected parameters for the tool.
 pub(all) struct ToolInputSchema {
   properties : Json?
   required : Array[String]?
   /// JSON-RPC: "type" = "object"
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ToolAnnotations: Additional properties describing a Tool to clients.
 ///
@@ -1685,19 +1685,19 @@ pub(all) struct ToolAnnotations {
   readOnlyHint : Bool?
   /// A human-readable title for the tool.
   title : String?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///| ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ToolListChangedNotification {
   /// JSON-RPC: "method" = "notifications/tools/list_changed"
   params : ToolListChangedNotificationParams?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct ToolListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPNotification for ToolListChangedNotification with to_notification(
@@ -1726,13 +1726,13 @@ pub fn ToolListChangedNotification::from_message(
 pub(all) struct UnsubscribeRequest {
   /// JSON-RPC: "method" = "resources/unsubscribe"
   params : UnsubscribeRequestParams
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct UnsubscribeRequestParams {
   /// The URI of the resource to unsubscribe from.
   uri : String
-} derive(Show, Eq)
+} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPCall for UnsubscribeRequest with to_call(self, id) {

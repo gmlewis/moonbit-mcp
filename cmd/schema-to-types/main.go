@@ -136,7 +136,7 @@ func (d *Definition) convert(name string) string {
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safePropName(propName), d.moonBitType(propName, prop)))
 	}
 
-	lines = append(lines, prefix+"} derive(Show, Eq)")
+	lines = append(lines, prefix+"} derive(Show, Eq, FromJson, ToJson)")
 
 	// generate any helper methods
 	d.genHelperMethods(jsonRPCConsts)
@@ -240,9 +240,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 		subTypeName := d.name + titleCase(propName)
 		subType := prop.convert(subTypeName)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, subType)
-		for _, helper := range prop.helperStructsAndMethods {
-			d.helperStructsAndMethods = append(d.helperStructsAndMethods, helper)
-		}
+		d.helperStructsAndMethods = append(d.helperStructsAndMethods, prop.helperStructsAndMethods...)
 		return subTypeName + suffix
 	case "null":
 		refType, anyOf := prop.refType(propName, d.Required)
@@ -371,7 +369,7 @@ func (d *Definition) genResultHelperMethods(jsonRPCConsts map[string]string) {
 	lines := []string{
 		"///|",
 		fmt.Sprintf("pub impl MCPResponse for %v with to_response(self, id) {", d.name),
-		fmt.Sprintf("  @jsonrpc2.new_response(id, Ok(self.to_json()))"),
+		"  @jsonrpc2.new_response(id, Ok(self.to_json()))",
 		"}",
 		"",
 		"///|",
