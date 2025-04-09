@@ -59,7 +59,7 @@ func main() {
 			continue
 		}
 		fmt.Printf("\n%v\n", mbt)
-		for _, helper := range def.helperStructs {
+		for _, helper := range def.helperStructsAndMethods {
 			fmt.Printf("\n%v\n", helper)
 		}
 	}
@@ -120,21 +120,27 @@ func (d *Definition) convert(name string) string {
 		props = append(props, key)
 	}
 	sort.Strings(props)
+	jsonRPCConsts := map[string]string{}
 	for _, propName := range props {
 		prop := d.Properties[propName]
 		if prop.Description != "" {
 			lines = append(lines, fmt.Sprintf(prefix+"  /// %v", strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1)))
 		}
 		if len(prop.Const) > 0 {
-			typ, err := json.Marshal(prop.Const)
+			value, err := json.Marshal(prop.Const)
 			must(err)
-			lines = append(lines, fmt.Sprintf(prefix+`  /// JSON-RPC: %q = %s`, propName, typ))
+			jsonRPCConsts[propName] = string(value)
+			lines = append(lines, fmt.Sprintf(prefix+`  /// JSON-RPC: %q = %s`, propName, value))
 			continue
 		}
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safePropName(propName), d.moonBitType(propName, prop)))
 	}
 
 	lines = append(lines, prefix+"} derive(Show, Eq)")
+
+	// generate any helper methods
+	d.genHelperMethods(jsonRPCConsts)
+
 	return strings.Join(lines, "\n")
 }
 
@@ -209,7 +215,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 			if len(anyOf) > 0 {
 				enumName := d.name + titleCase(propName)
 				enumBody := prop.Items.convertEnum(enumName, "")
-				d.helperStructs = append(d.helperStructs, enumBody)
+				d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 				// return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
 				return fmt.Sprintf("Array[%v]", enumName) + " // " + strings.Join(anyOf, " | ")
 			}
@@ -223,7 +229,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 		if len(prop.Enum) > 0 {
 			enumName := titleCase(propName)
 			enumBody := prop.convertEnum(enumName, "")
-			d.helperStructs = append(d.helperStructs, enumBody)
+			d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 			return enumName + suffix
 		}
 		return "String" + suffix
@@ -233,9 +239,9 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 		}
 		subTypeName := d.name + titleCase(propName)
 		subType := prop.convert(subTypeName)
-		d.helperStructs = append(d.helperStructs, subType)
-		for _, helper := range prop.helperStructs {
-			d.helperStructs = append(d.helperStructs, helper)
+		d.helperStructsAndMethods = append(d.helperStructsAndMethods, subType)
+		for _, helper := range prop.helperStructsAndMethods {
+			d.helperStructsAndMethods = append(d.helperStructsAndMethods, helper)
 		}
 		return subTypeName + suffix
 	case "null":
@@ -243,7 +249,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 		if len(anyOf) > 0 {
 			enumName := d.name + titleCase(propName)
 			enumBody := prop.convertEnum(enumName, "")
-			d.helperStructs = append(d.helperStructs, enumBody)
+			d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 			return enumName
 		}
 		return refType
@@ -274,6 +280,111 @@ func (d *Definition) refType(propName string, required []string) (refType string
 	}
 	// optional - not required
 	return typeName + "?", anyOf
+}
+
+func (d *Definition) genHelperMethods(jsonRPCConsts map[string]string) {
+	switch {
+	case strings.HasSuffix(d.name, "Request"):
+		d.genRequestHelperMethods(jsonRPCConsts)
+	case strings.HasSuffix(d.name, "Notification"):
+		d.genNotificationHelperMethods(jsonRPCConsts)
+	case strings.HasSuffix(d.name, "Result"):
+		d.genResultHelperMethods(jsonRPCConsts)
+	}
+}
+
+func (d *Definition) genRequestHelperMethods(jsonRPCConsts map[string]string) {
+	method, hasConstMethod := jsonRPCConsts["method"]
+	if !hasConstMethod {
+		method = "self.method_"
+	}
+
+	lines := []string{
+		"///|",
+		fmt.Sprintf("pub impl MCPCall for %v with to_call(self, id) {", d.name),
+		fmt.Sprintf("  @jsonrpc2.new_call(id, %v, self.params.to_json())", method),
+		"}",
+		"",
+		"///|",
+		fmt.Sprintf("pub fn %v::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID, %[1]v)?  {", d.name),
+		"  guard msg is Request(req) else { return None }",
+		"  guard req.id is Some(id) else { return None }",
+	}
+
+	if hasConstMethod {
+		lines = append(lines,
+			fmt.Sprintf("  guard req.method_ == %v else { return None }", method),
+			`  let json = { "params" : req.params }.to_json()`,
+		)
+	} else {
+		lines = append(lines, `  let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()`)
+	}
+
+	lines = append(lines,
+		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		"  guard v is Ok(request) else { return None }",
+		"  Some((id, request))",
+		"}",
+	)
+
+	d.helperStructsAndMethods = append(d.helperStructsAndMethods, strings.Join(lines, "\n"))
+}
+
+func (d *Definition) genNotificationHelperMethods(jsonRPCConsts map[string]string) {
+	method, hasConstMethod := jsonRPCConsts["method"]
+	if !hasConstMethod {
+		method = "self.method_"
+	}
+
+	lines := []string{
+		"///|",
+		fmt.Sprintf("pub impl MCPNotification for %v with to_notification(self) {", d.name),
+		fmt.Sprintf("  @jsonrpc2.new_notification(%v, self.params.to_json())", method),
+		"}",
+		"",
+		"///|",
+		fmt.Sprintf("pub fn %v::from_message(msg : @jsonrpc2.Message) -> %[1]v?  {", d.name),
+		"  guard msg is Request(req) else { return None }",
+		"  guard req.id is None else { return None }",
+	}
+
+	if hasConstMethod {
+		lines = append(lines,
+			fmt.Sprintf("  guard req.method_ == %v else { return None }", method),
+			`  let json = { "params" : req.params }.to_json()`,
+		)
+	} else {
+		lines = append(lines, `  let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()`)
+	}
+
+	lines = append(lines,
+		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		"  guard v is Ok(notification) else { return None }",
+		"  Some(notification)",
+		"}",
+	)
+
+	d.helperStructsAndMethods = append(d.helperStructsAndMethods, strings.Join(lines, "\n"))
+}
+
+func (d *Definition) genResultHelperMethods(jsonRPCConsts map[string]string) {
+	lines := []string{
+		"///|",
+		fmt.Sprintf("pub impl MCPResponse for %v with to_response(self, id) {", d.name),
+		fmt.Sprintf("  @jsonrpc2.new_response(id, Ok(self.to_json()))"),
+		"}",
+		"",
+		"///|",
+		fmt.Sprintf("pub fn %v::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID, %[1]v)?  {", d.name),
+		"  guard msg is Response(res) else { return None }",
+		"  guard res.result is Ok(json) else { return None }",
+		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		"  guard v is Ok(result) else { return None }",
+		"  Some((res.id, result))",
+		"}",
+	}
+
+	d.helperStructsAndMethods = append(d.helperStructsAndMethods, strings.Join(lines, "\n"))
 }
 
 func titleCase(s string) string {
@@ -313,9 +424,10 @@ type Definition struct {
 	Type                       json.RawMessage `json:"type,omitempty"`
 
 	// these are used internally for generating FromJson and ToJson
-	name          string   `json:"-"`
-	isRequired    bool     `json:"-"`
-	helperStructs []string `json:"-"`
+	name       string `json:"-"`
+	isRequired bool   `json:"-"`
+	// these are added to the auto-generated source following the structs
+	helperStructsAndMethods []string `json:"-"`
 }
 
 // MarshalJSON handles the serialization of AdditionalProperties which can be a bool or a schema

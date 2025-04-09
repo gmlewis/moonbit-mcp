@@ -45,6 +45,24 @@ pub(all) struct CallToolRequestParams {
   name : String
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for CallToolRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "tools/call", self.params.to_json())
+}
+
+///|
+pub fn CallToolRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CallToolRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "tools/call" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[CallToolRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| CallToolResult: The server's response to a tool call.
 ///
 /// Any errors that originate from the tool SHOULD be reported inside the result
@@ -73,6 +91,22 @@ pub enum CallToolResultContent {
   EmbeddedResource(EmbeddedResource)
 } derive(Show, Eq)
 
+///|
+pub impl MCPResponse for CallToolResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn CallToolResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CallToolResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[CallToolResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
+
 ///| CancelledNotification: This notification can be sent by either side to indicate that it is cancelling a previously-issued request.
 ///
 /// The request SHOULD still be in-flight, but due to communication latency, it is always possible that this notification MAY arrive after the request has already finished.
@@ -94,6 +128,24 @@ pub(all) struct CancelledNotificationParams {
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : RequestId
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for CancelledNotification with to_notification(self) {
+  @jsonrpc2.new_notification("notifications/cancelled", self.params.to_json())
+}
+
+///|
+pub fn CancelledNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> CancelledNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/cancelled" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[CancelledNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| ClientCapabilities: Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
 pub(all) struct ClientCapabilities {
@@ -169,6 +221,24 @@ pub enum CompleteRequestParamsRef {
   ResourceReference(ResourceReference)
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for CompleteRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "completion/complete", self.params.to_json())
+}
+
+///|
+pub fn CompleteRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CompleteRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "completion/complete" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[CompleteRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| CompleteResult: The server's response to a completion/complete request
 pub(all) struct CompleteResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -185,6 +255,22 @@ pub(all) struct CompleteResultCompletion {
   /// An array of completion values. Must not exceed 100 items.
   values : Array[String]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for CompleteResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn CompleteResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CompleteResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[CompleteResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| CreateMessageRequest: A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.
 pub(all) struct CreateMessageRequest {
@@ -216,6 +302,24 @@ pub enum IncludeContext {
   ThisServer // = "thisServer"
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for CreateMessageRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "sampling/createMessage", self.params.to_json())
+}
+
+///|
+pub fn CreateMessageRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CreateMessageRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "sampling/createMessage" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[CreateMessageRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| CreateMessageResult: The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.
 pub(all) struct CreateMessageResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -234,6 +338,22 @@ pub enum CreateMessageResultContent {
   ImageContent(ImageContent)
   AudioContent(AudioContent)
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for CreateMessageResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn CreateMessageResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CreateMessageResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[CreateMessageResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| Cursor: An opaque token used to represent a cursor for pagination.
 pub(all) struct Cursor {} derive(Show, Eq)
@@ -269,6 +389,24 @@ pub(all) struct GetPromptRequestParams {
   name : String
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for GetPromptRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "prompts/get", self.params.to_json())
+}
+
+///|
+pub fn GetPromptRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, GetPromptRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "prompts/get" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[GetPromptRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| GetPromptResult: The server's response to a prompts/get request from the client.
 pub(all) struct GetPromptResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -277,6 +415,22 @@ pub(all) struct GetPromptResult {
   description : String?
   messages : Array[PromptMessage]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for GetPromptResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn GetPromptResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, GetPromptResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[GetPromptResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| ImageContent: An image provided to or from an LLM.
 pub(all) struct ImageContent {
@@ -309,6 +463,24 @@ pub(all) struct InitializeRequestParams {
   protocolVersion : String
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for InitializeRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "initialize", self.params.to_json())
+}
+
+///|
+pub fn InitializeRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, InitializeRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "initialize" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[InitializeRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| InitializeResult: After receiving an initialize request from the client, the server sends this response.
 pub(all) struct InitializeResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -323,6 +495,22 @@ pub(all) struct InitializeResult {
   serverInfo : Implementation
 } derive(Show, Eq)
 
+///|
+pub impl MCPResponse for InitializeResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn InitializeResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, InitializeResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[InitializeResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
+
 ///| InitializedNotification: This notification is sent from the client to the server after initialization has finished.
 pub(all) struct InitializedNotification {
   /// JSON-RPC: "method" = "notifications/initialized"
@@ -334,6 +522,24 @@ pub(all) struct InitializedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for InitializedNotification with to_notification(self) {
+  @jsonrpc2.new_notification("notifications/initialized", self.params.to_json())
+}
+
+///|
+pub fn InitializedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> InitializedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/initialized" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[InitializedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| ListPromptsRequest: Sent from the client to request a list of prompts and prompt templates the server has.
 pub(all) struct ListPromptsRequest {
@@ -348,6 +554,24 @@ pub(all) struct ListPromptsRequestParams {
   cursor : String?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ListPromptsRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "prompts/list", self.params.to_json())
+}
+
+///|
+pub fn ListPromptsRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListPromptsRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "prompts/list" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ListPromptsRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ListPromptsResult: The server's response to a prompts/list request from the client.
 pub(all) struct ListPromptsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -357,6 +581,22 @@ pub(all) struct ListPromptsResult {
   nextCursor : String?
   prompts : Array[Prompt]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ListPromptsResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ListPromptsResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListPromptsResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ListPromptsResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| ListResourceTemplatesRequest: Sent from the client to request a list of resource templates the server has.
 pub(all) struct ListResourceTemplatesRequest {
@@ -371,6 +611,24 @@ pub(all) struct ListResourceTemplatesRequestParams {
   cursor : String?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ListResourceTemplatesRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "resources/templates/list", self.params.to_json())
+}
+
+///|
+pub fn ListResourceTemplatesRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListResourceTemplatesRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "resources/templates/list" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ListResourceTemplatesRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ListResourceTemplatesResult: The server's response to a resources/templates/list request from the client.
 pub(all) struct ListResourceTemplatesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -380,6 +638,22 @@ pub(all) struct ListResourceTemplatesResult {
   nextCursor : String?
   resourceTemplates : Array[ResourceTemplate]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ListResourceTemplatesResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ListResourceTemplatesResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListResourceTemplatesResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ListResourceTemplatesResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| ListResourcesRequest: Sent from the client to request a list of resources the server has.
 pub(all) struct ListResourcesRequest {
@@ -394,6 +668,24 @@ pub(all) struct ListResourcesRequestParams {
   cursor : String?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ListResourcesRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "resources/list", self.params.to_json())
+}
+
+///|
+pub fn ListResourcesRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListResourcesRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "resources/list" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ListResourcesRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ListResourcesResult: The server's response to a resources/list request from the client.
 pub(all) struct ListResourcesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -403,6 +695,22 @@ pub(all) struct ListResourcesResult {
   nextCursor : String?
   resources : Array[Resource]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ListResourcesResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ListResourcesResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListResourcesResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ListResourcesResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| ListRootsRequest: Sent from the server to request a list of root URIs from the client. Roots allow
 /// servers to ask for specific directories or files to operate on. A common example
@@ -427,6 +735,24 @@ pub(all) struct ListRootsRequestParams_meta {
   progressToken : ProgressToken?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ListRootsRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "roots/list", self.params.to_json())
+}
+
+///|
+pub fn ListRootsRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListRootsRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "roots/list" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ListRootsRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ListRootsResult: The client's response to a roots/list request from the server.
 /// This result contains an array of Root objects, each representing a root directory
 /// or file that the server can operate on.
@@ -435,6 +761,22 @@ pub(all) struct ListRootsResult {
   _meta : Json?
   roots : Array[Root]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ListRootsResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ListRootsResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListRootsResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ListRootsResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| ListToolsRequest: Sent from the client to request a list of tools the server has.
 pub(all) struct ListToolsRequest {
@@ -449,6 +791,24 @@ pub(all) struct ListToolsRequestParams {
   cursor : String?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ListToolsRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "tools/list", self.params.to_json())
+}
+
+///|
+pub fn ListToolsRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListToolsRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "tools/list" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ListToolsRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ListToolsResult: The server's response to a tools/list request from the client.
 pub(all) struct ListToolsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -458,6 +818,22 @@ pub(all) struct ListToolsResult {
   nextCursor : String?
   tools : Array[Tool]
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ListToolsResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ListToolsResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ListToolsResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ListToolsResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///|
 pub enum LoggingLevel {
@@ -486,6 +862,26 @@ pub(all) struct LoggingMessageNotificationParams {
   /// An optional name of the logger issuing this message.
   logger : String?
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for LoggingMessageNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification("notifications/message", self.params.to_json())
+}
+
+///|
+pub fn LoggingMessageNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> LoggingMessageNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/message" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[LoggingMessageNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| ModelHint: Hints to use for model selection.
 ///
@@ -551,6 +947,21 @@ pub(all) struct NotificationParams {
 } derive(Show, Eq)
 
 ///|
+pub impl MCPNotification for Notification with to_notification(self) {
+  @jsonrpc2.new_notification(self.method_, self.params.to_json())
+}
+
+///|
+pub fn Notification::from_message(msg : @jsonrpc2.Message) -> Notification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
+  let v : Result[Notification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
+
+///|
 pub(all) struct PaginatedRequest {
   method_ : String
   params : PaginatedRequestParams?
@@ -564,6 +975,23 @@ pub(all) struct PaginatedRequestParams {
 } derive(Show, Eq)
 
 ///|
+pub impl MCPCall for PaginatedRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, self.method_, self.params.to_json())
+}
+
+///|
+pub fn PaginatedRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, PaginatedRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
+  let v : Result[PaginatedRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
+///|
 pub(all) struct PaginatedResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -571,6 +999,22 @@ pub(all) struct PaginatedResult {
   /// If present, there may be more results available.
   nextCursor : String?
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for PaginatedResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn PaginatedResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, PaginatedResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[PaginatedResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///| PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
 pub(all) struct PingRequest {
@@ -589,6 +1033,24 @@ pub(all) struct PingRequestParams_meta {
   progressToken : ProgressToken?
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for PingRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "ping", self.params.to_json())
+}
+
+///|
+pub fn PingRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, PingRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "ping" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[PingRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ProgressNotification: An out-of-band notification used to inform the receiver of a progress update for a long-running request.
 pub(all) struct ProgressNotification {
   /// JSON-RPC: "method" = "notifications/progress"
@@ -606,6 +1068,24 @@ pub(all) struct ProgressNotificationParams {
   /// Total number of items to process (or total progress required), if known.
   total : Double?
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for ProgressNotification with to_notification(self) {
+  @jsonrpc2.new_notification("notifications/progress", self.params.to_json())
+}
+
+///|
+pub fn ProgressNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> ProgressNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/progress" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ProgressNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| ProgressToken: A progress token, used to associate progress notifications with the original request.
 pub(all) struct ProgressToken {} derive(Show, Eq)
@@ -641,6 +1121,29 @@ pub(all) struct PromptListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for PromptListChangedNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification(
+    "notifications/prompts/list_changed",
+    self.params.to_json(),
+  )
+}
+
+///|
+pub fn PromptListChangedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> PromptListChangedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/prompts/list_changed" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[PromptListChangedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| PromptMessage: Describes a message returned as part of a prompt.
 ///
@@ -678,6 +1181,24 @@ pub(all) struct ReadResourceRequestParams {
   uri : String
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for ReadResourceRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "resources/read", self.params.to_json())
+}
+
+///|
+pub fn ReadResourceRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ReadResourceRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "resources/read" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ReadResourceRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| ReadResourceResult: The server's response to a resources/read request from the client.
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
@@ -690,6 +1211,22 @@ pub enum ReadResourceResultContents {
   TextResourceContents(TextResourceContents)
   BlobResourceContents(BlobResourceContents)
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for ReadResourceResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn ReadResourceResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, ReadResourceResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[ReadResourceResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///|
 pub(all) struct Request {
@@ -707,6 +1244,23 @@ pub(all) struct RequestParams_meta {
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken : ProgressToken?
 } derive(Show, Eq)
+
+///|
+pub impl MCPCall for Request with to_call(self, id) {
+  @jsonrpc2.new_call(id, self.method_, self.params.to_json())
+}
+
+///|
+pub fn Request::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, Request)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
+  let v : Result[Request, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
 
 ///| RequestId: A uniquely identifying ID for a request in JSON-RPC.
 pub(all) struct RequestId {} derive(Show, Eq)
@@ -753,6 +1307,31 @@ pub(all) struct ResourceListChangedNotificationParams {
   _meta : Json?
 } derive(Show, Eq)
 
+///|
+pub impl MCPNotification for ResourceListChangedNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification(
+    "notifications/resources/list_changed",
+    self.params.to_json(),
+  )
+}
+
+///|
+pub fn ResourceListChangedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> ResourceListChangedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/resources/list_changed" else {
+    return None
+  }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ResourceListChangedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
+
 ///| ResourceReference: A reference to a resource or resource template definition.
 pub(all) struct ResourceReference {
   /// JSON-RPC: "type" = "ref/resource"
@@ -791,10 +1370,49 @@ pub(all) struct ResourceUpdatedNotificationParams {
 } derive(Show, Eq)
 
 ///|
+pub impl MCPNotification for ResourceUpdatedNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification(
+    "notifications/resources/updated",
+    self.params.to_json(),
+  )
+}
+
+///|
+pub fn ResourceUpdatedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> ResourceUpdatedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/resources/updated" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ResourceUpdatedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
+
+///|
 pub(all) struct CustomResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for CustomResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn CustomResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, CustomResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[CustomResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///|
 pub enum Role {
@@ -827,6 +1445,29 @@ pub(all) struct RootsListChangedNotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
 } derive(Show, Eq)
+
+///|
+pub impl MCPNotification for RootsListChangedNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification(
+    "notifications/roots/list_changed",
+    self.params.to_json(),
+  )
+}
+
+///|
+pub fn RootsListChangedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> RootsListChangedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/roots/list_changed" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[RootsListChangedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
 
 ///| SamplingMessage: Describes a message issued to or received from an LLM API.
 pub(all) struct SamplingMessage {
@@ -920,6 +1561,24 @@ pub(all) struct SetLevelRequestParams {
   level : LoggingLevel
 } derive(Show, Eq)
 
+///|
+pub impl MCPCall for SetLevelRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "logging/setLevel", self.params.to_json())
+}
+
+///|
+pub fn SetLevelRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, SetLevelRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "logging/setLevel" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[SetLevelRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
+
 ///| SubscribeRequest: Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.
 pub(all) struct SubscribeRequest {
   /// JSON-RPC: "method" = "resources/subscribe"
@@ -931,6 +1590,24 @@ pub(all) struct SubscribeRequestParams {
   /// The URI of the resource to subscribe to. The URI can use any protocol; it is up to the server how to interpret it.
   uri : String
 } derive(Show, Eq)
+
+///|
+pub impl MCPCall for SubscribeRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "resources/subscribe", self.params.to_json())
+}
+
+///|
+pub fn SubscribeRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, SubscribeRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "resources/subscribe" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[SubscribeRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
 
 ///| TextContent: Text provided to or from an LLM.
 pub(all) struct TextContent {
@@ -1022,6 +1699,29 @@ pub(all) struct ToolListChangedNotificationParams {
   _meta : Json?
 } derive(Show, Eq)
 
+///|
+pub impl MCPNotification for ToolListChangedNotification with to_notification(
+  self
+) {
+  @jsonrpc2.new_notification(
+    "notifications/tools/list_changed",
+    self.params.to_json(),
+  )
+}
+
+///|
+pub fn ToolListChangedNotification::from_message(
+  msg : @jsonrpc2.Message
+) -> ToolListChangedNotification? {
+  guard msg is Request(req) else { return None }
+  guard req.id is None else { return None }
+  guard req.method_ == "notifications/tools/list_changed" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[ToolListChangedNotification, _] = @json.from_json?(json)
+  guard v is Ok(notification) else { return None }
+  Some(notification)
+}
+
 ///| UnsubscribeRequest: Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.
 pub(all) struct UnsubscribeRequest {
   /// JSON-RPC: "method" = "resources/unsubscribe"
@@ -1033,3 +1733,21 @@ pub(all) struct UnsubscribeRequestParams {
   /// The URI of the resource to unsubscribe from.
   uri : String
 } derive(Show, Eq)
+
+///|
+pub impl MCPCall for UnsubscribeRequest with to_call(self, id) {
+  @jsonrpc2.new_call(id, "resources/unsubscribe", self.params.to_json())
+}
+
+///|
+pub fn UnsubscribeRequest::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, UnsubscribeRequest)? {
+  guard msg is Request(req) else { return None }
+  guard req.id is Some(id) else { return None }
+  guard req.method_ == "resources/unsubscribe" else { return None }
+  let json = { "params": req.params }.to_json()
+  let v : Result[UnsubscribeRequest, _] = @json.from_json?(json)
+  guard v is Ok(request) else { return None }
+  Some((id, request))
+}
