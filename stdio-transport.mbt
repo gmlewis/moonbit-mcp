@@ -1,4 +1,5 @@
-///| Read one line from stdin as a String (including the newline).
+///|
+/// Read one line from stdin as a String (including the newline).
 pub fn read_line() -> String!@io.IOError {
   let buf = @io.Buffer::new()
   for {
@@ -12,7 +13,8 @@ pub fn read_line() -> String!@io.IOError {
   buf.to_string()
 }
 
-///| Write a string to stdout.
+///|
+/// Write a string to stdout.
 pub fn write(s : String) -> Unit {
   let bytes = @base64.str2bytes(s)
   for i in 0..<bytes.length() {

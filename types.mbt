@@ -1,4 +1,5 @@
-///| Annotations: Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
+///|
+/// Annotations: Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
 pub(all) struct Annotations {
   /// Describes who the intended customer of this object or data is.
   ///
@@ -12,7 +13,8 @@ pub(all) struct Annotations {
   priority : Double?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| AudioContent: Audio provided to or from an LLM.
+///|
+/// AudioContent: Audio provided to or from an LLM.
 pub(all) struct AudioContent {
   /// Optional annotations for the client.
   annotations : Annotations?
@@ -33,7 +35,8 @@ pub(all) struct BlobResourceContents {
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| CallToolRequest: Used by the client to invoke a tool provided by the server.
+///|
+/// CallToolRequest: Used by the client to invoke a tool provided by the server.
 pub(all) struct CallToolRequest {
   /// JSON-RPC: "method" = "tools/call"
   params : CallToolRequestParams
@@ -63,7 +66,8 @@ pub fn CallToolRequest::from_message(
   Some((id, request))
 }
 
-///| CallToolResult: The server's response to a tool call.
+///|
+/// CallToolResult: The server's response to a tool call.
 ///
 /// Any errors that originate from the tool SHOULD be reported inside the result
 /// object, with `isError` set to true, _not_ as an MCP protocol-level error
@@ -107,7 +111,8 @@ pub fn CallToolResult::from_message(
   Some((res.id, result))
 }
 
-///| CancelledNotification: This notification can be sent by either side to indicate that it is cancelling a previously-issued request.
+///|
+/// CancelledNotification: This notification can be sent by either side to indicate that it is cancelling a previously-issued request.
 ///
 /// The request SHOULD still be in-flight, but due to communication latency, it is always possible that this notification MAY arrive after the request has already finished.
 ///
@@ -147,7 +152,8 @@ pub fn CancelledNotification::from_message(
   Some(notification)
 }
 
-///| ClientCapabilities: Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
+///|
+/// ClientCapabilities: Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
 pub(all) struct ClientCapabilities {
   /// Experimental, non-standard capabilities that the client supports.
   experimental : Json?
@@ -157,7 +163,8 @@ pub(all) struct ClientCapabilities {
   sampling : Json?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ClientCapabilitiesRoots: Present if the client supports listing roots.
+///|
+/// ClientCapabilitiesRoots: Present if the client supports listing roots.
 pub(all) struct ClientCapabilitiesRoots {
   /// Whether the client supports notifications for changes to the roots list.
   listChanged : Bool?
@@ -194,7 +201,8 @@ pub enum ClientResult {
   ListRootsResult(ListRootsResult)
 } derive(Show, Eq)
 
-///| CompleteRequest: A request from the client to the server, to ask for completion options.
+///|
+/// CompleteRequest: A request from the client to the server, to ask for completion options.
 pub(all) struct CompleteRequest {
   /// JSON-RPC: "method" = "completion/complete"
   params : CompleteRequestParams
@@ -207,7 +215,8 @@ pub(all) struct CompleteRequestParams {
   ref_ : CompleteRequestParamsRef
 } derive(Show, Eq, FromJson, ToJson)
 
-///| CompleteRequestParamsArgument: The argument's information
+///|
+/// CompleteRequestParamsArgument: The argument's information
 pub(all) struct CompleteRequestParamsArgument {
   /// The name of the argument
   name : String
@@ -239,7 +248,8 @@ pub fn CompleteRequest::from_message(
   Some((id, request))
 }
 
-///| CompleteResult: The server's response to a completion/complete request
+///|
+/// CompleteResult: The server's response to a completion/complete request
 pub(all) struct CompleteResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -272,7 +282,8 @@ pub fn CompleteResult::from_message(
   Some((res.id, result))
 }
 
-///| CreateMessageRequest: A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.
+///|
+/// CreateMessageRequest: A request from the server to sample an LLM via the client. The client has full discretion over which model to select. The client should also inform the user before beginning sampling, to allow them to inspect the request (human in the loop) and decide whether to approve it.
 pub(all) struct CreateMessageRequest {
   /// JSON-RPC: "method" = "sampling/createMessage"
   params : CreateMessageRequestParams
@@ -320,7 +331,8 @@ pub fn CreateMessageRequest::from_message(
   Some((id, request))
 }
 
-///| CreateMessageResult: The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.
+///|
+/// CreateMessageResult: The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.
 pub(all) struct CreateMessageResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -355,10 +367,12 @@ pub fn CreateMessageResult::from_message(
   Some((res.id, result))
 }
 
-///| Cursor: An opaque token used to represent a cursor for pagination.
+///|
+/// Cursor: An opaque token used to represent a cursor for pagination.
 pub(all) struct Cursor {} derive(Show, Eq, FromJson, ToJson)
 
-///| EmbeddedResource: The contents of a resource, embedded into a prompt or tool call result.
+///|
+/// EmbeddedResource: The contents of a resource, embedded into a prompt or tool call result.
 ///
 /// It is up to the client how best to render embedded resources for the benefit
 /// of the LLM and/or the user.
@@ -375,7 +389,8 @@ pub enum EmbeddedResourceResource {
   BlobResourceContents(BlobResourceContents)
 } derive(Show, Eq)
 
-///| GetPromptRequest: Used by the client to get a prompt provided by the server.
+///|
+/// GetPromptRequest: Used by the client to get a prompt provided by the server.
 pub(all) struct GetPromptRequest {
   /// JSON-RPC: "method" = "prompts/get"
   params : GetPromptRequestParams
@@ -407,7 +422,8 @@ pub fn GetPromptRequest::from_message(
   Some((id, request))
 }
 
-///| GetPromptResult: The server's response to a prompts/get request from the client.
+///|
+/// GetPromptResult: The server's response to a prompts/get request from the client.
 pub(all) struct GetPromptResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -432,7 +448,8 @@ pub fn GetPromptResult::from_message(
   Some((res.id, result))
 }
 
-///| ImageContent: An image provided to or from an LLM.
+///|
+/// ImageContent: An image provided to or from an LLM.
 pub(all) struct ImageContent {
   /// Optional annotations for the client.
   annotations : Annotations?
@@ -443,13 +460,15 @@ pub(all) struct ImageContent {
   /// JSON-RPC: "type" = "image"
 } derive(Show, Eq, FromJson, ToJson)
 
-///| Implementation: Describes the name and version of an MCP implementation.
+///|
+/// Implementation: Describes the name and version of an MCP implementation.
 pub(all) struct Implementation {
   name : String
   version : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| InitializeRequest: This request is sent from the client to the server when it first connects, asking it to begin initialization.
+///|
+/// InitializeRequest: This request is sent from the client to the server when it first connects, asking it to begin initialization.
 pub(all) struct InitializeRequest {
   /// JSON-RPC: "method" = "initialize"
   params : InitializeRequestParams
@@ -481,7 +500,8 @@ pub fn InitializeRequest::from_message(
   Some((id, request))
 }
 
-///| InitializeResult: After receiving an initialize request from the client, the server sends this response.
+///|
+/// InitializeResult: After receiving an initialize request from the client, the server sends this response.
 pub(all) struct InitializeResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -511,7 +531,8 @@ pub fn InitializeResult::from_message(
   Some((res.id, result))
 }
 
-///| InitializedNotification: This notification is sent from the client to the server after initialization has finished.
+///|
+/// InitializedNotification: This notification is sent from the client to the server after initialization has finished.
 pub(all) struct InitializedNotification {
   /// JSON-RPC: "method" = "notifications/initialized"
   params : InitializedNotificationParams?
@@ -541,7 +562,8 @@ pub fn InitializedNotification::from_message(
   Some(notification)
 }
 
-///| ListPromptsRequest: Sent from the client to request a list of prompts and prompt templates the server has.
+///|
+/// ListPromptsRequest: Sent from the client to request a list of prompts and prompt templates the server has.
 pub(all) struct ListPromptsRequest {
   /// JSON-RPC: "method" = "prompts/list"
   params : ListPromptsRequestParams?
@@ -572,7 +594,8 @@ pub fn ListPromptsRequest::from_message(
   Some((id, request))
 }
 
-///| ListPromptsResult: The server's response to a prompts/list request from the client.
+///|
+/// ListPromptsResult: The server's response to a prompts/list request from the client.
 pub(all) struct ListPromptsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -598,7 +621,8 @@ pub fn ListPromptsResult::from_message(
   Some((res.id, result))
 }
 
-///| ListResourceTemplatesRequest: Sent from the client to request a list of resource templates the server has.
+///|
+/// ListResourceTemplatesRequest: Sent from the client to request a list of resource templates the server has.
 pub(all) struct ListResourceTemplatesRequest {
   /// JSON-RPC: "method" = "resources/templates/list"
   params : ListResourceTemplatesRequestParams?
@@ -629,7 +653,8 @@ pub fn ListResourceTemplatesRequest::from_message(
   Some((id, request))
 }
 
-///| ListResourceTemplatesResult: The server's response to a resources/templates/list request from the client.
+///|
+/// ListResourceTemplatesResult: The server's response to a resources/templates/list request from the client.
 pub(all) struct ListResourceTemplatesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -655,7 +680,8 @@ pub fn ListResourceTemplatesResult::from_message(
   Some((res.id, result))
 }
 
-///| ListResourcesRequest: Sent from the client to request a list of resources the server has.
+///|
+/// ListResourcesRequest: Sent from the client to request a list of resources the server has.
 pub(all) struct ListResourcesRequest {
   /// JSON-RPC: "method" = "resources/list"
   params : ListResourcesRequestParams?
@@ -686,7 +712,8 @@ pub fn ListResourcesRequest::from_message(
   Some((id, request))
 }
 
-///| ListResourcesResult: The server's response to a resources/list request from the client.
+///|
+/// ListResourcesResult: The server's response to a resources/list request from the client.
 pub(all) struct ListResourcesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -712,7 +739,8 @@ pub fn ListResourcesResult::from_message(
   Some((res.id, result))
 }
 
-///| ListRootsRequest: Sent from the server to request a list of root URIs from the client. Roots allow
+///|
+/// ListRootsRequest: Sent from the server to request a list of root URIs from the client. Roots allow
 /// servers to ask for specific directories or files to operate on. A common example
 /// for roots is providing a set of repositories or directories a server should operate
 /// on.
@@ -753,7 +781,8 @@ pub fn ListRootsRequest::from_message(
   Some((id, request))
 }
 
-///| ListRootsResult: The client's response to a roots/list request from the server.
+///|
+/// ListRootsResult: The client's response to a roots/list request from the server.
 /// This result contains an array of Root objects, each representing a root directory
 /// or file that the server can operate on.
 pub(all) struct ListRootsResult {
@@ -778,7 +807,8 @@ pub fn ListRootsResult::from_message(
   Some((res.id, result))
 }
 
-///| ListToolsRequest: Sent from the client to request a list of tools the server has.
+///|
+/// ListToolsRequest: Sent from the client to request a list of tools the server has.
 pub(all) struct ListToolsRequest {
   /// JSON-RPC: "method" = "tools/list"
   params : ListToolsRequestParams?
@@ -809,7 +839,8 @@ pub fn ListToolsRequest::from_message(
   Some((id, request))
 }
 
-///| ListToolsResult: The server's response to a tools/list request from the client.
+///|
+/// ListToolsResult: The server's response to a tools/list request from the client.
 pub(all) struct ListToolsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -847,7 +878,8 @@ pub enum LoggingLevel {
   Warning // = "warning"
 } derive(Show, Eq)
 
-///| LoggingMessageNotification: Notification of a log message passed from server to client. If no logging/setLevel request has been sent from the client, the server MAY decide which messages to send automatically.
+///|
+/// LoggingMessageNotification: Notification of a log message passed from server to client. If no logging/setLevel request has been sent from the client, the server MAY decide which messages to send automatically.
 pub(all) struct LoggingMessageNotification {
   /// JSON-RPC: "method" = "notifications/message"
   params : LoggingMessageNotificationParams
@@ -883,7 +915,8 @@ pub fn LoggingMessageNotification::from_message(
   Some(notification)
 }
 
-///| ModelHint: Hints to use for model selection.
+///|
+/// ModelHint: Hints to use for model selection.
 ///
 /// Keys not declared here are currently left unspecified by the spec and are up
 /// to the client to interpret.
@@ -900,7 +933,8 @@ pub(all) struct ModelHint {
   name : String?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ModelPreferences: The server's preferences for model selection, requested of the client during sampling.
+///|
+/// ModelPreferences: The server's preferences for model selection, requested of the client during sampling.
 ///
 /// Because LLMs can vary along multiple dimensions, choosing the "best" model is
 /// rarely straightforward.  Different models excel in different areas—some are
@@ -1016,7 +1050,8 @@ pub fn PaginatedResult::from_message(
   Some((res.id, result))
 }
 
-///| PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
+///|
+/// PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
 pub(all) struct PingRequest {
   /// JSON-RPC: "method" = "ping"
   params : PingRequestParams?
@@ -1051,7 +1086,8 @@ pub fn PingRequest::from_message(
   Some((id, request))
 }
 
-///| ProgressNotification: An out-of-band notification used to inform the receiver of a progress update for a long-running request.
+///|
+/// ProgressNotification: An out-of-band notification used to inform the receiver of a progress update for a long-running request.
 pub(all) struct ProgressNotification {
   /// JSON-RPC: "method" = "notifications/progress"
   params : ProgressNotificationParams
@@ -1087,10 +1123,12 @@ pub fn ProgressNotification::from_message(
   Some(notification)
 }
 
-///| ProgressToken: A progress token, used to associate progress notifications with the original request.
+///|
+/// ProgressToken: A progress token, used to associate progress notifications with the original request.
 pub(all) struct ProgressToken {} derive(Show, Eq, FromJson, ToJson)
 
-///| Prompt: A prompt or prompt template that the server offers.
+///|
+/// Prompt: A prompt or prompt template that the server offers.
 pub(all) struct Prompt {
   /// A list of arguments to use for templating the prompt.
   arguments : Array[PromptArgument]?
@@ -1100,7 +1138,8 @@ pub(all) struct Prompt {
   name : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| PromptArgument: Describes an argument that a prompt can accept.
+///|
+/// PromptArgument: Describes an argument that a prompt can accept.
 pub(all) struct PromptArgument {
   /// A human-readable description of the argument.
   description : String?
@@ -1110,7 +1149,8 @@ pub(all) struct PromptArgument {
   required : Bool?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| PromptListChangedNotification: An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
+///|
+/// PromptListChangedNotification: An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct PromptListChangedNotification {
   /// JSON-RPC: "method" = "notifications/prompts/list_changed"
   params : PromptListChangedNotificationParams?
@@ -1145,7 +1185,8 @@ pub fn PromptListChangedNotification::from_message(
   Some(notification)
 }
 
-///| PromptMessage: Describes a message returned as part of a prompt.
+///|
+/// PromptMessage: Describes a message returned as part of a prompt.
 ///
 /// This is similar to `SamplingMessage`, but also supports the embedding of
 /// resources from the MCP server.
@@ -1162,14 +1203,16 @@ pub enum PromptMessageContent {
   EmbeddedResource(EmbeddedResource)
 } derive(Show, Eq)
 
-///| PromptReference: Identifies a prompt.
+///|
+/// PromptReference: Identifies a prompt.
 pub(all) struct PromptReference {
   /// The name of the prompt or prompt template
   name : String
   /// JSON-RPC: "type" = "ref/prompt"
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ReadResourceRequest: Sent from the client to the server, to read a specific resource URI.
+///|
+/// ReadResourceRequest: Sent from the client to the server, to read a specific resource URI.
 pub(all) struct ReadResourceRequest {
   /// JSON-RPC: "method" = "resources/read"
   params : ReadResourceRequestParams
@@ -1199,7 +1242,8 @@ pub fn ReadResourceRequest::from_message(
   Some((id, request))
 }
 
-///| ReadResourceResult: The server's response to a resources/read request from the client.
+///|
+/// ReadResourceResult: The server's response to a resources/read request from the client.
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
@@ -1262,10 +1306,12 @@ pub fn Request::from_message(
   Some((id, request))
 }
 
-///| RequestId: A uniquely identifying ID for a request in JSON-RPC.
+///|
+/// RequestId: A uniquely identifying ID for a request in JSON-RPC.
 pub(all) struct RequestId {} derive(Show, Eq, FromJson, ToJson)
 
-///| Resource: A known resource that the server is capable of reading.
+///|
+/// Resource: A known resource that the server is capable of reading.
 pub(all) struct Resource {
   /// Optional annotations for the client.
   annotations : Annotations?
@@ -1287,7 +1333,8 @@ pub(all) struct Resource {
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ResourceContents: The contents of a specific resource or sub-resource.
+///|
+/// ResourceContents: The contents of a specific resource or sub-resource.
 pub(all) struct ResourceContents {
   /// The MIME type of this resource, if known.
   mimeType : String?
@@ -1295,7 +1342,8 @@ pub(all) struct ResourceContents {
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ResourceListChangedNotification: An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
+///|
+/// ResourceListChangedNotification: An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ResourceListChangedNotification {
   /// JSON-RPC: "method" = "notifications/resources/list_changed"
   params : ResourceListChangedNotificationParams?
@@ -1332,14 +1380,16 @@ pub fn ResourceListChangedNotification::from_message(
   Some(notification)
 }
 
-///| ResourceReference: A reference to a resource or resource template definition.
+///|
+/// ResourceReference: A reference to a resource or resource template definition.
 pub(all) struct ResourceReference {
   /// JSON-RPC: "type" = "ref/resource"
   /// The URI or URI template of the resource.
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ResourceTemplate: A template description for resources available on the server.
+///|
+/// ResourceTemplate: A template description for resources available on the server.
 pub(all) struct ResourceTemplate {
   /// Optional annotations for the client.
   annotations : Annotations?
@@ -1357,7 +1407,8 @@ pub(all) struct ResourceTemplate {
   uriTemplate : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ResourceUpdatedNotification: A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
+///|
+/// ResourceUpdatedNotification: A notification from the server to the client, informing it that a resource has changed and may need to be read again. This should only be sent if the client previously sent a resources/subscribe request.
 pub(all) struct ResourceUpdatedNotification {
   /// JSON-RPC: "method" = "notifications/resources/updated"
   params : ResourceUpdatedNotificationParams
@@ -1420,7 +1471,8 @@ pub enum Role {
   User // = "user"
 } derive(Show, Eq)
 
-///| Root: Represents a root directory or file that the server can operate on.
+///|
+/// Root: Represents a root directory or file that the server can operate on.
 pub(all) struct Root {
   /// An optional name for the root. This can be used to provide a human-readable
   /// identifier for the root, which may be useful for display purposes or for
@@ -1432,7 +1484,8 @@ pub(all) struct Root {
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| RootsListChangedNotification: A notification from the client to the server, informing it that the list of roots has changed.
+///|
+/// RootsListChangedNotification: A notification from the client to the server, informing it that the list of roots has changed.
 /// This notification should be sent whenever the client adds, removes, or modifies any root.
 /// The server should then request an updated list of roots using the ListRootsRequest.
 pub(all) struct RootsListChangedNotification {
@@ -1469,7 +1522,8 @@ pub fn RootsListChangedNotification::from_message(
   Some(notification)
 }
 
-///| SamplingMessage: Describes a message issued to or received from an LLM API.
+///|
+/// SamplingMessage: Describes a message issued to or received from an LLM API.
 pub(all) struct SamplingMessage {
   content : SamplingMessageContent
   role : Role
@@ -1482,7 +1536,8 @@ pub enum SamplingMessageContent {
   AudioContent(AudioContent)
 } derive(Show, Eq)
 
-///| ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
+///|
+/// ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
 pub(all) struct ServerCapabilities {
   /// Present if the server supports argument autocompletion suggestions.
   completions : Json?
@@ -1498,13 +1553,15 @@ pub(all) struct ServerCapabilities {
   tools : ServerCapabilitiesTools?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ServerCapabilitiesPrompts: Present if the server offers any prompt templates.
+///|
+/// ServerCapabilitiesPrompts: Present if the server offers any prompt templates.
 pub(all) struct ServerCapabilitiesPrompts {
   /// Whether this server supports notifications for changes to the prompt list.
   listChanged : Bool?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ServerCapabilitiesResources: Present if the server offers any resources to read.
+///|
+/// ServerCapabilitiesResources: Present if the server offers any resources to read.
 pub(all) struct ServerCapabilitiesResources {
   /// Whether this server supports notifications for changes to the resource list.
   listChanged : Bool?
@@ -1512,7 +1569,8 @@ pub(all) struct ServerCapabilitiesResources {
   subscribe : Bool?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ServerCapabilitiesTools: Present if the server offers any tools to call.
+///|
+/// ServerCapabilitiesTools: Present if the server offers any tools to call.
 pub(all) struct ServerCapabilitiesTools {
   /// Whether this server supports notifications for changes to the tool list.
   listChanged : Bool?
@@ -1549,7 +1607,8 @@ pub enum ServerResult {
   CompleteResult(CompleteResult)
 } derive(Show, Eq)
 
-///| SetLevelRequest: A request from the client to the server, to enable or adjust logging.
+///|
+/// SetLevelRequest: A request from the client to the server, to enable or adjust logging.
 pub(all) struct SetLevelRequest {
   /// JSON-RPC: "method" = "logging/setLevel"
   params : SetLevelRequestParams
@@ -1579,7 +1638,8 @@ pub fn SetLevelRequest::from_message(
   Some((id, request))
 }
 
-///| SubscribeRequest: Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.
+///|
+/// SubscribeRequest: Sent from the client to request resources/updated notifications from the server whenever a particular resource changes.
 pub(all) struct SubscribeRequest {
   /// JSON-RPC: "method" = "resources/subscribe"
   params : SubscribeRequestParams
@@ -1609,7 +1669,8 @@ pub fn SubscribeRequest::from_message(
   Some((id, request))
 }
 
-///| TextContent: Text provided to or from an LLM.
+///|
+/// TextContent: Text provided to or from an LLM.
 pub(all) struct TextContent {
   /// Optional annotations for the client.
   annotations : Annotations?
@@ -1628,7 +1689,8 @@ pub(all) struct TextResourceContents {
   uri : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| Tool: Definition for a tool the client can call.
+///|
+/// Tool: Definition for a tool the client can call.
 pub(all) struct Tool {
   /// Optional additional tool information.
   annotations : ToolAnnotations?
@@ -1642,14 +1704,16 @@ pub(all) struct Tool {
   name : String
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ToolInputSchema: A JSON Schema object defining the expected parameters for the tool.
+///|
+/// ToolInputSchema: A JSON Schema object defining the expected parameters for the tool.
 pub(all) struct ToolInputSchema {
   properties : Json?
   required : Array[String]?
   /// JSON-RPC: "type" = "object"
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ToolAnnotations: Additional properties describing a Tool to clients.
+///|
+/// ToolAnnotations: Additional properties describing a Tool to clients.
 ///
 /// NOTE: all properties in ToolAnnotations are **hints**.
 /// They are not guaranteed to provide a faithful description of
@@ -1687,7 +1751,8 @@ pub(all) struct ToolAnnotations {
   title : String?
 } derive(Show, Eq, FromJson, ToJson)
 
-///| ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
+///|
+/// ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ToolListChangedNotification {
   /// JSON-RPC: "method" = "notifications/tools/list_changed"
   params : ToolListChangedNotificationParams?
@@ -1722,7 +1787,8 @@ pub fn ToolListChangedNotification::from_message(
   Some(notification)
 }
 
-///| UnsubscribeRequest: Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.
+///|
+/// UnsubscribeRequest: Sent from the client to request cancellation of resources/updated notifications from the server. This should follow a previous resources/subscribe request.
 pub(all) struct UnsubscribeRequest {
   /// JSON-RPC: "method" = "resources/unsubscribe"
   params : UnsubscribeRequestParams
