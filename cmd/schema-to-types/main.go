@@ -162,7 +162,12 @@ func (d *Definition) convertEnum(name, prefix string) string {
 		must(err)
 		noQuotesValue := strings.ReplaceAll(string(enumBuf), `"`, "")
 		// lines = append(lines, fmt.Sprintf(prefix+"  %v_%v // = %v", name, titleCase(noQuotesValue), string(enumBuf)))
-		lines = append(lines, fmt.Sprintf(prefix+"  %v // = %v", titleCase(noQuotesValue), string(enumBuf)))
+		enumName := titleCase(noQuotesValue)
+		// special case: change "None" to "NoServers" for `IncludeContext`:
+		if enumName == "None" {
+			enumName = "NoServers"
+		}
+		lines = append(lines, fmt.Sprintf(prefix+"  %v // = %v", enumName, string(enumBuf)))
 	}
 
 	lines = append(lines, prefix+"} derive(Show, Eq)")

@@ -1,0 +1,1317 @@
+package "gmlewis/mcp"
+
+import(
+  "gmlewis/io"
+  "gmlewis/jsonrpc2"
+  "moonbitlang/core/json"
+)
+
+// Values
+fn get_char() -> Byte
+
+fn put_char(Byte) -> Unit
+
+fn raw_audio(AudioContent) -> Bytes!
+
+fn raw_data(BlobResourceContents) -> Bytes!
+
+fn read_line() -> String!@io.IOError
+
+fn restore_terminal() -> Unit
+
+fn set_raw_mode() -> Unit
+
+fn write(String) -> Unit
+
+// Types and methods
+pub(all) struct Annotations {
+  audience : Array[Role]?
+  priority : Double?
+}
+impl Eq for Annotations
+impl Show for Annotations
+impl ToJson for Annotations
+impl @json.FromJson for Annotations
+
+pub(all) struct AudioContent {
+  annotations : Annotations?
+  data : String
+  mimeType : String
+}
+impl AudioContent {
+  new(FixedArray[Byte], String, annotations? : Annotations) -> Self
+  raw_audio(Self) -> Bytes!
+}
+impl Eq for AudioContent
+impl Show for AudioContent
+impl ToJson for AudioContent
+impl @json.FromJson for AudioContent
+
+pub(all) struct BlobResourceContents {
+  blob : String
+  mimeType : String?
+  uri : String
+}
+impl BlobResourceContents {
+  new(FixedArray[Byte], String, mime_type? : String) -> Self
+  raw_data(Self) -> Bytes!
+}
+impl Eq for BlobResourceContents
+impl Show for BlobResourceContents
+impl ToJson for BlobResourceContents
+impl @json.FromJson for BlobResourceContents
+
+pub(all) struct CallToolRequest {
+  params : CallToolRequestParams
+}
+impl CallToolRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for CallToolRequest
+impl Eq for CallToolRequest
+impl Show for CallToolRequest
+impl ToJson for CallToolRequest
+impl @json.FromJson for CallToolRequest
+
+pub(all) struct CallToolRequestParams {
+  arguments : Json?
+  name : String
+}
+impl Eq for CallToolRequestParams
+impl Show for CallToolRequestParams
+impl ToJson for CallToolRequestParams
+impl @json.FromJson for CallToolRequestParams
+
+pub(all) struct CallToolResult {
+  _meta : Json?
+  content : Array[CallToolResultContent]
+  isError : Bool?
+}
+impl CallToolResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for CallToolResult
+impl Eq for CallToolResult
+impl Show for CallToolResult
+impl ToJson for CallToolResult
+impl @json.FromJson for CallToolResult
+
+pub enum CallToolResultContent {
+  TextContent(TextContent)
+  ImageContent(ImageContent)
+  AudioContent(AudioContent)
+  EmbeddedResource(EmbeddedResource)
+}
+impl Eq for CallToolResultContent
+impl Show for CallToolResultContent
+impl ToJson for CallToolResultContent
+impl @json.FromJson for CallToolResultContent
+
+pub(all) struct CancelledNotification {
+  params : CancelledNotificationParams
+}
+impl CancelledNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for CancelledNotification
+impl Eq for CancelledNotification
+impl Show for CancelledNotification
+impl ToJson for CancelledNotification
+impl @json.FromJson for CancelledNotification
+
+pub(all) struct CancelledNotificationParams {
+  reason : String?
+  requestId : RequestId
+}
+impl Eq for CancelledNotificationParams
+impl Show for CancelledNotificationParams
+impl ToJson for CancelledNotificationParams
+impl @json.FromJson for CancelledNotificationParams
+
+pub(all) struct ClientCapabilities {
+  experimental : Json?
+  roots : ClientCapabilitiesRoots?
+  sampling : Json?
+}
+impl Eq for ClientCapabilities
+impl Show for ClientCapabilities
+impl ToJson for ClientCapabilities
+impl @json.FromJson for ClientCapabilities
+
+pub(all) struct ClientCapabilitiesRoots {
+  listChanged : Bool?
+}
+impl Eq for ClientCapabilitiesRoots
+impl Show for ClientCapabilitiesRoots
+impl ToJson for ClientCapabilitiesRoots
+impl @json.FromJson for ClientCapabilitiesRoots
+
+pub enum ClientNotification {
+  CancelledNotification(CancelledNotification)
+  InitializedNotification(InitializedNotification)
+  ProgressNotification(ProgressNotification)
+  RootsListChangedNotification(RootsListChangedNotification)
+}
+impl Eq for ClientNotification
+impl Show for ClientNotification
+impl ToJson for ClientNotification
+impl @json.FromJson for ClientNotification
+
+pub enum ClientRequest {
+  InitializeRequest(InitializeRequest)
+  PingRequest(PingRequest)
+  ListResourcesRequest(ListResourcesRequest)
+  ReadResourceRequest(ReadResourceRequest)
+  SubscribeRequest(SubscribeRequest)
+  UnsubscribeRequest(UnsubscribeRequest)
+  ListPromptsRequest(ListPromptsRequest)
+  GetPromptRequest(GetPromptRequest)
+  ListToolsRequest(ListToolsRequest)
+  CallToolRequest(CallToolRequest)
+  SetLevelRequest(SetLevelRequest)
+  CompleteRequest(CompleteRequest)
+}
+impl Eq for ClientRequest
+impl Show for ClientRequest
+impl ToJson for ClientRequest
+impl @json.FromJson for ClientRequest
+
+pub enum ClientResult {
+  CustomResult(CustomResult)
+  CreateMessageResult(CreateMessageResult)
+  ListRootsResult(ListRootsResult)
+}
+impl Eq for ClientResult
+impl Show for ClientResult
+impl ToJson for ClientResult
+impl @json.FromJson for ClientResult
+
+pub(all) struct CompleteRequest {
+  params : CompleteRequestParams
+}
+impl CompleteRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for CompleteRequest
+impl Eq for CompleteRequest
+impl Show for CompleteRequest
+impl ToJson for CompleteRequest
+impl @json.FromJson for CompleteRequest
+
+pub(all) struct CompleteRequestParams {
+  argument : CompleteRequestParamsArgument
+  ref_ : CompleteRequestParamsRef
+}
+impl Eq for CompleteRequestParams
+impl Show for CompleteRequestParams
+impl ToJson for CompleteRequestParams
+impl @json.FromJson for CompleteRequestParams
+
+pub(all) struct CompleteRequestParamsArgument {
+  name : String
+  value : String
+}
+impl Eq for CompleteRequestParamsArgument
+impl Show for CompleteRequestParamsArgument
+impl ToJson for CompleteRequestParamsArgument
+impl @json.FromJson for CompleteRequestParamsArgument
+
+pub enum CompleteRequestParamsRef {
+  PromptReference(PromptReference)
+  ResourceReference(ResourceReference)
+}
+impl Eq for CompleteRequestParamsRef
+impl Show for CompleteRequestParamsRef
+impl ToJson for CompleteRequestParamsRef
+impl @json.FromJson for CompleteRequestParamsRef
+
+pub(all) struct CompleteResult {
+  _meta : Json?
+  completion : CompleteResultCompletion
+}
+impl CompleteResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for CompleteResult
+impl Eq for CompleteResult
+impl Show for CompleteResult
+impl ToJson for CompleteResult
+impl @json.FromJson for CompleteResult
+
+pub(all) struct CompleteResultCompletion {
+  hasMore : Bool?
+  total : Int64?
+  values : Array[String]
+}
+impl Eq for CompleteResultCompletion
+impl Show for CompleteResultCompletion
+impl ToJson for CompleteResultCompletion
+impl @json.FromJson for CompleteResultCompletion
+
+pub(all) struct CreateMessageRequest {
+  params : CreateMessageRequestParams
+}
+impl CreateMessageRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for CreateMessageRequest
+impl Eq for CreateMessageRequest
+impl Show for CreateMessageRequest
+impl ToJson for CreateMessageRequest
+impl @json.FromJson for CreateMessageRequest
+
+pub(all) struct CreateMessageRequestParams {
+  includeContext : IncludeContext?
+  maxTokens : Int64
+  messages : Array[SamplingMessage]
+  metadata : Json?
+  modelPreferences : ModelPreferences?
+  stopSequences : Array[String]?
+  systemPrompt : String?
+  temperature : Double?
+}
+impl Eq for CreateMessageRequestParams
+impl Show for CreateMessageRequestParams
+impl ToJson for CreateMessageRequestParams
+impl @json.FromJson for CreateMessageRequestParams
+
+pub(all) struct CreateMessageResult {
+  _meta : Json?
+  content : CreateMessageResultContent
+  model : String
+  role : Role
+  stopReason : String?
+}
+impl CreateMessageResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for CreateMessageResult
+impl Eq for CreateMessageResult
+impl Show for CreateMessageResult
+impl ToJson for CreateMessageResult
+impl @json.FromJson for CreateMessageResult
+
+pub enum CreateMessageResultContent {
+  TextContent(TextContent)
+  ImageContent(ImageContent)
+  AudioContent(AudioContent)
+}
+impl Eq for CreateMessageResultContent
+impl Show for CreateMessageResultContent
+impl ToJson for CreateMessageResultContent
+impl @json.FromJson for CreateMessageResultContent
+
+pub(all) struct Cursor {
+}
+impl Eq for Cursor
+impl Show for Cursor
+impl ToJson for Cursor
+impl @json.FromJson for Cursor
+
+pub(all) struct CustomResult {
+  _meta : Json?
+}
+impl CustomResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for CustomResult
+impl Eq for CustomResult
+impl Show for CustomResult
+impl ToJson for CustomResult
+impl @json.FromJson for CustomResult
+
+pub(all) struct EmbeddedResource {
+  annotations : Annotations?
+  resource : EmbeddedResourceResource
+}
+impl Eq for EmbeddedResource
+impl Show for EmbeddedResource
+impl ToJson for EmbeddedResource
+impl @json.FromJson for EmbeddedResource
+
+pub enum EmbeddedResourceResource {
+  TextResourceContents(TextResourceContents)
+  BlobResourceContents(BlobResourceContents)
+}
+impl Eq for EmbeddedResourceResource
+impl Show for EmbeddedResourceResource
+impl ToJson for EmbeddedResourceResource
+impl @json.FromJson for EmbeddedResourceResource
+
+pub(all) struct GetPromptRequest {
+  params : GetPromptRequestParams
+}
+impl GetPromptRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for GetPromptRequest
+impl Eq for GetPromptRequest
+impl Show for GetPromptRequest
+impl ToJson for GetPromptRequest
+impl @json.FromJson for GetPromptRequest
+
+pub(all) struct GetPromptRequestParams {
+  arguments : Json?
+  name : String
+}
+impl Eq for GetPromptRequestParams
+impl Show for GetPromptRequestParams
+impl ToJson for GetPromptRequestParams
+impl @json.FromJson for GetPromptRequestParams
+
+pub(all) struct GetPromptResult {
+  _meta : Json?
+  description : String?
+  messages : Array[PromptMessage]
+}
+impl GetPromptResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for GetPromptResult
+impl Eq for GetPromptResult
+impl Show for GetPromptResult
+impl ToJson for GetPromptResult
+impl @json.FromJson for GetPromptResult
+
+pub(all) struct ImageContent {
+  annotations : Annotations?
+  data : String
+  mimeType : String
+}
+impl Eq for ImageContent
+impl Show for ImageContent
+impl ToJson for ImageContent
+impl @json.FromJson for ImageContent
+
+pub(all) struct Implementation {
+  name : String
+  version : String
+}
+impl Eq for Implementation
+impl Show for Implementation
+impl ToJson for Implementation
+impl @json.FromJson for Implementation
+
+pub enum IncludeContext {
+  AllServers
+  NoServers
+  ThisServer
+}
+impl Eq for IncludeContext
+impl Show for IncludeContext
+impl ToJson for IncludeContext
+impl @json.FromJson for IncludeContext
+
+pub(all) struct InitializeRequest {
+  params : InitializeRequestParams
+}
+impl InitializeRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for InitializeRequest
+impl Eq for InitializeRequest
+impl Show for InitializeRequest
+impl ToJson for InitializeRequest
+impl @json.FromJson for InitializeRequest
+
+pub(all) struct InitializeRequestParams {
+  capabilities : ClientCapabilities
+  clientInfo : Implementation
+  protocolVersion : String
+}
+impl Eq for InitializeRequestParams
+impl Show for InitializeRequestParams
+impl ToJson for InitializeRequestParams
+impl @json.FromJson for InitializeRequestParams
+
+pub(all) struct InitializeResult {
+  _meta : Json?
+  capabilities : ServerCapabilities
+  instructions : String?
+  protocolVersion : String
+  serverInfo : Implementation
+}
+impl InitializeResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for InitializeResult
+impl Eq for InitializeResult
+impl Show for InitializeResult
+impl ToJson for InitializeResult
+impl @json.FromJson for InitializeResult
+
+pub(all) struct InitializedNotification {
+  params : InitializedNotificationParams?
+}
+impl InitializedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for InitializedNotification
+impl Eq for InitializedNotification
+impl Show for InitializedNotification
+impl ToJson for InitializedNotification
+impl @json.FromJson for InitializedNotification
+
+pub(all) struct InitializedNotificationParams {
+  _meta : Json?
+}
+impl Eq for InitializedNotificationParams
+impl Show for InitializedNotificationParams
+impl ToJson for InitializedNotificationParams
+impl @json.FromJson for InitializedNotificationParams
+
+pub(all) struct ListPromptsRequest {
+  params : ListPromptsRequestParams?
+}
+impl ListPromptsRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ListPromptsRequest
+impl Eq for ListPromptsRequest
+impl Show for ListPromptsRequest
+impl ToJson for ListPromptsRequest
+impl @json.FromJson for ListPromptsRequest
+
+pub(all) struct ListPromptsRequestParams {
+  cursor : String?
+}
+impl Eq for ListPromptsRequestParams
+impl Show for ListPromptsRequestParams
+impl ToJson for ListPromptsRequestParams
+impl @json.FromJson for ListPromptsRequestParams
+
+pub(all) struct ListPromptsResult {
+  _meta : Json?
+  nextCursor : String?
+  prompts : Array[Prompt]
+}
+impl ListPromptsResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ListPromptsResult
+impl Eq for ListPromptsResult
+impl Show for ListPromptsResult
+impl ToJson for ListPromptsResult
+impl @json.FromJson for ListPromptsResult
+
+pub(all) struct ListResourceTemplatesRequest {
+  params : ListResourceTemplatesRequestParams?
+}
+impl ListResourceTemplatesRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ListResourceTemplatesRequest
+impl Eq for ListResourceTemplatesRequest
+impl Show for ListResourceTemplatesRequest
+impl ToJson for ListResourceTemplatesRequest
+impl @json.FromJson for ListResourceTemplatesRequest
+
+pub(all) struct ListResourceTemplatesRequestParams {
+  cursor : String?
+}
+impl Eq for ListResourceTemplatesRequestParams
+impl Show for ListResourceTemplatesRequestParams
+impl ToJson for ListResourceTemplatesRequestParams
+impl @json.FromJson for ListResourceTemplatesRequestParams
+
+pub(all) struct ListResourceTemplatesResult {
+  _meta : Json?
+  nextCursor : String?
+  resourceTemplates : Array[ResourceTemplate]
+}
+impl ListResourceTemplatesResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ListResourceTemplatesResult
+impl Eq for ListResourceTemplatesResult
+impl Show for ListResourceTemplatesResult
+impl ToJson for ListResourceTemplatesResult
+impl @json.FromJson for ListResourceTemplatesResult
+
+pub(all) struct ListResourcesRequest {
+  params : ListResourcesRequestParams?
+}
+impl ListResourcesRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ListResourcesRequest
+impl Eq for ListResourcesRequest
+impl Show for ListResourcesRequest
+impl ToJson for ListResourcesRequest
+impl @json.FromJson for ListResourcesRequest
+
+pub(all) struct ListResourcesRequestParams {
+  cursor : String?
+}
+impl Eq for ListResourcesRequestParams
+impl Show for ListResourcesRequestParams
+impl ToJson for ListResourcesRequestParams
+impl @json.FromJson for ListResourcesRequestParams
+
+pub(all) struct ListResourcesResult {
+  _meta : Json?
+  nextCursor : String?
+  resources : Array[Resource]
+}
+impl ListResourcesResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ListResourcesResult
+impl Eq for ListResourcesResult
+impl Show for ListResourcesResult
+impl ToJson for ListResourcesResult
+impl @json.FromJson for ListResourcesResult
+
+pub(all) struct ListRootsRequest {
+  params : ListRootsRequestParams?
+}
+impl ListRootsRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ListRootsRequest
+impl Eq for ListRootsRequest
+impl Show for ListRootsRequest
+impl ToJson for ListRootsRequest
+impl @json.FromJson for ListRootsRequest
+
+pub(all) struct ListRootsRequestParams {
+  _meta : ListRootsRequestParams_meta?
+}
+impl Eq for ListRootsRequestParams
+impl Show for ListRootsRequestParams
+impl ToJson for ListRootsRequestParams
+impl @json.FromJson for ListRootsRequestParams
+
+pub(all) struct ListRootsRequestParams_meta {
+  progressToken : ProgressToken?
+}
+impl Eq for ListRootsRequestParams_meta
+impl Show for ListRootsRequestParams_meta
+impl ToJson for ListRootsRequestParams_meta
+impl @json.FromJson for ListRootsRequestParams_meta
+
+pub(all) struct ListRootsResult {
+  _meta : Json?
+  roots : Array[Root]
+}
+impl ListRootsResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ListRootsResult
+impl Eq for ListRootsResult
+impl Show for ListRootsResult
+impl ToJson for ListRootsResult
+impl @json.FromJson for ListRootsResult
+
+pub(all) struct ListToolsRequest {
+  params : ListToolsRequestParams?
+}
+impl ListToolsRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ListToolsRequest
+impl Eq for ListToolsRequest
+impl Show for ListToolsRequest
+impl ToJson for ListToolsRequest
+impl @json.FromJson for ListToolsRequest
+
+pub(all) struct ListToolsRequestParams {
+  cursor : String?
+}
+impl Eq for ListToolsRequestParams
+impl Show for ListToolsRequestParams
+impl ToJson for ListToolsRequestParams
+impl @json.FromJson for ListToolsRequestParams
+
+pub(all) struct ListToolsResult {
+  _meta : Json?
+  nextCursor : String?
+  tools : Array[Tool]
+}
+impl ListToolsResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ListToolsResult
+impl Eq for ListToolsResult
+impl Show for ListToolsResult
+impl ToJson for ListToolsResult
+impl @json.FromJson for ListToolsResult
+
+pub enum LoggingLevel {
+  Alert
+  Critical
+  Debug
+  Emergency
+  Error
+  Info
+  Notice
+  Warning
+}
+impl Eq for LoggingLevel
+impl Show for LoggingLevel
+impl ToJson for LoggingLevel
+impl @json.FromJson for LoggingLevel
+
+pub(all) struct LoggingMessageNotification {
+  params : LoggingMessageNotificationParams
+}
+impl LoggingMessageNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for LoggingMessageNotification
+impl Eq for LoggingMessageNotification
+impl Show for LoggingMessageNotification
+impl ToJson for LoggingMessageNotification
+impl @json.FromJson for LoggingMessageNotification
+
+pub(all) struct LoggingMessageNotificationParams {
+  data : Json
+  level : LoggingLevel
+  logger : String?
+}
+impl Eq for LoggingMessageNotificationParams
+impl Show for LoggingMessageNotificationParams
+impl ToJson for LoggingMessageNotificationParams
+impl @json.FromJson for LoggingMessageNotificationParams
+
+pub(all) struct ModelHint {
+  name : String?
+}
+impl Eq for ModelHint
+impl Show for ModelHint
+impl ToJson for ModelHint
+impl @json.FromJson for ModelHint
+
+pub(all) struct ModelPreferences {
+  costPriority : Double?
+  hints : Array[ModelHint]?
+  intelligencePriority : Double?
+  speedPriority : Double?
+}
+impl Eq for ModelPreferences
+impl Show for ModelPreferences
+impl ToJson for ModelPreferences
+impl @json.FromJson for ModelPreferences
+
+pub(all) struct Notification {
+  method_ : String
+  params : NotificationParams?
+}
+impl Notification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for Notification
+impl Eq for Notification
+impl Show for Notification
+impl ToJson for Notification
+impl @json.FromJson for Notification
+
+pub(all) struct NotificationParams {
+  _meta : Json?
+}
+impl Eq for NotificationParams
+impl Show for NotificationParams
+impl ToJson for NotificationParams
+impl @json.FromJson for NotificationParams
+
+pub(all) struct PaginatedRequest {
+  method_ : String
+  params : PaginatedRequestParams?
+}
+impl PaginatedRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for PaginatedRequest
+impl Eq for PaginatedRequest
+impl Show for PaginatedRequest
+impl ToJson for PaginatedRequest
+impl @json.FromJson for PaginatedRequest
+
+pub(all) struct PaginatedRequestParams {
+  cursor : String?
+}
+impl Eq for PaginatedRequestParams
+impl Show for PaginatedRequestParams
+impl ToJson for PaginatedRequestParams
+impl @json.FromJson for PaginatedRequestParams
+
+pub(all) struct PaginatedResult {
+  _meta : Json?
+  nextCursor : String?
+}
+impl PaginatedResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for PaginatedResult
+impl Eq for PaginatedResult
+impl Show for PaginatedResult
+impl ToJson for PaginatedResult
+impl @json.FromJson for PaginatedResult
+
+pub(all) struct PingRequest {
+  params : PingRequestParams?
+}
+impl PingRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for PingRequest
+impl Eq for PingRequest
+impl Show for PingRequest
+impl ToJson for PingRequest
+impl @json.FromJson for PingRequest
+
+pub(all) struct PingRequestParams {
+  _meta : PingRequestParams_meta?
+}
+impl Eq for PingRequestParams
+impl Show for PingRequestParams
+impl ToJson for PingRequestParams
+impl @json.FromJson for PingRequestParams
+
+pub(all) struct PingRequestParams_meta {
+  progressToken : ProgressToken?
+}
+impl Eq for PingRequestParams_meta
+impl Show for PingRequestParams_meta
+impl ToJson for PingRequestParams_meta
+impl @json.FromJson for PingRequestParams_meta
+
+pub(all) struct ProgressNotification {
+  params : ProgressNotificationParams
+}
+impl ProgressNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for ProgressNotification
+impl Eq for ProgressNotification
+impl Show for ProgressNotification
+impl ToJson for ProgressNotification
+impl @json.FromJson for ProgressNotification
+
+pub(all) struct ProgressNotificationParams {
+  message : String?
+  progress : Double
+  progressToken : ProgressToken
+  total : Double?
+}
+impl Eq for ProgressNotificationParams
+impl Show for ProgressNotificationParams
+impl ToJson for ProgressNotificationParams
+impl @json.FromJson for ProgressNotificationParams
+
+pub(all) struct ProgressToken {
+}
+impl Eq for ProgressToken
+impl Show for ProgressToken
+impl ToJson for ProgressToken
+impl @json.FromJson for ProgressToken
+
+pub(all) struct Prompt {
+  arguments : Array[PromptArgument]?
+  description : String?
+  name : String
+}
+impl Eq for Prompt
+impl Show for Prompt
+impl ToJson for Prompt
+impl @json.FromJson for Prompt
+
+pub(all) struct PromptArgument {
+  description : String?
+  name : String
+  required : Bool?
+}
+impl Eq for PromptArgument
+impl Show for PromptArgument
+impl ToJson for PromptArgument
+impl @json.FromJson for PromptArgument
+
+pub(all) struct PromptListChangedNotification {
+  params : PromptListChangedNotificationParams?
+}
+impl PromptListChangedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for PromptListChangedNotification
+impl Eq for PromptListChangedNotification
+impl Show for PromptListChangedNotification
+impl ToJson for PromptListChangedNotification
+impl @json.FromJson for PromptListChangedNotification
+
+pub(all) struct PromptListChangedNotificationParams {
+  _meta : Json?
+}
+impl Eq for PromptListChangedNotificationParams
+impl Show for PromptListChangedNotificationParams
+impl ToJson for PromptListChangedNotificationParams
+impl @json.FromJson for PromptListChangedNotificationParams
+
+pub(all) struct PromptMessage {
+  content : PromptMessageContent
+  role : Role
+}
+impl Eq for PromptMessage
+impl Show for PromptMessage
+impl ToJson for PromptMessage
+impl @json.FromJson for PromptMessage
+
+pub enum PromptMessageContent {
+  TextContent(TextContent)
+  ImageContent(ImageContent)
+  AudioContent(AudioContent)
+  EmbeddedResource(EmbeddedResource)
+}
+impl Eq for PromptMessageContent
+impl Show for PromptMessageContent
+impl ToJson for PromptMessageContent
+impl @json.FromJson for PromptMessageContent
+
+pub(all) struct PromptReference {
+  name : String
+}
+impl Eq for PromptReference
+impl Show for PromptReference
+impl ToJson for PromptReference
+impl @json.FromJson for PromptReference
+
+pub(all) struct ReadResourceRequest {
+  params : ReadResourceRequestParams
+}
+impl ReadResourceRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for ReadResourceRequest
+impl Eq for ReadResourceRequest
+impl Show for ReadResourceRequest
+impl ToJson for ReadResourceRequest
+impl @json.FromJson for ReadResourceRequest
+
+pub(all) struct ReadResourceRequestParams {
+  uri : String
+}
+impl Eq for ReadResourceRequestParams
+impl Show for ReadResourceRequestParams
+impl ToJson for ReadResourceRequestParams
+impl @json.FromJson for ReadResourceRequestParams
+
+pub(all) struct ReadResourceResult {
+  _meta : Json?
+  contents : Array[ReadResourceResultContents]
+}
+impl ReadResourceResult {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPResponse for ReadResourceResult
+impl Eq for ReadResourceResult
+impl Show for ReadResourceResult
+impl ToJson for ReadResourceResult
+impl @json.FromJson for ReadResourceResult
+
+pub enum ReadResourceResultContents {
+  TextResourceContents(TextResourceContents)
+  BlobResourceContents(BlobResourceContents)
+}
+impl Eq for ReadResourceResultContents
+impl Show for ReadResourceResultContents
+impl ToJson for ReadResourceResultContents
+impl @json.FromJson for ReadResourceResultContents
+
+pub(all) struct Request {
+  method_ : String
+  params : RequestParams?
+}
+impl Request {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for Request
+impl Eq for Request
+impl Show for Request
+impl ToJson for Request
+impl @json.FromJson for Request
+
+pub(all) struct RequestId {
+}
+impl Eq for RequestId
+impl Show for RequestId
+impl ToJson for RequestId
+impl @json.FromJson for RequestId
+
+pub(all) struct RequestParams {
+  _meta : RequestParams_meta?
+}
+impl Eq for RequestParams
+impl Show for RequestParams
+impl ToJson for RequestParams
+impl @json.FromJson for RequestParams
+
+pub(all) struct RequestParams_meta {
+  progressToken : ProgressToken?
+}
+impl Eq for RequestParams_meta
+impl Show for RequestParams_meta
+impl ToJson for RequestParams_meta
+impl @json.FromJson for RequestParams_meta
+
+pub(all) struct Resource {
+  annotations : Annotations?
+  description : String?
+  mimeType : String?
+  name : String
+  size : Int64?
+  uri : String
+}
+impl Eq for Resource
+impl Show for Resource
+impl ToJson for Resource
+impl @json.FromJson for Resource
+
+pub(all) struct ResourceContents {
+  mimeType : String?
+  uri : String
+}
+impl Eq for ResourceContents
+impl Show for ResourceContents
+impl ToJson for ResourceContents
+impl @json.FromJson for ResourceContents
+
+pub(all) struct ResourceListChangedNotification {
+  params : ResourceListChangedNotificationParams?
+}
+impl ResourceListChangedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for ResourceListChangedNotification
+impl Eq for ResourceListChangedNotification
+impl Show for ResourceListChangedNotification
+impl ToJson for ResourceListChangedNotification
+impl @json.FromJson for ResourceListChangedNotification
+
+pub(all) struct ResourceListChangedNotificationParams {
+  _meta : Json?
+}
+impl Eq for ResourceListChangedNotificationParams
+impl Show for ResourceListChangedNotificationParams
+impl ToJson for ResourceListChangedNotificationParams
+impl @json.FromJson for ResourceListChangedNotificationParams
+
+pub(all) struct ResourceReference {
+  uri : String
+}
+impl Eq for ResourceReference
+impl Show for ResourceReference
+impl ToJson for ResourceReference
+impl @json.FromJson for ResourceReference
+
+pub(all) struct ResourceTemplate {
+  annotations : Annotations?
+  description : String?
+  mimeType : String?
+  name : String
+  uriTemplate : String
+}
+impl Eq for ResourceTemplate
+impl Show for ResourceTemplate
+impl ToJson for ResourceTemplate
+impl @json.FromJson for ResourceTemplate
+
+pub(all) struct ResourceUpdatedNotification {
+  params : ResourceUpdatedNotificationParams
+}
+impl ResourceUpdatedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for ResourceUpdatedNotification
+impl Eq for ResourceUpdatedNotification
+impl Show for ResourceUpdatedNotification
+impl ToJson for ResourceUpdatedNotification
+impl @json.FromJson for ResourceUpdatedNotification
+
+pub(all) struct ResourceUpdatedNotificationParams {
+  uri : String
+}
+impl Eq for ResourceUpdatedNotificationParams
+impl Show for ResourceUpdatedNotificationParams
+impl ToJson for ResourceUpdatedNotificationParams
+impl @json.FromJson for ResourceUpdatedNotificationParams
+
+pub enum Role {
+  Assistant
+  User
+}
+impl Eq for Role
+impl Show for Role
+impl ToJson for Role
+impl @json.FromJson for Role
+
+pub(all) struct Root {
+  name : String?
+  uri : String
+}
+impl Eq for Root
+impl Show for Root
+impl ToJson for Root
+impl @json.FromJson for Root
+
+pub(all) struct RootsListChangedNotification {
+  params : RootsListChangedNotificationParams?
+}
+impl RootsListChangedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for RootsListChangedNotification
+impl Eq for RootsListChangedNotification
+impl Show for RootsListChangedNotification
+impl ToJson for RootsListChangedNotification
+impl @json.FromJson for RootsListChangedNotification
+
+pub(all) struct RootsListChangedNotificationParams {
+  _meta : Json?
+}
+impl Eq for RootsListChangedNotificationParams
+impl Show for RootsListChangedNotificationParams
+impl ToJson for RootsListChangedNotificationParams
+impl @json.FromJson for RootsListChangedNotificationParams
+
+pub(all) struct SamplingMessage {
+  content : SamplingMessageContent
+  role : Role
+}
+impl Eq for SamplingMessage
+impl Show for SamplingMessage
+impl ToJson for SamplingMessage
+impl @json.FromJson for SamplingMessage
+
+pub enum SamplingMessageContent {
+  TextContent(TextContent)
+  ImageContent(ImageContent)
+  AudioContent(AudioContent)
+}
+impl Eq for SamplingMessageContent
+impl Show for SamplingMessageContent
+impl ToJson for SamplingMessageContent
+impl @json.FromJson for SamplingMessageContent
+
+pub(all) struct ServerCapabilities {
+  completions : Json?
+  experimental : Json?
+  logging : Json?
+  prompts : ServerCapabilitiesPrompts?
+  resources : ServerCapabilitiesResources?
+  tools : ServerCapabilitiesTools?
+}
+impl Eq for ServerCapabilities
+impl Show for ServerCapabilities
+impl ToJson for ServerCapabilities
+impl @json.FromJson for ServerCapabilities
+
+pub(all) struct ServerCapabilitiesPrompts {
+  listChanged : Bool?
+}
+impl Eq for ServerCapabilitiesPrompts
+impl Show for ServerCapabilitiesPrompts
+impl ToJson for ServerCapabilitiesPrompts
+impl @json.FromJson for ServerCapabilitiesPrompts
+
+pub(all) struct ServerCapabilitiesResources {
+  listChanged : Bool?
+  subscribe : Bool?
+}
+impl Eq for ServerCapabilitiesResources
+impl Show for ServerCapabilitiesResources
+impl ToJson for ServerCapabilitiesResources
+impl @json.FromJson for ServerCapabilitiesResources
+
+pub(all) struct ServerCapabilitiesTools {
+  listChanged : Bool?
+}
+impl Eq for ServerCapabilitiesTools
+impl Show for ServerCapabilitiesTools
+impl ToJson for ServerCapabilitiesTools
+impl @json.FromJson for ServerCapabilitiesTools
+
+pub enum ServerNotification {
+  CancelledNotification(CancelledNotification)
+  ProgressNotification(ProgressNotification)
+  ResourceListChangedNotification(ResourceListChangedNotification)
+  ResourceUpdatedNotification(ResourceUpdatedNotification)
+  PromptListChangedNotification(PromptListChangedNotification)
+  ToolListChangedNotification(ToolListChangedNotification)
+  LoggingMessageNotification(LoggingMessageNotification)
+}
+impl Eq for ServerNotification
+impl Show for ServerNotification
+impl ToJson for ServerNotification
+impl @json.FromJson for ServerNotification
+
+pub enum ServerRequest {
+  PingRequest(PingRequest)
+  CreateMessageRequest(CreateMessageRequest)
+  ListRootsRequest(ListRootsRequest)
+}
+impl Eq for ServerRequest
+impl Show for ServerRequest
+impl ToJson for ServerRequest
+impl @json.FromJson for ServerRequest
+
+pub enum ServerResult {
+  CustomResult(CustomResult)
+  InitializeResult(InitializeResult)
+  ListResourcesResult(ListResourcesResult)
+  ReadResourceResult(ReadResourceResult)
+  ListPromptsResult(ListPromptsResult)
+  GetPromptResult(GetPromptResult)
+  ListToolsResult(ListToolsResult)
+  CallToolResult(CallToolResult)
+  CompleteResult(CompleteResult)
+}
+impl Eq for ServerResult
+impl Show for ServerResult
+impl ToJson for ServerResult
+impl @json.FromJson for ServerResult
+
+pub(all) struct SetLevelRequest {
+  params : SetLevelRequestParams
+}
+impl SetLevelRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for SetLevelRequest
+impl Eq for SetLevelRequest
+impl Show for SetLevelRequest
+impl ToJson for SetLevelRequest
+impl @json.FromJson for SetLevelRequest
+
+pub(all) struct SetLevelRequestParams {
+  level : LoggingLevel
+}
+impl Eq for SetLevelRequestParams
+impl Show for SetLevelRequestParams
+impl ToJson for SetLevelRequestParams
+impl @json.FromJson for SetLevelRequestParams
+
+pub(all) struct SubscribeRequest {
+  params : SubscribeRequestParams
+}
+impl SubscribeRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for SubscribeRequest
+impl Eq for SubscribeRequest
+impl Show for SubscribeRequest
+impl ToJson for SubscribeRequest
+impl @json.FromJson for SubscribeRequest
+
+pub(all) struct SubscribeRequestParams {
+  uri : String
+}
+impl Eq for SubscribeRequestParams
+impl Show for SubscribeRequestParams
+impl ToJson for SubscribeRequestParams
+impl @json.FromJson for SubscribeRequestParams
+
+pub(all) struct TextContent {
+  annotations : Annotations?
+  text : String
+}
+impl Eq for TextContent
+impl Show for TextContent
+impl ToJson for TextContent
+impl @json.FromJson for TextContent
+
+pub(all) struct TextResourceContents {
+  mimeType : String?
+  text : String
+  uri : String
+}
+impl Eq for TextResourceContents
+impl Show for TextResourceContents
+impl ToJson for TextResourceContents
+impl @json.FromJson for TextResourceContents
+
+pub(all) struct Tool {
+  annotations : ToolAnnotations?
+  description : String?
+  inputSchema : ToolInputSchema
+  name : String
+}
+impl Eq for Tool
+impl Show for Tool
+impl ToJson for Tool
+impl @json.FromJson for Tool
+
+pub(all) struct ToolAnnotations {
+  destructiveHint : Bool?
+  idempotentHint : Bool?
+  openWorldHint : Bool?
+  readOnlyHint : Bool?
+  title : String?
+}
+impl Eq for ToolAnnotations
+impl Show for ToolAnnotations
+impl ToJson for ToolAnnotations
+impl @json.FromJson for ToolAnnotations
+
+pub(all) struct ToolInputSchema {
+  properties : Json?
+  required : Array[String]?
+}
+impl Eq for ToolInputSchema
+impl Show for ToolInputSchema
+impl ToJson for ToolInputSchema
+impl @json.FromJson for ToolInputSchema
+
+pub(all) struct ToolListChangedNotification {
+  params : ToolListChangedNotificationParams?
+}
+impl ToolListChangedNotification {
+  from_message(@jsonrpc2.Message) -> Self?
+}
+impl MCPNotification for ToolListChangedNotification
+impl Eq for ToolListChangedNotification
+impl Show for ToolListChangedNotification
+impl ToJson for ToolListChangedNotification
+impl @json.FromJson for ToolListChangedNotification
+
+pub(all) struct ToolListChangedNotificationParams {
+  _meta : Json?
+}
+impl Eq for ToolListChangedNotificationParams
+impl Show for ToolListChangedNotificationParams
+impl ToJson for ToolListChangedNotificationParams
+impl @json.FromJson for ToolListChangedNotificationParams
+
+pub(all) struct UnsubscribeRequest {
+  params : UnsubscribeRequestParams
+}
+impl UnsubscribeRequest {
+  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+}
+impl MCPCall for UnsubscribeRequest
+impl Eq for UnsubscribeRequest
+impl Show for UnsubscribeRequest
+impl ToJson for UnsubscribeRequest
+impl @json.FromJson for UnsubscribeRequest
+
+pub(all) struct UnsubscribeRequestParams {
+  uri : String
+}
+impl Eq for UnsubscribeRequestParams
+impl Show for UnsubscribeRequestParams
+impl ToJson for UnsubscribeRequestParams
+impl @json.FromJson for UnsubscribeRequestParams
+
+// Type aliases
+
+// Traits
+pub trait MCPCall {
+  to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
+}
+
+pub trait MCPNotification {
+  to_notification(Self) -> @jsonrpc2.Message
+}
+
+pub trait MCPResponse {
+  to_response(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
+}
+

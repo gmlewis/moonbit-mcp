@@ -298,7 +298,7 @@ pub(all) struct CreateMessageRequestParams {
 ///|
 pub enum IncludeContext {
   AllServers // = "allServers"
-  None // = "none"
+  NoServers // = "none"
   ThisServer // = "thisServer"
 } derive(Show, Eq)
 

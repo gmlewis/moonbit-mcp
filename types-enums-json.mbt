@@ -184,7 +184,7 @@ pub impl @json.FromJson for CompleteRequestParamsRef with from_json(json, path) 
 pub impl ToJson for IncludeContext with to_json(self) {
   match self {
     AllServers => "allServers".to_json()
-    None => "none".to_json()
+    NoServers => "none".to_json()
     ThisServer => "thisServer".to_json()
   }
 }
@@ -196,7 +196,7 @@ pub impl @json.FromJson for IncludeContext with from_json(json, path) {
   }
   match s {
     "allServers" => AllServers
-    "none" => None
+    "none" => NoServers
     "thisServer" => ThisServer
     _ =>
       raise @json.JsonDecodeError(
