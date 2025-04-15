@@ -131,7 +131,7 @@ pub(all) struct CancelledNotificationParams {
   /// The ID of the request to cancel.
   ///
   /// This MUST correspond to the ID of a request previously issued in the same direction.
-  requestId : RequestId
+  requestId : @jsonrpc2.ID
 } derive(Show, Eq, FromJson, ToJson)
 
 ///|
@@ -1305,10 +1305,6 @@ pub fn Request::from_message(
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
-
-///|
-/// RequestId: A uniquely identifying ID for a request in JSON-RPC.
-pub(all) struct RequestId {} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 /// Resource: A known resource that the server is capable of reading.

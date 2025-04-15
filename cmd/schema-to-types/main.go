@@ -90,6 +90,7 @@ var structsToSkip = map[string]skipType{
 	"JSONRPCNotification":  totallyIgnore,
 	"JSONRPCRequest":       totallyIgnore,
 	"JSONRPCResponse":      totallyIgnore,
+	"@jsonrpc2.ID":         totallyIgnore, // `ResultId` converted to `@jsonrpc2.ID`
 }
 
 func (d *Definition) convert(name string) string {
@@ -107,11 +108,9 @@ func (d *Definition) convert(name string) string {
 		return d.convertEnum(name, prefix)
 	}
 
-	lines := []string{}
+	lines := []string{prefix + "///|"}
 	if d.Description != "" {
-		lines = append(lines, fmt.Sprintf(prefix+"///| %v: %v", name, strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)))
-	} else {
-		lines = append(lines, "///|")
+		lines = append(lines, fmt.Sprintf(prefix+"/// %v: %v", name, strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)))
 	}
 	lines = append(lines, fmt.Sprintf(prefix+"pub(all) struct %v {", name))
 
@@ -184,6 +183,9 @@ func safeStructName(s string) string {
 	switch s {
 	case "Result":
 		return "CustomResult"
+	case "RequestId":
+		// Here we are renaming a RequestId to the @jsonrpc.ID type.
+		return "@jsonrpc2.ID"
 	default:
 		return s
 	}

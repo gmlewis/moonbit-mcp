@@ -121,7 +121,7 @@ impl @json.FromJson for CancelledNotification
 
 pub(all) struct CancelledNotificationParams {
   reason : String?
-  requestId : RequestId
+  requestId : @jsonrpc2.ID
 }
 impl Eq for CancelledNotificationParams
 impl Show for CancelledNotificationParams
@@ -928,13 +928,6 @@ impl Eq for Request
 impl Show for Request
 impl ToJson for Request
 impl @json.FromJson for Request
-
-pub(all) struct RequestId {
-}
-impl Eq for RequestId
-impl Show for RequestId
-impl ToJson for RequestId
-impl @json.FromJson for RequestId
 
 pub(all) struct RequestParams {
   _meta : RequestParams_meta?
