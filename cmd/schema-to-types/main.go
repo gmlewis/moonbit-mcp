@@ -271,6 +271,13 @@ func (d *Definition) convertEnum(out *outBufsT, name, prefix string) string {
 		refType = strings.TrimSuffix(refType, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"  %v(%[1]v)", refType))
 		toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"    %v(v) => v.to_json(),", refType))
+		fromJSONOptions = append(fromJSONOptions, refType)
+		fromJSONLines = append(fromJSONLines,
+			fmt.Sprintf(prefix+"  let v : Result[%v, _] = @json.from_json?(json)", refType),
+			prefix+"  if v is Ok(v) {",
+			fmt.Sprintf(prefix+"    return %v(v)", refType),
+			prefix+"  }",
+		)
 	}
 	// or explicit enum:
 	for _, rawEnum := range d.Enum {
@@ -301,9 +308,12 @@ func (d *Definition) convertEnum(out *outBufsT, name, prefix string) string {
 			prefix+"  raise @json.JsonDecodeError(",
 			fmt.Sprintf(prefix+`    (path, "expected one of: '%v'; got '\{s}'"),`, strings.Join(fromJSONOptions, "', '")),
 			prefix+"  )",
-			prefix+"  }")
+			prefix+"}")
 	} else {
-
+		fromJSONLines = append(fromJSONLines,
+			prefix+"  raise @json.JsonDecodeError(",
+			fmt.Sprintf(prefix+`    (path, "expected one of: %v; got: \{@json.stringify(json)}"),`, strings.Join(fromJSONOptions, ", ")),
+			prefix+"  )")
 	}
 	fromJSONLines = append(fromJSONLines, prefix+"}")
 	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")

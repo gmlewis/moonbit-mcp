@@ -12,7 +12,28 @@ pub impl ToJson for CallToolResultContent with to_json(self) {
 
 ///|
 pub impl @json.FromJson for CallToolResultContent with from_json(json, path) {
-
+  let v : Result[TextContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextContent(v)
+  }
+  let v : Result[ImageContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ImageContent(v)
+  }
+  let v : Result[AudioContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return AudioContent(v)
+  }
+  let v : Result[EmbeddedResource, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return EmbeddedResource(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextContent, ImageContent, AudioContent, EmbeddedResource; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -27,7 +48,28 @@ pub impl ToJson for ClientNotification with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ClientNotification with from_json(json, path) {
-
+  let v : Result[CancelledNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CancelledNotification(v)
+  }
+  let v : Result[InitializedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return InitializedNotification(v)
+  }
+  let v : Result[ProgressNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ProgressNotification(v)
+  }
+  let v : Result[RootsListChangedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return RootsListChangedNotification(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: CancelledNotification, InitializedNotification, ProgressNotification, RootsListChangedNotification; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -50,7 +92,60 @@ pub impl ToJson for ClientRequest with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ClientRequest with from_json(json, path) {
-
+  let v : Result[InitializeRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return InitializeRequest(v)
+  }
+  let v : Result[PingRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return PingRequest(v)
+  }
+  let v : Result[ListResourcesRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListResourcesRequest(v)
+  }
+  let v : Result[ReadResourceRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ReadResourceRequest(v)
+  }
+  let v : Result[SubscribeRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return SubscribeRequest(v)
+  }
+  let v : Result[UnsubscribeRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return UnsubscribeRequest(v)
+  }
+  let v : Result[ListPromptsRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListPromptsRequest(v)
+  }
+  let v : Result[GetPromptRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return GetPromptRequest(v)
+  }
+  let v : Result[ListToolsRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListToolsRequest(v)
+  }
+  let v : Result[CallToolRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CallToolRequest(v)
+  }
+  let v : Result[SetLevelRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return SetLevelRequest(v)
+  }
+  let v : Result[CompleteRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CompleteRequest(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: InitializeRequest, PingRequest, ListResourcesRequest, ReadResourceRequest, SubscribeRequest, UnsubscribeRequest, ListPromptsRequest, GetPromptRequest, ListToolsRequest, CallToolRequest, SetLevelRequest, CompleteRequest; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -64,7 +159,24 @@ pub impl ToJson for ClientResult with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ClientResult with from_json(json, path) {
-
+  let v : Result[CustomResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CustomResult(v)
+  }
+  let v : Result[CreateMessageResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CreateMessageResult(v)
+  }
+  let v : Result[ListRootsResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListRootsResult(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: CustomResult, CreateMessageResult, ListRootsResult; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -77,7 +189,20 @@ pub impl ToJson for CompleteRequestParamsRef with to_json(self) {
 
 ///|
 pub impl @json.FromJson for CompleteRequestParamsRef with from_json(json, path) {
-
+  let v : Result[PromptReference, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return PromptReference(v)
+  }
+  let v : Result[ResourceReference, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ResourceReference(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: PromptReference, ResourceReference; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -122,7 +247,24 @@ pub impl @json.FromJson for CreateMessageResultContent with from_json(
   json,
   path
 ) {
-
+  let v : Result[TextContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextContent(v)
+  }
+  let v : Result[ImageContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ImageContent(v)
+  }
+  let v : Result[AudioContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return AudioContent(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextContent, ImageContent, AudioContent; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -135,7 +277,20 @@ pub impl ToJson for EmbeddedResourceResource with to_json(self) {
 
 ///|
 pub impl @json.FromJson for EmbeddedResourceResource with from_json(json, path) {
-
+  let v : Result[TextResourceContents, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextResourceContents(v)
+  }
+  let v : Result[BlobResourceContents, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return BlobResourceContents(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextResourceContents, BlobResourceContents; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -188,7 +343,28 @@ pub impl ToJson for PromptMessageContent with to_json(self) {
 
 ///|
 pub impl @json.FromJson for PromptMessageContent with from_json(json, path) {
-
+  let v : Result[TextContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextContent(v)
+  }
+  let v : Result[ImageContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ImageContent(v)
+  }
+  let v : Result[AudioContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return AudioContent(v)
+  }
+  let v : Result[EmbeddedResource, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return EmbeddedResource(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextContent, ImageContent, AudioContent, EmbeddedResource; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -204,7 +380,20 @@ pub impl @json.FromJson for ReadResourceResultContents with from_json(
   json,
   path
 ) {
-
+  let v : Result[TextResourceContents, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextResourceContents(v)
+  }
+  let v : Result[BlobResourceContents, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return BlobResourceContents(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextResourceContents, BlobResourceContents; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -241,7 +430,24 @@ pub impl ToJson for SamplingMessageContent with to_json(self) {
 
 ///|
 pub impl @json.FromJson for SamplingMessageContent with from_json(json, path) {
-
+  let v : Result[TextContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return TextContent(v)
+  }
+  let v : Result[ImageContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ImageContent(v)
+  }
+  let v : Result[AudioContent, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return AudioContent(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: TextContent, ImageContent, AudioContent; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -259,7 +465,40 @@ pub impl ToJson for ServerNotification with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ServerNotification with from_json(json, path) {
-
+  let v : Result[CancelledNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CancelledNotification(v)
+  }
+  let v : Result[ProgressNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ProgressNotification(v)
+  }
+  let v : Result[ResourceListChangedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ResourceListChangedNotification(v)
+  }
+  let v : Result[ResourceUpdatedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ResourceUpdatedNotification(v)
+  }
+  let v : Result[PromptListChangedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return PromptListChangedNotification(v)
+  }
+  let v : Result[ToolListChangedNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ToolListChangedNotification(v)
+  }
+  let v : Result[LoggingMessageNotification, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return LoggingMessageNotification(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: CancelledNotification, ProgressNotification, ResourceListChangedNotification, ResourceUpdatedNotification, PromptListChangedNotification, ToolListChangedNotification, LoggingMessageNotification; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -273,7 +512,24 @@ pub impl ToJson for ServerRequest with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ServerRequest with from_json(json, path) {
-
+  let v : Result[PingRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return PingRequest(v)
+  }
+  let v : Result[CreateMessageRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CreateMessageRequest(v)
+  }
+  let v : Result[ListRootsRequest, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListRootsRequest(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: PingRequest, CreateMessageRequest, ListRootsRequest; got: \{@json.stringify(json)}",
+    ),
+  )
 }
 
 ///|
@@ -293,5 +549,46 @@ pub impl ToJson for ServerResult with to_json(self) {
 
 ///|
 pub impl @json.FromJson for ServerResult with from_json(json, path) {
-
+  let v : Result[CustomResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CustomResult(v)
+  }
+  let v : Result[InitializeResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return InitializeResult(v)
+  }
+  let v : Result[ListResourcesResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListResourcesResult(v)
+  }
+  let v : Result[ReadResourceResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ReadResourceResult(v)
+  }
+  let v : Result[ListPromptsResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListPromptsResult(v)
+  }
+  let v : Result[GetPromptResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return GetPromptResult(v)
+  }
+  let v : Result[ListToolsResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return ListToolsResult(v)
+  }
+  let v : Result[CallToolResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CallToolResult(v)
+  }
+  let v : Result[CompleteResult, _] = @json.from_json?(json)
+  if v is Ok(v) {
+    return CompleteResult(v)
+  }
+  raise @json.JsonDecodeError(
+    (
+      path,
+      "expected one of: CustomResult, InitializeResult, ListResourcesResult, ReadResourceResult, ListPromptsResult, GetPromptResult, ListToolsResult, CallToolResult, CompleteResult; got: \{@json.stringify(json)}",
+    ),
+  )
 }
