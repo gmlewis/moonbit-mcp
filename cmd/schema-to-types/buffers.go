@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -22,6 +23,11 @@ func (o *outBufsT) writeBuffersToFiles(baseDir string) {
 	writeFile(filePath, &o.typesJSONFile)
 	filePath = filepath.Join(baseDir, "types-new.mbt")
 	writeFile(filePath, &o.typesNewFile)
+
+	// After all the files are written, run "moon fmt --directory <baseDir>"
+	// to format the generated files.
+	_, err := exec.Command("moon", "fmt", "--directory", baseDir).CombinedOutput()
+	must(err)
 }
 
 func writeFile(filePath string, buffer *bytes.Buffer) {

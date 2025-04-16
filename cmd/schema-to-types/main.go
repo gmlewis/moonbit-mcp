@@ -117,6 +117,11 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	}
 	lines = append(lines, fmt.Sprintf(prefix+"pub(all) struct %v {", name))
 
+	newLines := []string{
+		prefix + "///|",
+		fmt.Sprintf("pub fn %v::new(", name),
+	}
+
 	toJSONLines := []string{
 		prefix + "///|",
 		fmt.Sprintf(prefix+"pub impl ToJson for %v with to_json(self) {", name),
@@ -143,7 +148,9 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	for _, propName := range props {
 		prop := d.Properties[propName]
 		if prop.Description != "" {
-			lines = append(lines, fmt.Sprintf(prefix+"  /// %v", strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1)))
+			comment := fmt.Sprintf(prefix+"  /// %v", strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1))
+			lines = append(lines, comment)
+			newLines = append(newLines, comment)
 		}
 		if len(prop.Const) > 0 {
 			value, err := json.Marshal(prop.Const)
@@ -183,6 +190,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 				prefix+"      }",
 				prefix+"    None => None",
 				prefix+"  }")
+			newLines = append(newLines, fmt.Sprintf(prefix+"  %v? : %v,", safeName, strings.TrimSuffix(mbtType, "?")))
 		} else {
 			toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"  obj[%q] = self.%v.to_json()", propName, safeName))
 			fromJSONLines = append(fromJSONLines,
@@ -194,12 +202,13 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 				fmt.Sprintf(prefix+`    raise @json.JsonDecodeError((path, "expected field '%v'"))`, propName),
 				prefix+"  }",
 			)
+			newLines = append(newLines, fmt.Sprintf(prefix+"  %v : %v,", safeName, mbtType))
 		}
 	}
 
 	if needsCustomJSON {
 		toJSONLines = append(toJSONLines, prefix+"  obj.to_json()", "}")
-		fromJSONLines = append(fromJSONLines, prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }", "}")
+		fromJSONLines = append(fromJSONLines, prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }", prefix+"}")
 		lines = append(lines,
 			prefix+"} derive(Show, Eq)")
 		out.typesJSONFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
@@ -207,6 +216,12 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	} else {
 		lines = append(lines, prefix+"} derive(Show, Eq, FromJson, ToJson)")
 	}
+
+	newLines = append(newLines,
+		fmt.Sprintf(prefix+") -> %v {", name),
+		fmt.Sprintf(prefix+"  %v::{ ", name)+strings.Join(fromJSONLastLineFields, ", ")+" }",
+		prefix+"}")
+	out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
 
 	// generate any helper methods
 	d.genHelperMethods(jsonRPCConsts)
@@ -295,10 +310,10 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 				enumBody := prop.Items.convertEnum(enumName, "")
 				d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 				// return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
-				return fmt.Sprintf("Array[%v]", enumName) + " // " + strings.Join(anyOf, " | ")
+				return fmt.Sprintf("Array[%v]", enumName) // + " // " + strings.Join(anyOf, " | ")
 			}
 			// return fmt.Sprintf("Array[%v]", arrayType) + suffix + " // " + strings.Join(anyOf, " | ")
-			return fmt.Sprintf("Array[%v]", arrayType) + " // " + strings.Join(anyOf, " | ")
+			return fmt.Sprintf("Array[%v]", arrayType) // + " // " + strings.Join(anyOf, " | ")
 		}
 		// arrayType := prop.moonBitType(propName, prop.Items)
 		arrayType := strings.TrimSuffix(prop.moonBitType(out, propName, prop.Items), "?")

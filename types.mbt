@@ -4,11 +4,11 @@
 /// Annotations: Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
 pub(all) struct Annotations {
   /// Describes who the intended customer of this object or data is.
-  ///
+  /// 
   /// It can include multiple entries to indicate content useful for multiple audiences (e.g., `["user", "assistant"]`).
   audience : Array[Role]?
   /// Describes how important this data is for operating the server.
-  ///
+  /// 
   /// A value of 1 means "most important," and indicates that the data is
   /// effectively required, while 0 means "least important," and indicates that
   /// the data is entirely optional.
@@ -70,21 +70,21 @@ pub fn CallToolRequest::from_message(
 
 ///|
 /// CallToolResult: The server's response to a tool call.
-///
+/// 
 /// Any errors that originate from the tool SHOULD be reported inside the result
 /// object, with `isError` set to true, _not_ as an MCP protocol-level error
 /// response. Otherwise, the LLM would not be able to see that an error occurred
 /// and self-correct.
-///
+/// 
 /// However, any errors in _finding_ the tool, an error indicating that the
 /// server does not support tool calls, or any other exceptional conditions,
 /// should be reported as an MCP error response.
 pub(all) struct CallToolResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  content : Array[CallToolResultContent] // TextContent? | ImageContent? | AudioContent? | EmbeddedResource?
+  content : Array[CallToolResultContent]
   /// Whether the tool call ended in an error.
-  ///
+  /// 
   /// If not set, this is assumed to be false (the call was successful).
   isError : Bool?
 } derive(Show, Eq, FromJson, ToJson)
@@ -115,11 +115,11 @@ pub fn CallToolResult::from_message(
 
 ///|
 /// CancelledNotification: This notification can be sent by either side to indicate that it is cancelling a previously-issued request.
-///
+/// 
 /// The request SHOULD still be in-flight, but due to communication latency, it is always possible that this notification MAY arrive after the request has already finished.
-///
+/// 
 /// This notification indicates that the result will be unused, so any associated processing SHOULD cease.
-///
+/// 
 /// A client MUST NOT attempt to cancel its `initialize` request.
 pub(all) struct CancelledNotification {
   /// JSON-RPC: "method" = "notifications/cancelled"
@@ -131,7 +131,7 @@ pub(all) struct CancelledNotificationParams {
   /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
   reason : String?
   /// The ID of the request to cancel.
-  ///
+  /// 
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : @jsonrpc2.ID
 } derive(Show, Eq, FromJson, ToJson)
@@ -375,7 +375,7 @@ pub(all) struct Cursor {} derive(Show, Eq, FromJson, ToJson)
 
 ///|
 /// EmbeddedResource: The contents of a resource, embedded into a prompt or tool call result.
-///
+/// 
 /// It is up to the client how best to render embedded resources for the benefit
 /// of the LLM and/or the user.
 pub(all) struct EmbeddedResource {
@@ -509,7 +509,7 @@ pub(all) struct InitializeResult {
   _meta : Json?
   capabilities : ServerCapabilities
   /// Instructions describing how to use the server and its features.
-  ///
+  /// 
   /// This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
   instructions : String?
   /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
@@ -746,7 +746,7 @@ pub fn ListResourcesResult::from_message(
 /// servers to ask for specific directories or files to operate on. A common example
 /// for roots is providing a set of repositories or directories a server should operate
 /// on.
-///
+/// 
 /// This request is typically used when the server needs to understand the file system
 /// structure or access specific locations that the client has permission to read from.
 pub(all) struct ListRootsRequest {
@@ -919,17 +919,17 @@ pub fn LoggingMessageNotification::from_message(
 
 ///|
 /// ModelHint: Hints to use for model selection.
-///
+/// 
 /// Keys not declared here are currently left unspecified by the spec and are up
 /// to the client to interpret.
 pub(all) struct ModelHint {
   /// A hint for a model name.
-  ///
+  /// 
   /// The client SHOULD treat this as a substring of a model name; for example:
   ///  - `claude-3-5-sonnet` should match `claude-3-5-sonnet-20241022`
   ///  - `sonnet` should match `claude-3-5-sonnet-20241022`, `claude-3-sonnet-20240229`, etc.
   ///  - `claude` should match any Claude model
-  ///
+  /// 
   /// The client MAY also map the string to a different provider's model name or a different model family, as long as it fills a similar niche; for example:
   ///  - `gemini-1.5-flash` could match `claude-3-haiku-20240307`
   name : String?
@@ -937,13 +937,13 @@ pub(all) struct ModelHint {
 
 ///|
 /// ModelPreferences: The server's preferences for model selection, requested of the client during sampling.
-///
+/// 
 /// Because LLMs can vary along multiple dimensions, choosing the "best" model is
 /// rarely straightforward.  Different models excel in different areas—some are
 /// faster but less capable, others are more capable but more expensive, and so
 /// on. This interface allows servers to express their priorities across multiple
 /// dimensions to help clients make an appropriate selection for their use case.
-///
+/// 
 /// These preferences are always advisory. The client MAY ignore them. It is also
 /// up to the client to decide how to interpret these preferences and how to
 /// balance them against other considerations.
@@ -953,10 +953,10 @@ pub(all) struct ModelPreferences {
   /// factor.
   costPriority : Double?
   /// Optional hints to use for model selection.
-  ///
+  /// 
   /// If multiple hints are specified, the client MUST evaluate them in order
   /// (such that the first match is taken).
-  ///
+  /// 
   /// The client SHOULD prioritize these hints over the numeric priorities, but
   /// MAY still use the priorities to select from ambiguous matches.
   hints : Array[ModelHint]?
@@ -1189,7 +1189,7 @@ pub fn PromptListChangedNotification::from_message(
 
 ///|
 /// PromptMessage: Describes a message returned as part of a prompt.
-///
+/// 
 /// This is similar to `SamplingMessage`, but also supports the embedding of
 /// resources from the MCP server.
 pub(all) struct PromptMessage {
@@ -1249,7 +1249,7 @@ pub fn ReadResourceRequest::from_message(
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  contents : Array[ReadResourceResultContents] // TextResourceContents? | BlobResourceContents?
+  contents : Array[ReadResourceResultContents]
 } derive(Show, Eq, FromJson, ToJson)
 
 ///|
@@ -1314,17 +1314,17 @@ pub(all) struct Resource {
   /// Optional annotations for the client.
   annotations : Annotations?
   /// A description of what this resource represents.
-  ///
+  /// 
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description : String?
   /// The MIME type of this resource, if known.
   mimeType : String?
   /// A human-readable name for this resource.
-  ///
+  /// 
   /// This can be used by clients to populate UI elements.
   name : String
   /// The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.
-  ///
+  /// 
   /// This can be used by Hosts to display file sizes and estimate context window usage.
   size : Int64?
   /// The URI of this resource.
@@ -1392,13 +1392,13 @@ pub(all) struct ResourceTemplate {
   /// Optional annotations for the client.
   annotations : Annotations?
   /// A description of what this template is for.
-  ///
+  /// 
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description : String?
   /// The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.
   mimeType : String?
   /// A human-readable name for the type of resource this template refers to.
-  ///
+  /// 
   /// This can be used by clients to populate UI elements.
   name : String
   /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
@@ -1693,7 +1693,7 @@ pub(all) struct Tool {
   /// Optional additional tool information.
   annotations : ToolAnnotations?
   /// A human-readable description of the tool.
-  ///
+  /// 
   /// This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.
   description : String?
   /// A JSON Schema object defining the expected parameters for the tool.
@@ -1712,37 +1712,37 @@ pub(all) struct ToolInputSchema {
 
 ///|
 /// ToolAnnotations: Additional properties describing a Tool to clients.
-///
-/// NOTE: all properties in ToolAnnotations are **hints**.
-/// They are not guaranteed to provide a faithful description of
+/// 
+/// NOTE: all properties in ToolAnnotations are **hints**. 
+/// They are not guaranteed to provide a faithful description of 
 /// tool behavior (including descriptive properties like `title`).
-///
+/// 
 /// Clients should never make tool use decisions based on ToolAnnotations
 /// received from untrusted servers.
 pub(all) struct ToolAnnotations {
   /// If true, the tool may perform destructive updates to its environment.
   /// If false, the tool performs only additive updates.
-  ///
+  /// 
   /// (This property is meaningful only when `readOnlyHint == false`)
-  ///
+  /// 
   /// Default: true
   destructiveHint : Bool?
-  /// If true, calling the tool repeatedly with the same arguments
+  /// If true, calling the tool repeatedly with the same arguments 
   /// will have no additional effect on the its environment.
-  ///
+  /// 
   /// (This property is meaningful only when `readOnlyHint == false`)
-  ///
+  /// 
   /// Default: false
   idempotentHint : Bool?
   /// If true, this tool may interact with an "open world" of external
   /// entities. If false, the tool's domain of interaction is closed.
   /// For example, the world of a web search tool is open, whereas that
   /// of a memory tool is not.
-  ///
+  /// 
   /// Default: true
   openWorldHint : Bool?
   /// If true, the tool does not modify its environment.
-  ///
+  /// 
   /// Default: false
   readOnlyHint : Bool?
   /// A human-readable title for the tool.
