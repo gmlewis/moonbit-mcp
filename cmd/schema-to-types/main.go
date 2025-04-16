@@ -62,7 +62,7 @@ func main() {
 	// Generate MoonBit source from the schema
 	for _, key := range keys {
 		def := schema.Definitions[key]
-		mbt := def.convert(key)
+		mbt := def.convert(out, key)
 		if mbt == "" {
 			continue
 		}
@@ -96,7 +96,7 @@ var structsToSkip = map[string]skipType{
 	"@jsonrpc2.ID":         totallyIgnore, // `ResultId` converted to `@jsonrpc2.ID`
 }
 
-func (d *Definition) convert(name string) string {
+func (d *Definition) convert(out *outBufsT, name string) string {
 	name = safeStructName(name)
 	d.name = name
 	var prefix string
@@ -161,7 +161,7 @@ func (d *Definition) convert(name string) string {
 			continue
 		}
 		safeName := safePropName(propName)
-		mbtType := d.moonBitType(propName, prop)
+		mbtType := d.moonBitType(out, propName, prop)
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safeName, mbtType))
 		fromJSONLastLineFields = append(fromJSONLastLineFields, safeName)
 
@@ -201,11 +201,9 @@ func (d *Definition) convert(name string) string {
 		toJSONLines = append(toJSONLines, prefix+"  obj.to_json()", "}")
 		fromJSONLines = append(fromJSONLines, prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }", "}")
 		lines = append(lines,
-			prefix+"} derive(Show, Eq)",
-			"",
-			strings.Join(toJSONLines, "\n"),
-			"",
-			strings.Join(fromJSONLines, "\n"))
+			prefix+"} derive(Show, Eq)")
+		out.typesJSONFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
+		out.typesJSONFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
 	} else {
 		lines = append(lines, prefix+"} derive(Show, Eq, FromJson, ToJson)")
 	}
@@ -271,7 +269,7 @@ func safePropName(s string) string {
 	return s
 }
 
-func (d *Definition) moonBitType(propName string, prop *Definition) string {
+func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definition) string {
 	var suffix string
 	if slices.Contains(d.Required, propName) {
 		d.isRequired = true
@@ -303,7 +301,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 			return fmt.Sprintf("Array[%v]", arrayType) + " // " + strings.Join(anyOf, " | ")
 		}
 		// arrayType := prop.moonBitType(propName, prop.Items)
-		arrayType := strings.TrimSuffix(prop.moonBitType(propName, prop.Items), "?")
+		arrayType := strings.TrimSuffix(prop.moonBitType(out, propName, prop.Items), "?")
 		return fmt.Sprintf("Array[%v]", arrayType) + suffix
 	case `"string"`:
 		if len(prop.Enum) > 0 {
@@ -318,7 +316,7 @@ func (d *Definition) moonBitType(propName string, prop *Definition) string {
 			return "Json" + suffix
 		}
 		subTypeName := d.name + titleCase(propName)
-		subType := prop.convert(subTypeName)
+		subType := prop.convert(out, subTypeName)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, subType)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, prop.helperStructsAndMethods...)
 		return subTypeName + suffix
@@ -367,7 +365,7 @@ func (d *Definition) genHelperMethods(jsonRPCConsts map[string]string) {
 	case strings.HasSuffix(d.name, "Notification"):
 		d.genNotificationHelperMethods(jsonRPCConsts)
 	case strings.HasSuffix(d.name, "Result"):
-		d.genResultHelperMethods(jsonRPCConsts)
+		d.genResultHelperMethods()
 	}
 }
 
@@ -445,7 +443,7 @@ func (d *Definition) genNotificationHelperMethods(jsonRPCConsts map[string]strin
 	d.helperStructsAndMethods = append(d.helperStructsAndMethods, strings.Join(lines, "\n"))
 }
 
-func (d *Definition) genResultHelperMethods(jsonRPCConsts map[string]string) {
+func (d *Definition) genResultHelperMethods() {
 	lines := []string{
 		"///|",
 		fmt.Sprintf("pub impl MCPResponse for %v with to_response(self, id) {", d.name),

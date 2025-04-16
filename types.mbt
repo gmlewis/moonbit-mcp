@@ -28,51 +28,6 @@ pub(all) struct AudioContent {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for AudioContent with to_json(self) {
-  let obj = {}
-  if self.annotations is Some(v) {
-    obj["annotations"] = v.to_json()
-  }
-  obj["data"] = self.data.to_json()
-  obj["mimeType"] = self.mimeType.to_json()
-  obj["type"] = "audio".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for AudioContent with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  guard obj["data"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'data'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(data) else {
-    raise @json.JsonDecodeError((path, "expected field 'data'"))
-  }
-  guard obj["mimeType"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(mimeType) else {
-    raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
-  }
-  guard obj["type"] == Some(String("audio")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='audio'"))
-  }
-  { annotations, data, mimeType }
-}
-
-///|
 pub(all) struct BlobResourceContents {
   /// A base64-encoded string representing the binary data of the item.
   blob : String
@@ -263,36 +218,6 @@ pub(all) struct CompleteRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for CompleteRequestParams with to_json(self) {
-  let obj = {}
-  obj["argument"] = self.argument.to_json()
-  obj["ref"] = self.ref_.to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for CompleteRequestParams with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["argument"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'argument'"))
-  }
-  let v : Result[CompleteRequestParamsArgument, _] = @json.from_json?(json)
-  guard v is Ok(argument) else {
-    raise @json.JsonDecodeError((path, "expected field 'argument'"))
-  }
-  guard obj["ref"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'ref'"))
-  }
-  let v : Result[CompleteRequestParamsRef, _] = @json.from_json?(json)
-  guard v is Ok(ref_) else {
-    raise @json.JsonDecodeError((path, "expected field 'ref'"))
-  }
-  { argument, ref_ }
-}
-
-///|
 /// CompleteRequestParamsArgument: The argument's information
 pub(all) struct CompleteRequestParamsArgument {
   /// The name of the argument
@@ -461,43 +386,6 @@ pub(all) struct EmbeddedResource {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for EmbeddedResource with to_json(self) {
-  let obj = {}
-  if self.annotations is Some(v) {
-    obj["annotations"] = v.to_json()
-  }
-  obj["resource"] = self.resource.to_json()
-  obj["type"] = "resource".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for EmbeddedResource with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  guard obj["resource"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'resource'"))
-  }
-  let v : Result[EmbeddedResourceResource, _] = @json.from_json?(json)
-  guard v is Ok(resource) else {
-    raise @json.JsonDecodeError((path, "expected field 'resource'"))
-  }
-  guard obj["type"] == Some(String("resource")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='resource'"))
-  }
-  { annotations, resource }
-}
-
-///|
 pub enum EmbeddedResourceResource {
   TextResourceContents(TextResourceContents)
   BlobResourceContents(BlobResourceContents)
@@ -573,51 +461,6 @@ pub(all) struct ImageContent {
   mimeType : String
   /// JSON-RPC: "type" = "image"
 } derive(Show, Eq)
-
-///|
-pub impl ToJson for ImageContent with to_json(self) {
-  let obj = {}
-  if self.annotations is Some(v) {
-    obj["annotations"] = v.to_json()
-  }
-  obj["data"] = self.data.to_json()
-  obj["mimeType"] = self.mimeType.to_json()
-  obj["type"] = "image".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for ImageContent with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  guard obj["data"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'data'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(data) else {
-    raise @json.JsonDecodeError((path, "expected field 'data'"))
-  }
-  guard obj["mimeType"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(mimeType) else {
-    raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
-  }
-  guard obj["type"] == Some(String("image")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='image'"))
-  }
-  { annotations, data, mimeType }
-}
 
 ///|
 /// Implementation: Describes the name and version of an MCP implementation.
@@ -1134,39 +977,6 @@ pub(all) struct Notification {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for Notification with to_json(self) {
-  let obj = {}
-  obj["method"] = self.method_.to_json()
-  if self.params is Some(v) {
-    obj["params"] = v.to_json()
-  }
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for Notification with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["method"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(method_) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let params : NotificationParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  { method_, params }
-}
-
-///|
 pub(all) struct NotificationParams {
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta : Json?
@@ -1192,39 +1002,6 @@ pub(all) struct PaginatedRequest {
   method_ : String
   params : PaginatedRequestParams?
 } derive(Show, Eq)
-
-///|
-pub impl ToJson for PaginatedRequest with to_json(self) {
-  let obj = {}
-  obj["method"] = self.method_.to_json()
-  if self.params is Some(v) {
-    obj["params"] = v.to_json()
-  }
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for PaginatedRequest with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["method"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(method_) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let params : PaginatedRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  { method_, params }
-}
 
 ///|
 pub(all) struct PaginatedRequestParams {
@@ -1437,32 +1214,6 @@ pub(all) struct PromptReference {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for PromptReference with to_json(self) {
-  let obj = {}
-  obj["name"] = self.name.to_json()
-  obj["type"] = "ref/prompt".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for PromptReference with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["name"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'name'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(name) else {
-    raise @json.JsonDecodeError((path, "expected field 'name'"))
-  }
-  guard obj["type"] == Some(String("ref/prompt")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='ref/prompt'"))
-  }
-  { name, }
-}
-
-///|
 /// ReadResourceRequest: Sent from the client to the server, to read a specific resource URI.
 pub(all) struct ReadResourceRequest {
   /// JSON-RPC: "method" = "resources/read"
@@ -1528,39 +1279,6 @@ pub(all) struct Request {
   method_ : String
   params : RequestParams?
 } derive(Show, Eq)
-
-///|
-pub impl ToJson for Request with to_json(self) {
-  let obj = {}
-  obj["method"] = self.method_.to_json()
-  if self.params is Some(v) {
-    obj["params"] = v.to_json()
-  }
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for Request with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["method"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(method_) else {
-    raise @json.JsonDecodeError((path, "expected field 'method'"))
-  }
-  let params : RequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  { method_, params }
-}
 
 ///|
 pub(all) struct RequestParams {
@@ -1667,32 +1385,6 @@ pub(all) struct ResourceReference {
   /// The URI or URI template of the resource.
   uri : String
 } derive(Show, Eq)
-
-///|
-pub impl ToJson for ResourceReference with to_json(self) {
-  let obj = {}
-  obj["type"] = "ref/resource".to_json()
-  obj["uri"] = self.uri.to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for ResourceReference with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  guard obj["type"] == Some(String("ref/resource")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='ref/resource'"))
-  }
-  guard obj["uri"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'uri'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(uri) else {
-    raise @json.JsonDecodeError((path, "expected field 'uri'"))
-  }
-  { uri, }
-}
 
 ///|
 /// ResourceTemplate: A template description for resources available on the server.
@@ -1986,43 +1678,6 @@ pub(all) struct TextContent {
 } derive(Show, Eq)
 
 ///|
-pub impl ToJson for TextContent with to_json(self) {
-  let obj = {}
-  if self.annotations is Some(v) {
-    obj["annotations"] = v.to_json()
-  }
-  obj["text"] = self.text.to_json()
-  obj["type"] = "text".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for TextContent with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  guard obj["text"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'text'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(text) else {
-    raise @json.JsonDecodeError((path, "expected field 'text'"))
-  }
-  guard obj["type"] == Some(String("text")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='text'"))
-  }
-  { annotations, text }
-}
-
-///|
 pub(all) struct TextResourceContents {
   /// The MIME type of this resource, if known.
   mimeType : String?
@@ -2054,46 +1709,6 @@ pub(all) struct ToolInputSchema {
   required : Array[String]?
   /// JSON-RPC: "type" = "object"
 } derive(Show, Eq)
-
-///|
-pub impl ToJson for ToolInputSchema with to_json(self) {
-  let obj = {}
-  if self.properties is Some(v) {
-    obj["properties"] = v.to_json()
-  }
-  if self.required is Some(v) {
-    obj["required"] = v.to_json()
-  }
-  obj["type"] = "object".to_json()
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for ToolInputSchema with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let properties : Json? = match obj["properties"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  let required : Array[String]? = match obj["required"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
-      }
-    None => None
-  }
-  guard obj["type"] == Some(String("object")) else {
-    raise @json.JsonDecodeError((path, "expected 'type'='object'"))
-  }
-  { properties, required }
-}
 
 ///|
 /// ToolAnnotations: Additional properties describing a Tool to clients.
