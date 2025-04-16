@@ -30,6 +30,9 @@ pub(all) struct Annotations {
   audience : Array[Role]?
   priority : Double?
 }
+impl Annotations {
+  new(audience? : Array[Role], priority? : Double) -> Self
+}
 impl Eq for Annotations
 impl Show for Annotations
 impl ToJson for Annotations
@@ -41,7 +44,7 @@ pub(all) struct AudioContent {
   mimeType : String
 }
 impl AudioContent {
-  new(FixedArray[Byte], String, annotations? : Annotations) -> Self
+  new(annotations? : Annotations, String, String) -> Self
   raw_audio(Self) -> Bytes!
 }
 impl Eq for AudioContent
@@ -55,7 +58,7 @@ pub(all) struct BlobResourceContents {
   uri : String
 }
 impl BlobResourceContents {
-  new(FixedArray[Byte], String, mime_type? : String) -> Self
+  new(String, mimeType? : String, String) -> Self
   raw_data(Self) -> Bytes!
 }
 impl Eq for BlobResourceContents
@@ -68,6 +71,7 @@ pub(all) struct CallToolRequest {
 }
 impl CallToolRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(CallToolRequestParams) -> Self
 }
 impl MCPCall for CallToolRequest
 impl Eq for CallToolRequest
@@ -78,6 +82,9 @@ impl @json.FromJson for CallToolRequest
 pub(all) struct CallToolRequestParams {
   arguments : Json?
   name : String
+}
+impl CallToolRequestParams {
+  new(arguments? : Json, String) -> Self
 }
 impl Eq for CallToolRequestParams
 impl Show for CallToolRequestParams
@@ -91,6 +98,7 @@ pub(all) struct CallToolResult {
 }
 impl CallToolResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, Array[CallToolResultContent], isError? : Bool) -> Self
 }
 impl MCPResponse for CallToolResult
 impl Eq for CallToolResult
@@ -114,6 +122,7 @@ pub(all) struct CancelledNotification {
 }
 impl CancelledNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(CancelledNotificationParams) -> Self
 }
 impl MCPNotification for CancelledNotification
 impl Eq for CancelledNotification
@@ -125,6 +134,9 @@ pub(all) struct CancelledNotificationParams {
   reason : String?
   requestId : @jsonrpc2.ID
 }
+impl CancelledNotificationParams {
+  new(reason? : String, @jsonrpc2.ID) -> Self
+}
 impl Eq for CancelledNotificationParams
 impl Show for CancelledNotificationParams
 impl ToJson for CancelledNotificationParams
@@ -135,6 +147,9 @@ pub(all) struct ClientCapabilities {
   roots : ClientCapabilitiesRoots?
   sampling : Json?
 }
+impl ClientCapabilities {
+  new(experimental? : Json, roots? : ClientCapabilitiesRoots, sampling? : Json) -> Self
+}
 impl Eq for ClientCapabilities
 impl Show for ClientCapabilities
 impl ToJson for ClientCapabilities
@@ -142,6 +157,9 @@ impl @json.FromJson for ClientCapabilities
 
 pub(all) struct ClientCapabilitiesRoots {
   listChanged : Bool?
+}
+impl ClientCapabilitiesRoots {
+  new(listChanged? : Bool) -> Self
 }
 impl Eq for ClientCapabilitiesRoots
 impl Show for ClientCapabilitiesRoots
@@ -193,6 +211,7 @@ pub(all) struct CompleteRequest {
 }
 impl CompleteRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(CompleteRequestParams) -> Self
 }
 impl MCPCall for CompleteRequest
 impl Eq for CompleteRequest
@@ -204,6 +223,9 @@ pub(all) struct CompleteRequestParams {
   argument : CompleteRequestParamsArgument
   ref_ : CompleteRequestParamsRef
 }
+impl CompleteRequestParams {
+  new(CompleteRequestParamsArgument, CompleteRequestParamsRef) -> Self
+}
 impl Eq for CompleteRequestParams
 impl Show for CompleteRequestParams
 impl ToJson for CompleteRequestParams
@@ -212,6 +234,9 @@ impl @json.FromJson for CompleteRequestParams
 pub(all) struct CompleteRequestParamsArgument {
   name : String
   value : String
+}
+impl CompleteRequestParamsArgument {
+  new(String, String) -> Self
 }
 impl Eq for CompleteRequestParamsArgument
 impl Show for CompleteRequestParamsArgument
@@ -233,6 +258,7 @@ pub(all) struct CompleteResult {
 }
 impl CompleteResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, CompleteResultCompletion) -> Self
 }
 impl MCPResponse for CompleteResult
 impl Eq for CompleteResult
@@ -245,6 +271,9 @@ pub(all) struct CompleteResultCompletion {
   total : Int64?
   values : Array[String]
 }
+impl CompleteResultCompletion {
+  new(hasMore? : Bool, total? : Int64, Array[String]) -> Self
+}
 impl Eq for CompleteResultCompletion
 impl Show for CompleteResultCompletion
 impl ToJson for CompleteResultCompletion
@@ -255,6 +284,7 @@ pub(all) struct CreateMessageRequest {
 }
 impl CreateMessageRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(CreateMessageRequestParams) -> Self
 }
 impl MCPCall for CreateMessageRequest
 impl Eq for CreateMessageRequest
@@ -272,6 +302,9 @@ pub(all) struct CreateMessageRequestParams {
   systemPrompt : String?
   temperature : Double?
 }
+impl CreateMessageRequestParams {
+  new(includeContext? : IncludeContext, Int64, Array[SamplingMessage], metadata? : Json, modelPreferences? : ModelPreferences, stopSequences? : Array[String], systemPrompt? : String, temperature? : Double) -> Self
+}
 impl Eq for CreateMessageRequestParams
 impl Show for CreateMessageRequestParams
 impl ToJson for CreateMessageRequestParams
@@ -286,6 +319,7 @@ pub(all) struct CreateMessageResult {
 }
 impl CreateMessageResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, CreateMessageResultContent, String, Role, stopReason? : String) -> Self
 }
 impl MCPResponse for CreateMessageResult
 impl Eq for CreateMessageResult
@@ -305,6 +339,9 @@ impl @json.FromJson for CreateMessageResultContent
 
 pub(all) struct Cursor {
 }
+impl Cursor {
+  new() -> Self
+}
 impl Eq for Cursor
 impl Show for Cursor
 impl ToJson for Cursor
@@ -315,6 +352,7 @@ pub(all) struct CustomResult {
 }
 impl CustomResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json) -> Self
 }
 impl MCPResponse for CustomResult
 impl Eq for CustomResult
@@ -325,6 +363,9 @@ impl @json.FromJson for CustomResult
 pub(all) struct EmbeddedResource {
   annotations : Annotations?
   resource : EmbeddedResourceResource
+}
+impl EmbeddedResource {
+  new(annotations? : Annotations, EmbeddedResourceResource) -> Self
 }
 impl Eq for EmbeddedResource
 impl Show for EmbeddedResource
@@ -345,6 +386,7 @@ pub(all) struct GetPromptRequest {
 }
 impl GetPromptRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(GetPromptRequestParams) -> Self
 }
 impl MCPCall for GetPromptRequest
 impl Eq for GetPromptRequest
@@ -355,6 +397,9 @@ impl @json.FromJson for GetPromptRequest
 pub(all) struct GetPromptRequestParams {
   arguments : Json?
   name : String
+}
+impl GetPromptRequestParams {
+  new(arguments? : Json, String) -> Self
 }
 impl Eq for GetPromptRequestParams
 impl Show for GetPromptRequestParams
@@ -368,6 +413,7 @@ pub(all) struct GetPromptResult {
 }
 impl GetPromptResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, description? : String, Array[PromptMessage]) -> Self
 }
 impl MCPResponse for GetPromptResult
 impl Eq for GetPromptResult
@@ -381,7 +427,7 @@ pub(all) struct ImageContent {
   mimeType : String
 }
 impl ImageContent {
-  new(FixedArray[Byte], String, annotations? : Annotations) -> Self
+  new(annotations? : Annotations, String, String) -> Self
   raw_image(Self) -> Bytes!
 }
 impl Eq for ImageContent
@@ -392,6 +438,9 @@ impl @json.FromJson for ImageContent
 pub(all) struct Implementation {
   name : String
   version : String
+}
+impl Implementation {
+  new(String, String) -> Self
 }
 impl Eq for Implementation
 impl Show for Implementation
@@ -413,6 +462,7 @@ pub(all) struct InitializeRequest {
 }
 impl InitializeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(InitializeRequestParams) -> Self
 }
 impl MCPCall for InitializeRequest
 impl Eq for InitializeRequest
@@ -424,6 +474,9 @@ pub(all) struct InitializeRequestParams {
   capabilities : ClientCapabilities
   clientInfo : Implementation
   protocolVersion : String
+}
+impl InitializeRequestParams {
+  new(ClientCapabilities, Implementation, String) -> Self
 }
 impl Eq for InitializeRequestParams
 impl Show for InitializeRequestParams
@@ -439,6 +492,7 @@ pub(all) struct InitializeResult {
 }
 impl InitializeResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, ServerCapabilities, instructions? : String, String, Implementation) -> Self
 }
 impl MCPResponse for InitializeResult
 impl Eq for InitializeResult
@@ -451,6 +505,7 @@ pub(all) struct InitializedNotification {
 }
 impl InitializedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(params? : InitializedNotificationParams) -> Self
 }
 impl MCPNotification for InitializedNotification
 impl Eq for InitializedNotification
@@ -460,6 +515,9 @@ impl @json.FromJson for InitializedNotification
 
 pub(all) struct InitializedNotificationParams {
   _meta : Json?
+}
+impl InitializedNotificationParams {
+  new(_meta? : Json) -> Self
 }
 impl Eq for InitializedNotificationParams
 impl Show for InitializedNotificationParams
@@ -471,6 +529,7 @@ pub(all) struct ListPromptsRequest {
 }
 impl ListPromptsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : ListPromptsRequestParams) -> Self
 }
 impl MCPCall for ListPromptsRequest
 impl Eq for ListPromptsRequest
@@ -480,6 +539,9 @@ impl @json.FromJson for ListPromptsRequest
 
 pub(all) struct ListPromptsRequestParams {
   cursor : String?
+}
+impl ListPromptsRequestParams {
+  new(cursor? : String) -> Self
 }
 impl Eq for ListPromptsRequestParams
 impl Show for ListPromptsRequestParams
@@ -493,6 +555,7 @@ pub(all) struct ListPromptsResult {
 }
 impl ListPromptsResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, nextCursor? : String, Array[Prompt]) -> Self
 }
 impl MCPResponse for ListPromptsResult
 impl Eq for ListPromptsResult
@@ -505,6 +568,7 @@ pub(all) struct ListResourceTemplatesRequest {
 }
 impl ListResourceTemplatesRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : ListResourceTemplatesRequestParams) -> Self
 }
 impl MCPCall for ListResourceTemplatesRequest
 impl Eq for ListResourceTemplatesRequest
@@ -514,6 +578,9 @@ impl @json.FromJson for ListResourceTemplatesRequest
 
 pub(all) struct ListResourceTemplatesRequestParams {
   cursor : String?
+}
+impl ListResourceTemplatesRequestParams {
+  new(cursor? : String) -> Self
 }
 impl Eq for ListResourceTemplatesRequestParams
 impl Show for ListResourceTemplatesRequestParams
@@ -527,6 +594,7 @@ pub(all) struct ListResourceTemplatesResult {
 }
 impl ListResourceTemplatesResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, nextCursor? : String, Array[ResourceTemplate]) -> Self
 }
 impl MCPResponse for ListResourceTemplatesResult
 impl Eq for ListResourceTemplatesResult
@@ -539,6 +607,7 @@ pub(all) struct ListResourcesRequest {
 }
 impl ListResourcesRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : ListResourcesRequestParams) -> Self
 }
 impl MCPCall for ListResourcesRequest
 impl Eq for ListResourcesRequest
@@ -548,6 +617,9 @@ impl @json.FromJson for ListResourcesRequest
 
 pub(all) struct ListResourcesRequestParams {
   cursor : String?
+}
+impl ListResourcesRequestParams {
+  new(cursor? : String) -> Self
 }
 impl Eq for ListResourcesRequestParams
 impl Show for ListResourcesRequestParams
@@ -561,6 +633,7 @@ pub(all) struct ListResourcesResult {
 }
 impl ListResourcesResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, nextCursor? : String, Array[Resource]) -> Self
 }
 impl MCPResponse for ListResourcesResult
 impl Eq for ListResourcesResult
@@ -573,6 +646,7 @@ pub(all) struct ListRootsRequest {
 }
 impl ListRootsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : ListRootsRequestParams) -> Self
 }
 impl MCPCall for ListRootsRequest
 impl Eq for ListRootsRequest
@@ -583,6 +657,9 @@ impl @json.FromJson for ListRootsRequest
 pub(all) struct ListRootsRequestParams {
   _meta : ListRootsRequestParams_meta?
 }
+impl ListRootsRequestParams {
+  new(_meta? : ListRootsRequestParams_meta) -> Self
+}
 impl Eq for ListRootsRequestParams
 impl Show for ListRootsRequestParams
 impl ToJson for ListRootsRequestParams
@@ -590,6 +667,9 @@ impl @json.FromJson for ListRootsRequestParams
 
 pub(all) struct ListRootsRequestParams_meta {
   progressToken : ProgressToken?
+}
+impl ListRootsRequestParams_meta {
+  new(progressToken? : ProgressToken) -> Self
 }
 impl Eq for ListRootsRequestParams_meta
 impl Show for ListRootsRequestParams_meta
@@ -602,6 +682,7 @@ pub(all) struct ListRootsResult {
 }
 impl ListRootsResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, Array[Root]) -> Self
 }
 impl MCPResponse for ListRootsResult
 impl Eq for ListRootsResult
@@ -614,6 +695,7 @@ pub(all) struct ListToolsRequest {
 }
 impl ListToolsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : ListToolsRequestParams) -> Self
 }
 impl MCPCall for ListToolsRequest
 impl Eq for ListToolsRequest
@@ -623,6 +705,9 @@ impl @json.FromJson for ListToolsRequest
 
 pub(all) struct ListToolsRequestParams {
   cursor : String?
+}
+impl ListToolsRequestParams {
+  new(cursor? : String) -> Self
 }
 impl Eq for ListToolsRequestParams
 impl Show for ListToolsRequestParams
@@ -636,6 +721,7 @@ pub(all) struct ListToolsResult {
 }
 impl ListToolsResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, nextCursor? : String, Array[Tool]) -> Self
 }
 impl MCPResponse for ListToolsResult
 impl Eq for ListToolsResult
@@ -663,6 +749,7 @@ pub(all) struct LoggingMessageNotification {
 }
 impl LoggingMessageNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(LoggingMessageNotificationParams) -> Self
 }
 impl MCPNotification for LoggingMessageNotification
 impl Eq for LoggingMessageNotification
@@ -675,6 +762,9 @@ pub(all) struct LoggingMessageNotificationParams {
   level : LoggingLevel
   logger : String?
 }
+impl LoggingMessageNotificationParams {
+  new(Json, LoggingLevel, logger? : String) -> Self
+}
 impl Eq for LoggingMessageNotificationParams
 impl Show for LoggingMessageNotificationParams
 impl ToJson for LoggingMessageNotificationParams
@@ -682,6 +772,9 @@ impl @json.FromJson for LoggingMessageNotificationParams
 
 pub(all) struct ModelHint {
   name : String?
+}
+impl ModelHint {
+  new(name? : String) -> Self
 }
 impl Eq for ModelHint
 impl Show for ModelHint
@@ -694,6 +787,9 @@ pub(all) struct ModelPreferences {
   intelligencePriority : Double?
   speedPriority : Double?
 }
+impl ModelPreferences {
+  new(costPriority? : Double, hints? : Array[ModelHint], intelligencePriority? : Double, speedPriority? : Double) -> Self
+}
 impl Eq for ModelPreferences
 impl Show for ModelPreferences
 impl ToJson for ModelPreferences
@@ -705,6 +801,7 @@ pub(all) struct Notification {
 }
 impl Notification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(String, params? : NotificationParams) -> Self
 }
 impl MCPNotification for Notification
 impl Eq for Notification
@@ -714,6 +811,9 @@ impl @json.FromJson for Notification
 
 pub(all) struct NotificationParams {
   _meta : Json?
+}
+impl NotificationParams {
+  new(_meta? : Json) -> Self
 }
 impl Eq for NotificationParams
 impl Show for NotificationParams
@@ -726,6 +826,7 @@ pub(all) struct PaginatedRequest {
 }
 impl PaginatedRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(String, params? : PaginatedRequestParams) -> Self
 }
 impl MCPCall for PaginatedRequest
 impl Eq for PaginatedRequest
@@ -735,6 +836,9 @@ impl @json.FromJson for PaginatedRequest
 
 pub(all) struct PaginatedRequestParams {
   cursor : String?
+}
+impl PaginatedRequestParams {
+  new(cursor? : String) -> Self
 }
 impl Eq for PaginatedRequestParams
 impl Show for PaginatedRequestParams
@@ -747,6 +851,7 @@ pub(all) struct PaginatedResult {
 }
 impl PaginatedResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, nextCursor? : String) -> Self
 }
 impl MCPResponse for PaginatedResult
 impl Eq for PaginatedResult
@@ -759,6 +864,7 @@ pub(all) struct PingRequest {
 }
 impl PingRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(params? : PingRequestParams) -> Self
 }
 impl MCPCall for PingRequest
 impl Eq for PingRequest
@@ -769,6 +875,9 @@ impl @json.FromJson for PingRequest
 pub(all) struct PingRequestParams {
   _meta : PingRequestParams_meta?
 }
+impl PingRequestParams {
+  new(_meta? : PingRequestParams_meta) -> Self
+}
 impl Eq for PingRequestParams
 impl Show for PingRequestParams
 impl ToJson for PingRequestParams
@@ -776,6 +885,9 @@ impl @json.FromJson for PingRequestParams
 
 pub(all) struct PingRequestParams_meta {
   progressToken : ProgressToken?
+}
+impl PingRequestParams_meta {
+  new(progressToken? : ProgressToken) -> Self
 }
 impl Eq for PingRequestParams_meta
 impl Show for PingRequestParams_meta
@@ -787,6 +899,7 @@ pub(all) struct ProgressNotification {
 }
 impl ProgressNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(ProgressNotificationParams) -> Self
 }
 impl MCPNotification for ProgressNotification
 impl Eq for ProgressNotification
@@ -800,12 +913,18 @@ pub(all) struct ProgressNotificationParams {
   progressToken : ProgressToken
   total : Double?
 }
+impl ProgressNotificationParams {
+  new(message? : String, Double, ProgressToken, total? : Double) -> Self
+}
 impl Eq for ProgressNotificationParams
 impl Show for ProgressNotificationParams
 impl ToJson for ProgressNotificationParams
 impl @json.FromJson for ProgressNotificationParams
 
 pub(all) struct ProgressToken {
+}
+impl ProgressToken {
+  new() -> Self
 }
 impl Eq for ProgressToken
 impl Show for ProgressToken
@@ -817,6 +936,9 @@ pub(all) struct Prompt {
   description : String?
   name : String
 }
+impl Prompt {
+  new(arguments? : Array[PromptArgument], description? : String, String) -> Self
+}
 impl Eq for Prompt
 impl Show for Prompt
 impl ToJson for Prompt
@@ -826,6 +948,9 @@ pub(all) struct PromptArgument {
   description : String?
   name : String
   required : Bool?
+}
+impl PromptArgument {
+  new(description? : String, String, required? : Bool) -> Self
 }
 impl Eq for PromptArgument
 impl Show for PromptArgument
@@ -837,6 +962,7 @@ pub(all) struct PromptListChangedNotification {
 }
 impl PromptListChangedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(params? : PromptListChangedNotificationParams) -> Self
 }
 impl MCPNotification for PromptListChangedNotification
 impl Eq for PromptListChangedNotification
@@ -847,6 +973,9 @@ impl @json.FromJson for PromptListChangedNotification
 pub(all) struct PromptListChangedNotificationParams {
   _meta : Json?
 }
+impl PromptListChangedNotificationParams {
+  new(_meta? : Json) -> Self
+}
 impl Eq for PromptListChangedNotificationParams
 impl Show for PromptListChangedNotificationParams
 impl ToJson for PromptListChangedNotificationParams
@@ -855,6 +984,9 @@ impl @json.FromJson for PromptListChangedNotificationParams
 pub(all) struct PromptMessage {
   content : PromptMessageContent
   role : Role
+}
+impl PromptMessage {
+  new(PromptMessageContent, Role) -> Self
 }
 impl Eq for PromptMessage
 impl Show for PromptMessage
@@ -875,6 +1007,9 @@ impl @json.FromJson for PromptMessageContent
 pub(all) struct PromptReference {
   name : String
 }
+impl PromptReference {
+  new(String) -> Self
+}
 impl Eq for PromptReference
 impl Show for PromptReference
 impl ToJson for PromptReference
@@ -885,6 +1020,7 @@ pub(all) struct ReadResourceRequest {
 }
 impl ReadResourceRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(ReadResourceRequestParams) -> Self
 }
 impl MCPCall for ReadResourceRequest
 impl Eq for ReadResourceRequest
@@ -894,6 +1030,9 @@ impl @json.FromJson for ReadResourceRequest
 
 pub(all) struct ReadResourceRequestParams {
   uri : String
+}
+impl ReadResourceRequestParams {
+  new(String) -> Self
 }
 impl Eq for ReadResourceRequestParams
 impl Show for ReadResourceRequestParams
@@ -906,6 +1045,7 @@ pub(all) struct ReadResourceResult {
 }
 impl ReadResourceResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(_meta? : Json, Array[ReadResourceResultContents]) -> Self
 }
 impl MCPResponse for ReadResourceResult
 impl Eq for ReadResourceResult
@@ -928,6 +1068,7 @@ pub(all) struct Request {
 }
 impl Request {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(String, params? : RequestParams) -> Self
 }
 impl MCPCall for Request
 impl Eq for Request
@@ -938,6 +1079,9 @@ impl @json.FromJson for Request
 pub(all) struct RequestParams {
   _meta : RequestParams_meta?
 }
+impl RequestParams {
+  new(_meta? : RequestParams_meta) -> Self
+}
 impl Eq for RequestParams
 impl Show for RequestParams
 impl ToJson for RequestParams
@@ -945,6 +1089,9 @@ impl @json.FromJson for RequestParams
 
 pub(all) struct RequestParams_meta {
   progressToken : ProgressToken?
+}
+impl RequestParams_meta {
+  new(progressToken? : ProgressToken) -> Self
 }
 impl Eq for RequestParams_meta
 impl Show for RequestParams_meta
@@ -959,6 +1106,9 @@ pub(all) struct Resource {
   size : Int64?
   uri : String
 }
+impl Resource {
+  new(annotations? : Annotations, description? : String, mimeType? : String, String, size? : Int64, String) -> Self
+}
 impl Eq for Resource
 impl Show for Resource
 impl ToJson for Resource
@@ -967,6 +1117,9 @@ impl @json.FromJson for Resource
 pub(all) struct ResourceContents {
   mimeType : String?
   uri : String
+}
+impl ResourceContents {
+  new(mimeType? : String, String) -> Self
 }
 impl Eq for ResourceContents
 impl Show for ResourceContents
@@ -978,6 +1131,7 @@ pub(all) struct ResourceListChangedNotification {
 }
 impl ResourceListChangedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(params? : ResourceListChangedNotificationParams) -> Self
 }
 impl MCPNotification for ResourceListChangedNotification
 impl Eq for ResourceListChangedNotification
@@ -988,6 +1142,9 @@ impl @json.FromJson for ResourceListChangedNotification
 pub(all) struct ResourceListChangedNotificationParams {
   _meta : Json?
 }
+impl ResourceListChangedNotificationParams {
+  new(_meta? : Json) -> Self
+}
 impl Eq for ResourceListChangedNotificationParams
 impl Show for ResourceListChangedNotificationParams
 impl ToJson for ResourceListChangedNotificationParams
@@ -995,6 +1152,9 @@ impl @json.FromJson for ResourceListChangedNotificationParams
 
 pub(all) struct ResourceReference {
   uri : String
+}
+impl ResourceReference {
+  new(String) -> Self
 }
 impl Eq for ResourceReference
 impl Show for ResourceReference
@@ -1008,6 +1168,9 @@ pub(all) struct ResourceTemplate {
   name : String
   uriTemplate : String
 }
+impl ResourceTemplate {
+  new(annotations? : Annotations, description? : String, mimeType? : String, String, String) -> Self
+}
 impl Eq for ResourceTemplate
 impl Show for ResourceTemplate
 impl ToJson for ResourceTemplate
@@ -1018,6 +1181,7 @@ pub(all) struct ResourceUpdatedNotification {
 }
 impl ResourceUpdatedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(ResourceUpdatedNotificationParams) -> Self
 }
 impl MCPNotification for ResourceUpdatedNotification
 impl Eq for ResourceUpdatedNotification
@@ -1027,6 +1191,9 @@ impl @json.FromJson for ResourceUpdatedNotification
 
 pub(all) struct ResourceUpdatedNotificationParams {
   uri : String
+}
+impl ResourceUpdatedNotificationParams {
+  new(String) -> Self
 }
 impl Eq for ResourceUpdatedNotificationParams
 impl Show for ResourceUpdatedNotificationParams
@@ -1046,6 +1213,9 @@ pub(all) struct Root {
   name : String?
   uri : String
 }
+impl Root {
+  new(name? : String, String) -> Self
+}
 impl Eq for Root
 impl Show for Root
 impl ToJson for Root
@@ -1056,6 +1226,7 @@ pub(all) struct RootsListChangedNotification {
 }
 impl RootsListChangedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(params? : RootsListChangedNotificationParams) -> Self
 }
 impl MCPNotification for RootsListChangedNotification
 impl Eq for RootsListChangedNotification
@@ -1066,6 +1237,9 @@ impl @json.FromJson for RootsListChangedNotification
 pub(all) struct RootsListChangedNotificationParams {
   _meta : Json?
 }
+impl RootsListChangedNotificationParams {
+  new(_meta? : Json) -> Self
+}
 impl Eq for RootsListChangedNotificationParams
 impl Show for RootsListChangedNotificationParams
 impl ToJson for RootsListChangedNotificationParams
@@ -1074,6 +1248,9 @@ impl @json.FromJson for RootsListChangedNotificationParams
 pub(all) struct SamplingMessage {
   content : SamplingMessageContent
   role : Role
+}
+impl SamplingMessage {
+  new(SamplingMessageContent, Role) -> Self
 }
 impl Eq for SamplingMessage
 impl Show for SamplingMessage
@@ -1098,6 +1275,9 @@ pub(all) struct ServerCapabilities {
   resources : ServerCapabilitiesResources?
   tools : ServerCapabilitiesTools?
 }
+impl ServerCapabilities {
+  new(completions? : Json, experimental? : Json, logging? : Json, prompts? : ServerCapabilitiesPrompts, resources? : ServerCapabilitiesResources, tools? : ServerCapabilitiesTools) -> Self
+}
 impl Eq for ServerCapabilities
 impl Show for ServerCapabilities
 impl ToJson for ServerCapabilities
@@ -1105,6 +1285,9 @@ impl @json.FromJson for ServerCapabilities
 
 pub(all) struct ServerCapabilitiesPrompts {
   listChanged : Bool?
+}
+impl ServerCapabilitiesPrompts {
+  new(listChanged? : Bool) -> Self
 }
 impl Eq for ServerCapabilitiesPrompts
 impl Show for ServerCapabilitiesPrompts
@@ -1115,6 +1298,9 @@ pub(all) struct ServerCapabilitiesResources {
   listChanged : Bool?
   subscribe : Bool?
 }
+impl ServerCapabilitiesResources {
+  new(listChanged? : Bool, subscribe? : Bool) -> Self
+}
 impl Eq for ServerCapabilitiesResources
 impl Show for ServerCapabilitiesResources
 impl ToJson for ServerCapabilitiesResources
@@ -1122,6 +1308,9 @@ impl @json.FromJson for ServerCapabilitiesResources
 
 pub(all) struct ServerCapabilitiesTools {
   listChanged : Bool?
+}
+impl ServerCapabilitiesTools {
+  new(listChanged? : Bool) -> Self
 }
 impl Eq for ServerCapabilitiesTools
 impl Show for ServerCapabilitiesTools
@@ -1173,6 +1362,7 @@ pub(all) struct SetLevelRequest {
 }
 impl SetLevelRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(SetLevelRequestParams) -> Self
 }
 impl MCPCall for SetLevelRequest
 impl Eq for SetLevelRequest
@@ -1182,6 +1372,9 @@ impl @json.FromJson for SetLevelRequest
 
 pub(all) struct SetLevelRequestParams {
   level : LoggingLevel
+}
+impl SetLevelRequestParams {
+  new(LoggingLevel) -> Self
 }
 impl Eq for SetLevelRequestParams
 impl Show for SetLevelRequestParams
@@ -1193,6 +1386,7 @@ pub(all) struct SubscribeRequest {
 }
 impl SubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(SubscribeRequestParams) -> Self
 }
 impl MCPCall for SubscribeRequest
 impl Eq for SubscribeRequest
@@ -1203,6 +1397,9 @@ impl @json.FromJson for SubscribeRequest
 pub(all) struct SubscribeRequestParams {
   uri : String
 }
+impl SubscribeRequestParams {
+  new(String) -> Self
+}
 impl Eq for SubscribeRequestParams
 impl Show for SubscribeRequestParams
 impl ToJson for SubscribeRequestParams
@@ -1211,6 +1408,9 @@ impl @json.FromJson for SubscribeRequestParams
 pub(all) struct TextContent {
   annotations : Annotations?
   text : String
+}
+impl TextContent {
+  new(annotations? : Annotations, String) -> Self
 }
 impl Eq for TextContent
 impl Show for TextContent
@@ -1222,6 +1422,9 @@ pub(all) struct TextResourceContents {
   text : String
   uri : String
 }
+impl TextResourceContents {
+  new(mimeType? : String, String, String) -> Self
+}
 impl Eq for TextResourceContents
 impl Show for TextResourceContents
 impl ToJson for TextResourceContents
@@ -1232,6 +1435,9 @@ pub(all) struct Tool {
   description : String?
   inputSchema : ToolInputSchema
   name : String
+}
+impl Tool {
+  new(annotations? : ToolAnnotations, description? : String, ToolInputSchema, String) -> Self
 }
 impl Eq for Tool
 impl Show for Tool
@@ -1245,6 +1451,9 @@ pub(all) struct ToolAnnotations {
   readOnlyHint : Bool?
   title : String?
 }
+impl ToolAnnotations {
+  new(destructiveHint? : Bool, idempotentHint? : Bool, openWorldHint? : Bool, readOnlyHint? : Bool, title? : String) -> Self
+}
 impl Eq for ToolAnnotations
 impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
@@ -1253,6 +1462,9 @@ impl @json.FromJson for ToolAnnotations
 pub(all) struct ToolInputSchema {
   properties : Json?
   required : Array[String]?
+}
+impl ToolInputSchema {
+  new(properties? : Json, required? : Array[String]) -> Self
 }
 impl Eq for ToolInputSchema
 impl Show for ToolInputSchema
@@ -1264,6 +1476,7 @@ pub(all) struct ToolListChangedNotification {
 }
 impl ToolListChangedNotification {
   from_message(@jsonrpc2.Message) -> Self?
+  new(params? : ToolListChangedNotificationParams) -> Self
 }
 impl MCPNotification for ToolListChangedNotification
 impl Eq for ToolListChangedNotification
@@ -1273,6 +1486,9 @@ impl @json.FromJson for ToolListChangedNotification
 
 pub(all) struct ToolListChangedNotificationParams {
   _meta : Json?
+}
+impl ToolListChangedNotificationParams {
+  new(_meta? : Json) -> Self
 }
 impl Eq for ToolListChangedNotificationParams
 impl Show for ToolListChangedNotificationParams
@@ -1284,6 +1500,7 @@ pub(all) struct UnsubscribeRequest {
 }
 impl UnsubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+  new(UnsubscribeRequestParams) -> Self
 }
 impl MCPCall for UnsubscribeRequest
 impl Eq for UnsubscribeRequest
@@ -1293,6 +1510,9 @@ impl @json.FromJson for UnsubscribeRequest
 
 pub(all) struct UnsubscribeRequestParams {
   uri : String
+}
+impl UnsubscribeRequestParams {
+  new(String) -> Self
 }
 impl Eq for UnsubscribeRequestParams
 impl Show for UnsubscribeRequestParams
