@@ -126,19 +126,27 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		fmt.Sprintf("pub fn %v::new(", name),
 	}
 
+	selfVar := "self"
+	if len(d.Properties) == 0 {
+		selfVar = "_self"
+	}
 	toJSONLines := []string{
 		prefix + "///|",
-		fmt.Sprintf(prefix+"pub impl ToJson for %v with to_json(self) {", name),
+		fmt.Sprintf(prefix+"pub impl ToJson for %v with to_json(%v) {", name, selfVar),
 		prefix + "  let obj = {}",
 	}
 
 	var fromJSONLastLineFields []string
+	objVar := "obj"
+	if len(d.Properties) == 0 {
+		objVar = "_obj"
+	}
 	fromJSONLines := []string{
 		prefix + "///|",
 		fmt.Sprintf(prefix+"pub impl @json.FromJson for %v with from_json(json, path) {", name),
-		"  guard json is Object(obj) else {",
-		`    raise @json.JsonDecodeError((path, "expected object"))`,
-		"  }",
+		fmt.Sprintf(prefix+"  guard json is Object(%v) else {", objVar),
+		prefix + `    raise @json.JsonDecodeError((path, "expected object"))`,
+		prefix + "  }",
 	}
 
 	props := make([]string, 0, len(d.Properties))
@@ -148,7 +156,6 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	sort.Strings(props)
 
 	jsonRPCConsts := map[string]string{}
-	var needsCustomJSON bool
 	for _, propName := range props {
 		prop := d.Properties[propName]
 		if prop.Description != "" {
@@ -164,7 +171,6 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 			must(err)
 			jsonRPCConsts[propName] = string(value)
 			if propName != "method" {
-				needsCustomJSON = true
 				toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"  obj[%q] = %s.to_json()", propName, value))
 				fromJSONLines = append(fromJSONLines,
 					fmt.Sprintf(prefix+"  guard obj[%q] == Some(String(%s)) else {", propName, value),
@@ -179,10 +185,6 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safeName, mbtType))
 		fromJSONLastLineFields = append(fromJSONLastLineFields, safeName)
 
-		if safeName != propName {
-			needsCustomJSON = true
-		}
-
 		if strings.HasSuffix(mbtType, "?") {
 			toJSONLines = append(toJSONLines,
 				fmt.Sprintf(prefix+"  if self.%v is Some(v) {", propName),
@@ -191,9 +193,17 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 			fromJSONLines = append(fromJSONLines,
 				fmt.Sprintf(prefix+"  let %v : %v = match obj[%[1]q] {", propName, mbtType),
 				prefix+"    Some(v) =>",
-				prefix+"      match @json.from_json?(v) {",
-				prefix+"        Ok(v) => Some(v)",
-				prefix+"        Err(e) => raise e",
+				prefix+"      match @json.from_json?(v) {")
+			if mbtType == "Int64?" {
+				fromJSONLines = append(fromJSONLines,
+					prefix+`Ok(Number(v)) => Some(v.to_int64())`,
+					prefix+`_ => raise @json.JsonDecodeError((path, "expected number; got \{v}"))`)
+			} else {
+				fromJSONLines = append(fromJSONLines,
+					prefix+"        Ok(v) => Some(v)",
+					prefix+"        Err(e) => raise e")
+			}
+			fromJSONLines = append(fromJSONLines,
 				prefix+"      }",
 				prefix+"    None => None",
 				prefix+"  }")
@@ -213,16 +223,14 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		}
 	}
 
-	if needsCustomJSON {
-		toJSONLines = append(toJSONLines, prefix+"  obj.to_json()", "}")
-		fromJSONLines = append(fromJSONLines, prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }", prefix+"}")
-		lines = append(lines,
-			prefix+"} derive(Show, Eq)")
-		out.typesJSONFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
-		out.typesJSONFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
-	} else {
-		lines = append(lines, prefix+"} derive(Show, Eq, FromJson, ToJson)")
-	}
+	toJSONLines = append(toJSONLines, prefix+"  obj.to_json()", "}")
+	fromJSONLines = append(fromJSONLines,
+		fmt.Sprintf(prefix+"  %v::{ ", name)+strings.Join(fromJSONLastLineFields, ", ")+" }",
+		prefix+"}")
+	lines = append(lines,
+		prefix+"} derive(Show, Eq)")
+	out.typesJSONFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
+	out.typesJSONFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
 
 	newLines = append(newLines,
 		fmt.Sprintf(prefix+") -> %v {", name),
