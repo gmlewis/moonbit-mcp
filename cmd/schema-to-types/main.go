@@ -56,6 +56,7 @@ func main() {
 
 	out := &outBufsT{}
 	out.typesFile.WriteString(fileHeader)
+	out.typesJSONEnumsFile.WriteString(fileHeader)
 	out.typesJSONFile.WriteString(fileHeader)
 	out.typesNewFile.WriteString(fileHeader)
 
@@ -108,12 +109,15 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	}
 
 	if len(d.Properties) == 0 && len(d.AnyOf) > 0 || len(d.Enum) > 0 {
-		return d.convertEnum(name, prefix)
+		return d.convertEnum(out, name, prefix)
 	}
 
 	lines := []string{prefix + "///|"}
 	if d.Description != "" {
-		lines = append(lines, fmt.Sprintf(prefix+"/// %v: %v", name, strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)))
+		desc := strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)
+		// clean up trailing whitespace within description:
+		desc = strings.Replace(desc, " \n", "\n", -1)
+		lines = append(lines, fmt.Sprintf(prefix+"/// %v: %v", name, desc))
 	}
 	lines = append(lines, fmt.Sprintf(prefix+"pub(all) struct %v {", name))
 
@@ -148,7 +152,10 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	for _, propName := range props {
 		prop := d.Properties[propName]
 		if prop.Description != "" {
-			comment := fmt.Sprintf(prefix+"  /// %v", strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1))
+			desc := strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1)
+			// clean up trailing whitespace within description:
+			desc = strings.Replace(desc, " \n", "\n", -1)
+			comment := fmt.Sprintf(prefix+"  /// %v", desc)
 			lines = append(lines, comment)
 			newLines = append(newLines, comment)
 		}
@@ -229,10 +236,33 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	return strings.Join(lines, "\n")
 }
 
-func (d *Definition) convertEnum(name, prefix string) string {
+func (d *Definition) convertEnum(out *outBufsT, name, prefix string) string {
 	lines := []string{
 		prefix + "///|",
 		fmt.Sprintf(prefix+"pub enum %v {", name),
+	}
+
+	toJSONLines := []string{
+		prefix + "///|",
+		fmt.Sprintf(prefix+"pub impl ToJson for %v with to_json(self) {", name),
+		prefix + "  match self {",
+	}
+
+	var fromJSONOptions []string
+	fromJSONLines := []string{
+		prefix + "///|",
+		fmt.Sprintf(prefix+"pub impl @json.FromJson for %v with from_json(json, path) {", name),
+	}
+	if len(d.Enum) > 0 {
+		fromJSONOptions = make([]string, 0, len(d.Enum))
+		fromJSONLines = append(fromJSONLines,
+			prefix+"  guard json is String(s) else {",
+			prefix+`    raise @json.JsonDecodeError((path, "expected string"))`,
+			prefix+"  }",
+			prefix+"  match s {",
+		)
+	} else {
+
 	}
 
 	// two different kinds of enums: anyOf:
@@ -240,6 +270,7 @@ func (d *Definition) convertEnum(name, prefix string) string {
 		refType, _ := def.refType(name, nil)
 		refType = strings.TrimSuffix(refType, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"  %v(%[1]v)", refType))
+		toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"    %v(v) => v.to_json(),", refType))
 	}
 	// or explicit enum:
 	for _, rawEnum := range d.Enum {
@@ -253,9 +284,30 @@ func (d *Definition) convertEnum(name, prefix string) string {
 			enumName = "NoServers"
 		}
 		lines = append(lines, fmt.Sprintf(prefix+"  %v // = %v", enumName, string(enumBuf)))
+		toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"    %v => %s.to_json(),", enumName, string(enumBuf)))
+		fromJSONOptions = append(fromJSONOptions, noQuotesValue)
+		fromJSONLines = append(fromJSONLines, fmt.Sprintf(prefix+"    %q => %v", noQuotesValue, enumName))
 	}
 
 	lines = append(lines, prefix+"} derive(Show, Eq)")
+
+	toJSONLines = append(toJSONLines, prefix+"  }")
+	toJSONLines = append(toJSONLines, prefix+"}")
+	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
+
+	if len(d.Enum) > 0 {
+		fromJSONLines = append(fromJSONLines,
+			prefix+"  _ =>",
+			prefix+"  raise @json.JsonDecodeError(",
+			fmt.Sprintf(prefix+`    (path, "expected one of: '%v'; got '\{s}'"),`, strings.Join(fromJSONOptions, "', '")),
+			prefix+"  )",
+			prefix+"  }")
+	} else {
+
+	}
+	fromJSONLines = append(fromJSONLines, prefix+"}")
+	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
+
 	return strings.Join(lines, "\n")
 }
 
@@ -307,7 +359,7 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 			arrayType, anyOf := prop.Items.refType(propName, nil)
 			if len(anyOf) > 0 {
 				enumName := d.name + titleCase(propName)
-				enumBody := prop.Items.convertEnum(enumName, "")
+				enumBody := prop.Items.convertEnum(out, enumName, "")
 				d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 				// return fmt.Sprintf("Array[%v]", enumName) + suffix + " // " + strings.Join(anyOf, " | ")
 				return fmt.Sprintf("Array[%v]", enumName) // + " // " + strings.Join(anyOf, " | ")
@@ -321,7 +373,7 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 	case `"string"`:
 		if len(prop.Enum) > 0 {
 			enumName := titleCase(propName)
-			enumBody := prop.convertEnum(enumName, "")
+			enumBody := prop.convertEnum(out, enumName, "")
 			d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 			return enumName + suffix
 		}
@@ -339,7 +391,7 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 		refType, anyOf := prop.refType(propName, d.Required)
 		if len(anyOf) > 0 {
 			enumName := d.name + titleCase(propName)
-			enumBody := prop.convertEnum(enumName, "")
+			enumBody := prop.convertEnum(out, enumName, "")
 			d.helperStructsAndMethods = append(d.helperStructsAndMethods, enumBody)
 			return enumName
 		}

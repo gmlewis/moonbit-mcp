@@ -10,6 +10,8 @@ import (
 type outBufsT struct {
 	// enums and structs defined in types.mbt
 	typesFile bytes.Buffer
+	// ToJson and FromJson enum implementations defined in types-json-enums.mbt
+	typesJSONEnumsFile bytes.Buffer
 	// ToJson and FromJson trait implementations defined in types-json.mbt
 	typesJSONFile bytes.Buffer
 	// ::new functions defined in types-new.mbt
@@ -19,6 +21,8 @@ type outBufsT struct {
 func (o *outBufsT) writeBuffersToFiles(baseDir string) {
 	filePath := filepath.Join(baseDir, "types.mbt")
 	writeFile(filePath, &o.typesFile)
+	filePath = filepath.Join(baseDir, "types-json-enums.mbt")
+	writeFile(filePath, &o.typesJSONEnumsFile)
 	filePath = filepath.Join(baseDir, "types-json.mbt")
 	writeFile(filePath, &o.typesJSONFile)
 	filePath = filepath.Join(baseDir, "types-new.mbt")
