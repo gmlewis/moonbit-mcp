@@ -10,24 +10,21 @@ fn main {
   stdio.start(ctx) |> ignore()
 
   // Send a call
-  let params = { "key1": "value1" }.to_json()
-  guard stdio.send(
-      ctx,
-      @jsonrpc2.new_call(@jsonrpc2.ID::number(1), "method1", params),
-    )
-    is None else {
+  guard stdio.send_call(ctx, @mcp.Request::new("method1")) is None else {
     println("Failed to send message")
   }
 
   // Send a notification
-  let params = { "key2": "value2" }.to_json()
-  guard stdio.send(ctx, @jsonrpc2.new_notification("method2", params)) is None else {
+  guard stdio.send_notification(ctx, @mcp.Notification::new("method2")) is None else {
     println("Failed to send message")
   }
 
   // Send a response
-  let result = Ok(params)
-  guard stdio.send(ctx, @jsonrpc2.new_response(@jsonrpc2.ID::number(1), result))
+  guard stdio.send_response(
+      ctx,
+      @jsonrpc2.ID::number(1),
+      @mcp.CustomResult::new(),
+    )
     is None else {
     println("Failed to send message")
   }

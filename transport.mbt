@@ -19,8 +19,12 @@ pub trait Transport {
   /// as they will implicitly call start().
   start(Self, Context) -> TransportError?
 
-  /// Sends a JSON-RPC message (call, notification, or response).
-  send(Self, Context, @jsonrpc2.Message) -> TransportError?
+  /// Sends an MCPCall.
+  send_call(Self, Context, &MCPCall) -> TransportError?
+  /// Sends an MCPNotification.
+  send_notification(Self, Context, &MCPNotification) -> TransportError?
+  /// Sends an MCPResponse with the provided ID.
+  send_response(Self, Context, @jsonrpc2.ID, &MCPResponse) -> TransportError?
 
   /// Closes the connection.
   close(Self) -> TransportError?
@@ -40,6 +44,7 @@ pub trait Transport {
 
 ///|
 pub struct StdioTransport {
+  mut last_id : Int64
   mut close_handler : (() -> Unit)?
   mut error_handler : ((TransportError) -> Unit)?
   mut message_handler : ((Context, @jsonrpc2.Message) -> Unit)?
@@ -55,6 +60,7 @@ pub fn StdioTransport::new() -> StdioTransport {
   let reader = None
   let writer = None
   let self = StdioTransport::{
+    last_id: 0,
     close_handler,
     error_handler,
     message_handler,
@@ -113,7 +119,37 @@ pub impl @io.Writer for StdioTransport with write(_self, bytes) {
 }
 
 ///|
-pub impl Transport for StdioTransport with send(self, _context, message) {
+pub impl Transport for StdioTransport with send_call(self, context, message) {
+  self.last_id += 1
+  let id = @jsonrpc2.ID::number(self.last_id)
+  self.send(context, message.to_call(id))
+}
+
+///|
+pub impl Transport for StdioTransport with send_notification(
+  self,
+  context,
+  message
+) {
+  self.send(context, message.to_notification())
+}
+
+///|
+pub impl Transport for StdioTransport with send_response(
+  self,
+  context,
+  id,
+  message
+) {
+  self.send(context, message.to_response(id))
+}
+
+///|
+fn StdioTransport::send(
+  self : StdioTransport,
+  _context : Context,
+  message : @jsonrpc2.Message
+) -> TransportError? {
   let result = self.writer.unwrap().write(message)
   guard result is (_, None) else {
     if self.error_handler is Some(handler) {
