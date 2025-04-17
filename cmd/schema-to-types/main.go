@@ -186,9 +186,13 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		fromJSONLastLineFields = append(fromJSONLastLineFields, safeName)
 
 		if strings.HasSuffix(mbtType, "?") {
+			var injectToDouble string
+			if mbtType == "Int64?" {
+				injectToDouble = ".to_double()"
+			}
 			toJSONLines = append(toJSONLines,
 				fmt.Sprintf(prefix+"  if self.%v is Some(v) {", propName),
-				fmt.Sprintf(prefix+"    obj[%q] = v.to_json()", propName),
+				fmt.Sprintf(prefix+"    obj[%q] = v%v.to_json()", propName, injectToDouble),
 				"  }")
 			fromJSONLines = append(fromJSONLines,
 				fmt.Sprintf(prefix+"  let %v : %v = match obj[%[1]q] {", propName, mbtType),

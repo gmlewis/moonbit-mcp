@@ -1,4 +1,41 @@
 ///|
+test "serialize CompleteResultCompletion to JSON" {
+  // Create a CompleteResultCompletion using the constructor function
+  let completion = CompleteResultCompletion::new(hasMore=true, total=100, [
+    "option1", "option2", "option3",
+  ])
+
+  // Convert to JSON
+  let json = completion.to_json()
+
+  // Verify the resulting JSON has the expected structure
+  inspect!(
+    json,
+    content=
+      #|Object({"hasMore": True, "total": Number(100), "values": Array([String("option1"), String("option2"), String("option3")])})
+    ,
+  )
+}
+
+///|
+test "serialize CompleteResultCompletion with only required fields" {
+  // Create a CompleteResultCompletion using the constructor function with only required fields
+  let completion = CompleteResultCompletion::new(["single_value"])
+
+  // Convert to JSON
+  let json = completion.to_json()
+
+  // Verify the resulting JSON has the expected structure
+  inspect!(
+    json,
+    content=
+      #|Object({"values": Array([String("single_value")])})
+    ,
+  )
+}
+
+// Existing tests for FromJson implementation follow
+///|
 test "parse CompleteResultCompletion from JSON" {
   // Create a JSON object with the properties we want to test
   let json_string =
@@ -7,10 +44,7 @@ test "parse CompleteResultCompletion from JSON" {
     #|  "total": 42,
     #|  "values": ["completion1", "completion2", "completion3"]
     #|}
-  let json = match @json.parse?(json_string) {
-    Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
-  }
+  let json = @json.parse!(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
   let result : CompleteResultCompletion = @json.from_json!(json)
@@ -35,10 +69,7 @@ test "parse CompleteResultCompletion from JSON with bad number" {
     #|  "total": "42",
     #|  "values": ["completion1", "completion2", "completion3"]
     #|}
-  let json = match @json.parse?(json_string) {
-    Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
-  }
+  let json = @json.parse!(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
   let result : Result[CompleteResultCompletion, _] = @json.from_json?(json)
@@ -58,10 +89,7 @@ test "parse CompleteResultCompletion with missing optional fields" {
     #|{
     #|  "values": ["only", "required", "field"]
     #|}
-  let json = match @json.parse?(json_string) {
-    Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
-  }
+  let json = @json.parse!(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
   let result : CompleteResultCompletion = @json.from_json!(json)
@@ -84,10 +112,7 @@ test "error when required field is missing" {
     #|  "hasMore": true,
     #|  "total": 42
     #|}
-  let json = match @json.parse?(json_string) {
-    Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
-  }
+  let json = @json.parse!(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
   let result : Result[CompleteResultCompletion, _] = @json.from_json?(json)

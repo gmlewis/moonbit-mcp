@@ -443,7 +443,7 @@ pub impl ToJson for CompleteResultCompletion with to_json(self) {
     obj["hasMore"] = v.to_json()
   }
   if self.total is Some(v) {
-    obj["total"] = v.to_json()
+    obj["total"] = v.to_double().to_json()
   }
   obj["values"] = self.values.to_json()
   obj.to_json()
@@ -2450,7 +2450,7 @@ pub impl ToJson for Resource with to_json(self) {
   }
   obj["name"] = self.name.to_json()
   if self.size is Some(v) {
-    obj["size"] = v.to_json()
+    obj["size"] = v.to_double().to_json()
   }
   obj["uri"] = self.uri.to_json()
   obj.to_json()
