@@ -90,7 +90,7 @@ pub(all) struct CallToolResult {
 } derive(Show, Eq)
 
 ///|
-pub enum CallToolResultContent {
+pub(all) enum CallToolResultContent {
   TextContent(TextContent)
   ImageContent(ImageContent)
   AudioContent(AudioContent)

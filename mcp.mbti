@@ -8,6 +8,10 @@ import(
 // Values
 fn get_char() -> Byte
 
+fn new_call_tool_error_result(annotations? : Annotations, String) -> CallToolResult
+
+fn new_call_tool_text_result(annotations? : Annotations, String) -> CallToolResultContent
+
 fn put_char(Byte) -> Unit
 
 fn raw_audio(AudioContent) -> Bytes!
@@ -105,7 +109,7 @@ impl Show for CallToolResult
 impl ToJson for CallToolResult
 impl @moonbitlang/core/json.FromJson for CallToolResult
 
-pub enum CallToolResultContent {
+pub(all) enum CallToolResultContent {
   TextContent(TextContent)
   ImageContent(ImageContent)
   AudioContent(AudioContent)
@@ -956,6 +960,8 @@ impl Show for PromptArgument
 impl ToJson for PromptArgument
 impl @moonbitlang/core/json.FromJson for PromptArgument
 
+pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
+
 pub(all) struct PromptListChangedNotification {
   params : PromptListChangedNotificationParams?
 }
@@ -1125,6 +1131,8 @@ impl Show for ResourceContents
 impl ToJson for ResourceContents
 impl @moonbitlang/core/json.FromJson for ResourceContents
 
+pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
+
 pub(all) struct ResourceListChangedNotification {
   params : ResourceListChangedNotificationParams?
 }
@@ -1265,6 +1273,17 @@ impl Eq for SamplingMessageContent
 impl Show for SamplingMessageContent
 impl ToJson for SamplingMessageContent
 impl @moonbitlang/core/json.FromJson for SamplingMessageContent
+
+pub struct Server {
+}
+impl Server {
+  new() -> Self
+  run(Self) -> Unit
+  with_new_prompt(Self, String, String, PromptFunc) -> Unit
+  with_new_resource(Self, String, String, String, String, ResourceFunc) -> Unit
+  with_new_tool(Self, String, String, ToolFunc) -> Unit
+  with_stdio_transport(Self) -> Unit
+}
 
 pub(all) struct ServerCapabilities {
   completions : Json?
@@ -1457,6 +1476,8 @@ impl Eq for ToolAnnotations
 impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
 impl @moonbitlang/core/json.FromJson for ToolAnnotations
+
+pub(all) type ToolFunc (Json?) -> CallToolResult
 
 pub(all) struct ToolInputSchema {
   properties : Json?

@@ -1,0 +1,25 @@
+package "gmlewis/mcp/examples/basic-tool-server"
+
+import(
+  "moonbitlang/core/json"
+)
+
+// Values
+
+// Types and methods
+type Content
+impl Eq for Content
+impl Show for Content
+impl ToJson for Content
+impl @json.FromJson for Content
+
+type SayHelloArguments
+impl Eq for SayHelloArguments
+impl Show for SayHelloArguments
+impl ToJson for SayHelloArguments
+impl @json.FromJson for SayHelloArguments
+
+// Type aliases
+
+// Traits
+

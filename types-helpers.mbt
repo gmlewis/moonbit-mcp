@@ -13,5 +13,20 @@ pub fn raw_image(self : ImageContent) -> Bytes!Error {
   @base64.std_decode2bytes!(self.data)
 }
 
-// TODO: Any struct with `Int64` needs custom ToJson and FromJson due
-// to MoonBit's handling of Int64 as strings.
+///|
+pub fn new_call_tool_text_result(
+  annotations? : Annotations,
+  text : String
+) -> CallToolResultContent {
+  CallToolResultContent::TextContent(TextContent::new(annotations?, text))
+}
+
+///|
+pub fn new_call_tool_error_result(
+  annotations? : Annotations,
+  text : String
+) -> CallToolResult {
+  CallToolResult::new(isError=true, [
+    CallToolResultContent::TextContent(TextContent::new(annotations?, text)),
+  ])
+}
