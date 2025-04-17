@@ -71,7 +71,7 @@ impl CallToolRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(CallToolRequestParams) -> Self
 }
-impl MCPCall for CallToolRequest
+impl MCPRequest for CallToolRequest
 impl Eq for CallToolRequest
 impl Show for CallToolRequest
 impl ToJson for CallToolRequest
@@ -211,7 +211,7 @@ impl CompleteRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(CompleteRequestParams) -> Self
 }
-impl MCPCall for CompleteRequest
+impl MCPRequest for CompleteRequest
 impl Eq for CompleteRequest
 impl Show for CompleteRequest
 impl ToJson for CompleteRequest
@@ -290,7 +290,7 @@ impl CreateMessageRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(CreateMessageRequestParams) -> Self
 }
-impl MCPCall for CreateMessageRequest
+impl MCPRequest for CreateMessageRequest
 impl Eq for CreateMessageRequest
 impl Show for CreateMessageRequest
 impl ToJson for CreateMessageRequest
@@ -392,7 +392,7 @@ impl GetPromptRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(GetPromptRequestParams) -> Self
 }
-impl MCPCall for GetPromptRequest
+impl MCPRequest for GetPromptRequest
 impl Eq for GetPromptRequest
 impl Show for GetPromptRequest
 impl ToJson for GetPromptRequest
@@ -468,7 +468,7 @@ impl InitializeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(InitializeRequestParams) -> Self
 }
-impl MCPCall for InitializeRequest
+impl MCPRequest for InitializeRequest
 impl Eq for InitializeRequest
 impl Show for InitializeRequest
 impl ToJson for InitializeRequest
@@ -535,7 +535,7 @@ impl ListPromptsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListPromptsRequestParams) -> Self
 }
-impl MCPCall for ListPromptsRequest
+impl MCPRequest for ListPromptsRequest
 impl Eq for ListPromptsRequest
 impl Show for ListPromptsRequest
 impl ToJson for ListPromptsRequest
@@ -574,7 +574,7 @@ impl ListResourceTemplatesRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListResourceTemplatesRequestParams) -> Self
 }
-impl MCPCall for ListResourceTemplatesRequest
+impl MCPRequest for ListResourceTemplatesRequest
 impl Eq for ListResourceTemplatesRequest
 impl Show for ListResourceTemplatesRequest
 impl ToJson for ListResourceTemplatesRequest
@@ -613,7 +613,7 @@ impl ListResourcesRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListResourcesRequestParams) -> Self
 }
-impl MCPCall for ListResourcesRequest
+impl MCPRequest for ListResourcesRequest
 impl Eq for ListResourcesRequest
 impl Show for ListResourcesRequest
 impl ToJson for ListResourcesRequest
@@ -652,7 +652,7 @@ impl ListRootsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListRootsRequestParams) -> Self
 }
-impl MCPCall for ListRootsRequest
+impl MCPRequest for ListRootsRequest
 impl Eq for ListRootsRequest
 impl Show for ListRootsRequest
 impl ToJson for ListRootsRequest
@@ -701,7 +701,7 @@ impl ListToolsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListToolsRequestParams) -> Self
 }
-impl MCPCall for ListToolsRequest
+impl MCPRequest for ListToolsRequest
 impl Eq for ListToolsRequest
 impl Show for ListToolsRequest
 impl ToJson for ListToolsRequest
@@ -832,7 +832,7 @@ impl PaginatedRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(String, params? : PaginatedRequestParams) -> Self
 }
-impl MCPCall for PaginatedRequest
+impl MCPRequest for PaginatedRequest
 impl Eq for PaginatedRequest
 impl Show for PaginatedRequest
 impl ToJson for PaginatedRequest
@@ -870,7 +870,7 @@ impl PingRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : PingRequestParams) -> Self
 }
-impl MCPCall for PingRequest
+impl MCPRequest for PingRequest
 impl Eq for PingRequest
 impl Show for PingRequest
 impl ToJson for PingRequest
@@ -1028,7 +1028,7 @@ impl ReadResourceRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(ReadResourceRequestParams) -> Self
 }
-impl MCPCall for ReadResourceRequest
+impl MCPRequest for ReadResourceRequest
 impl Eq for ReadResourceRequest
 impl Show for ReadResourceRequest
 impl ToJson for ReadResourceRequest
@@ -1076,7 +1076,7 @@ impl Request {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(String, params? : RequestParams) -> Self
 }
-impl MCPCall for Request
+impl MCPRequest for Request
 impl Eq for Request
 impl Show for Request
 impl ToJson for Request
@@ -1385,7 +1385,7 @@ impl SetLevelRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(SetLevelRequestParams) -> Self
 }
-impl MCPCall for SetLevelRequest
+impl MCPRequest for SetLevelRequest
 impl Eq for SetLevelRequest
 impl Show for SetLevelRequest
 impl ToJson for SetLevelRequest
@@ -1423,7 +1423,7 @@ impl SubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(SubscribeRequestParams) -> Self
 }
-impl MCPCall for SubscribeRequest
+impl MCPRequest for SubscribeRequest
 impl Eq for SubscribeRequest
 impl Show for SubscribeRequest
 impl ToJson for SubscribeRequest
@@ -1541,7 +1541,7 @@ impl UnsubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(UnsubscribeRequestParams) -> Self
 }
-impl MCPCall for UnsubscribeRequest
+impl MCPRequest for UnsubscribeRequest
 impl Eq for UnsubscribeRequest
 impl Show for UnsubscribeRequest
 impl ToJson for UnsubscribeRequest
@@ -1561,7 +1561,7 @@ impl @moonbitlang/core/json.FromJson for UnsubscribeRequestParams
 // Type aliases
 
 // Traits
-pub trait MCPCall {
+pub trait MCPRequest {
   to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
 }
 

@@ -471,7 +471,7 @@ func (d *Definition) genRequestHelperMethods(jsonRPCConsts map[string]string) {
 
 	lines := []string{
 		"///|",
-		fmt.Sprintf("pub impl MCPCall for %v with to_call(self, id) {", d.name),
+		fmt.Sprintf("pub impl MCPRequest for %v with to_call(self, id) {", d.name),
 		fmt.Sprintf("  @jsonrpc2.new_call(id, %v, self.params.to_json())", method),
 		"}",
 		"",

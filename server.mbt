@@ -1,14 +1,24 @@
 ///|
 pub struct Server {
-  tools : Map[String, &MCPTool]
+  prompts : Map[String, PromptFunc]
+  resources : Map[String, ResourceFunc]
+  tools : Map[String, ServerTool]
   mut transport : &Transport
 }
 
 ///|
+pub struct ServerTool {
+  tool : &MCPTool
+  list_changed : Bool
+}
+
+///|
 pub fn Server::new() -> Server {
+  let prompts = {}
+  let resources = {}
   let tools = {}
   let transport = StdioTransport::new()
-  Server::{ tools, transport }
+  Server::{ prompts, resources, tools, transport }
 }
 
 ///|
@@ -17,9 +27,13 @@ pub fn Server::with_stdio_transport(self : Server, stdio : &Transport) -> Unit {
 }
 
 ///|
-pub fn Server::with_tool(self : Server, tool : &MCPTool) -> Unit {
+pub fn Server::with_tool(
+  self : Server,
+  tool : &MCPTool,
+  list_changed~ : Bool = false
+) -> Unit {
   let t = tool.as_tool()
-  self.tools[t.name] = tool
+  self.tools[t.name] = ServerTool::{ tool, list_changed }
 }
 
 ///|

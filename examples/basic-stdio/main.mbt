@@ -6,11 +6,11 @@ fn main {
     ..with_message_handler(message_handler)
 
   //
-  let ctx = @mcp.Context::new()
+  let ctx = @mcp.Context::new().with_timeout(1000)
   stdio.start(ctx) |> ignore()
 
   // Send a call
-  guard stdio.send_call(ctx, @mcp.Request::new("method1")) is None else {
+  guard stdio.send_request(ctx, @mcp.Request::new("method1")) is None else {
     println("Failed to send message")
   }
 

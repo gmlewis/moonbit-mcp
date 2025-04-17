@@ -55,7 +55,7 @@ pub(all) struct CallToolRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for CallToolRequest with to_call(self, id) {
+pub impl MCPRequest for CallToolRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "tools/call", self.params.to_json())
 }
 
@@ -237,7 +237,7 @@ pub(all) enum CompleteRequestParamsRef {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for CompleteRequest with to_call(self, id) {
+pub impl MCPRequest for CompleteRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "completion/complete", self.params.to_json())
 }
 
@@ -320,7 +320,7 @@ pub(all) enum IncludeContext {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for CreateMessageRequest with to_call(self, id) {
+pub impl MCPRequest for CreateMessageRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "sampling/createMessage", self.params.to_json())
 }
 
@@ -411,7 +411,7 @@ pub(all) struct GetPromptRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for GetPromptRequest with to_call(self, id) {
+pub impl MCPRequest for GetPromptRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "prompts/get", self.params.to_json())
 }
 
@@ -489,7 +489,7 @@ pub(all) struct InitializeRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for InitializeRequest with to_call(self, id) {
+pub impl MCPRequest for InitializeRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "initialize", self.params.to_json())
 }
 
@@ -583,7 +583,7 @@ pub(all) struct ListPromptsRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ListPromptsRequest with to_call(self, id) {
+pub impl MCPRequest for ListPromptsRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "prompts/list", self.params.to_json())
 }
 
@@ -642,7 +642,7 @@ pub(all) struct ListResourceTemplatesRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ListResourceTemplatesRequest with to_call(self, id) {
+pub impl MCPRequest for ListResourceTemplatesRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "resources/templates/list", self.params.to_json())
 }
 
@@ -701,7 +701,7 @@ pub(all) struct ListResourcesRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ListResourcesRequest with to_call(self, id) {
+pub impl MCPRequest for ListResourcesRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "resources/list", self.params.to_json())
 }
 
@@ -770,7 +770,7 @@ pub(all) struct ListRootsRequestParams_meta {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ListRootsRequest with to_call(self, id) {
+pub impl MCPRequest for ListRootsRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "roots/list", self.params.to_json())
 }
 
@@ -828,7 +828,7 @@ pub(all) struct ListToolsRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ListToolsRequest with to_call(self, id) {
+pub impl MCPRequest for ListToolsRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "tools/list", self.params.to_json())
 }
 
@@ -1015,7 +1015,7 @@ pub(all) struct PaginatedRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for PaginatedRequest with to_call(self, id) {
+pub impl MCPRequest for PaginatedRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, self.method_, self.params.to_json())
 }
 
@@ -1075,7 +1075,7 @@ pub(all) struct PingRequestParams_meta {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for PingRequest with to_call(self, id) {
+pub impl MCPRequest for PingRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "ping", self.params.to_json())
 }
 
@@ -1231,7 +1231,7 @@ pub(all) struct ReadResourceRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for ReadResourceRequest with to_call(self, id) {
+pub impl MCPRequest for ReadResourceRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "resources/read", self.params.to_json())
 }
 
@@ -1296,7 +1296,7 @@ pub(all) struct RequestParams_meta {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for Request with to_call(self, id) {
+pub impl MCPRequest for Request with to_call(self, id) {
   @jsonrpc2.new_call(id, self.method_, self.params.to_json())
 }
 
@@ -1623,7 +1623,7 @@ pub(all) struct SetLevelRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for SetLevelRequest with to_call(self, id) {
+pub impl MCPRequest for SetLevelRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "logging/setLevel", self.params.to_json())
 }
 
@@ -1654,7 +1654,7 @@ pub(all) struct SubscribeRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for SubscribeRequest with to_call(self, id) {
+pub impl MCPRequest for SubscribeRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "resources/subscribe", self.params.to_json())
 }
 
@@ -1803,7 +1803,7 @@ pub(all) struct UnsubscribeRequestParams {
 } derive(Show, Eq)
 
 ///|
-pub impl MCPCall for UnsubscribeRequest with to_call(self, id) {
+pub impl MCPRequest for UnsubscribeRequest with to_call(self, id) {
   @jsonrpc2.new_call(id, "resources/unsubscribe", self.params.to_json())
 }
 

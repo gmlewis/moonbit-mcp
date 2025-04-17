@@ -1,9 +1,22 @@
 ///|
-pub struct Context {}
+const DEFAULT_TIMEOUT_MILLIS = 10_000 // 10 seconds
+
+///|
+const MAX_TIMEOUT_MILLIS = 600_000 // 10 minutes
+
+///|
+pub struct Context {
+  timeout_millis : Int?
+}
 
 ///|
 pub fn Context::new() -> Context {
-  Context::{  }
+  Context::{ timeout_millis: None }
+}
+
+///|
+pub fn Context::with_timeout(self : Context, timeout_millis : Int) -> Context {
+  Context::{ ..self, timeout_millis: Some(timeout_millis) }
 }
 
 ///|
@@ -19,8 +32,8 @@ pub trait Transport {
   /// as they will implicitly call start().
   start(Self, Context) -> TransportError?
 
-  /// Sends an MCPCall.
-  send_call(Self, Context, &MCPCall) -> TransportError?
+  /// Sends an MCPRequest.
+  send_request(Self, Context, &MCPRequest) -> TransportError?
   /// Sends an MCPNotification.
   send_notification(Self, Context, &MCPNotification) -> TransportError?
   /// Sends an MCPResponse with the provided ID.
@@ -40,10 +53,18 @@ pub trait Transport {
   /// with_message_handler sets the callback for when a message (call, notification, or response) is received over the connection.
   /// Partially deserializes the messages to pass a @jsonrpc2.Message
   with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
+
+  // with_timeout sets the default timeout for requests.
+  with_timeout(Self, Int) -> Unit
+
+  /// with_max_timeout sets the maximum timeout for requests.
+  with_max_timeout(Self, Int) -> Unit
 }
 
 ///|
 pub struct StdioTransport {
+  mut default_timeout_millis : Int
+  mut max_timeout_millis : Int
   mut last_id : Int64
   mut close_handler : (() -> Unit)?
   mut error_handler : ((TransportError) -> Unit)?
@@ -54,12 +75,16 @@ pub struct StdioTransport {
 
 ///|
 pub fn StdioTransport::new() -> StdioTransport {
+  let default_timeout_millis = DEFAULT_TIMEOUT_MILLIS
+  let max_timeout_millis = MAX_TIMEOUT_MILLIS
   let close_handler = None
   let error_handler = None
   let message_handler = None
   let reader = None
   let writer = None
   let self = StdioTransport::{
+    default_timeout_millis,
+    max_timeout_millis,
     last_id: 0,
     close_handler,
     error_handler,
@@ -105,6 +130,16 @@ pub impl Transport for StdioTransport with with_message_handler(self, handler) {
 }
 
 ///|
+pub impl Transport for StdioTransport with with_timeout(self, timeout) {
+  self.default_timeout_millis = timeout
+}
+
+///|
+pub impl Transport for StdioTransport with with_max_timeout(self, timeout) {
+  self.max_timeout_millis = timeout
+}
+
+///|
 pub impl @io.ByteReader for StdioTransport with read_byte(_self) {
   let byte = get_char()
   (byte, None)
@@ -119,7 +154,7 @@ pub impl @io.Writer for StdioTransport with write(_self, bytes) {
 }
 
 ///|
-pub impl Transport for StdioTransport with send_call(self, context, message) {
+pub impl Transport for StdioTransport with send_request(self, context, message) {
   self.last_id += 1
   let id = @jsonrpc2.ID::number(self.last_id)
   self.send(context, message.to_call(id))

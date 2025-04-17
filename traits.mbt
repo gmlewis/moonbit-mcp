@@ -1,7 +1,7 @@
 ///|
-/// An MCPCall represents types that can be serialized to and from
+/// An MCPRequest represents types that can be serialized to and from
 /// JSON-RPC "call" messages.
-pub trait MCPCall {
+pub trait MCPRequest {
   to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
 }
 
