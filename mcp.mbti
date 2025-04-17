@@ -20,13 +20,9 @@ fn raw_data(BlobResourceContents) -> Bytes!
 
 fn raw_image(ImageContent) -> Bytes!
 
-fn read_line() -> String!@io.IOError
-
 fn restore_terminal() -> Unit
 
 fn set_raw_mode() -> Unit
-
-fn write(String) -> Unit
 
 // Types and methods
 pub(all) struct Annotations {
@@ -1275,14 +1271,16 @@ impl ToJson for SamplingMessageContent
 impl @moonbitlang/core/json.FromJson for SamplingMessageContent
 
 pub struct Server {
+  tools : Map[String, &MCPTool]
+  mut transport : &Transport
 }
 impl Server {
   new() -> Self
   run(Self) -> Unit
-  with_new_prompt(Self, String, String, PromptFunc) -> Unit
-  with_new_resource(Self, String, String, String, String, ResourceFunc) -> Unit
-  with_new_tool(Self, String, String, ToolFunc) -> Unit
+  with_prompt(Self, String, String, PromptFunc) -> Unit
+  with_resource(Self, String, String, String, String, ResourceFunc) -> Unit
   with_stdio_transport(Self) -> Unit
+  with_tool(Self, &MCPTool) -> Unit
 }
 
 pub(all) struct ServerCapabilities {
@@ -1399,6 +1397,13 @@ impl Show for SetLevelRequestParams
 impl ToJson for SetLevelRequestParams
 impl @moonbitlang/core/json.FromJson for SetLevelRequestParams
 
+pub struct StdioTransport {
+}
+impl StdioTransport {
+  new() -> Self
+}
+impl Transport for StdioTransport
+
 pub(all) struct SubscribeRequest {
   params : SubscribeRequestParams
 }
@@ -1477,8 +1482,6 @@ impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
 impl @moonbitlang/core/json.FromJson for ToolAnnotations
 
-pub(all) type ToolFunc (Json?) -> CallToolResult
-
 pub(all) struct ToolInputSchema {
   properties : Json?
   required : Array[String]?
@@ -1552,5 +1555,15 @@ pub trait MCPNotification {
 
 pub trait MCPResponse {
   to_response(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
+}
+
+pub(open) trait MCPTool {
+  as_tool(Self) -> Tool
+  call_tool(Self, Json?) -> CallToolResult
+}
+
+pub trait Transport {
+  read_line(Self) -> String!@io.IOError
+  write(Self, String) -> Unit
 }
 

@@ -19,6 +19,8 @@ impl Show for SayHelloArguments
 impl ToJson for SayHelloArguments
 impl @json.FromJson for SayHelloArguments
 
+type SayHelloTool
+
 // Type aliases
 
 // Traits

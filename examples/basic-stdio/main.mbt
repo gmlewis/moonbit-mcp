@@ -1,23 +1,24 @@
 ///|
 fn main {
   @mcp.set_raw_mode()
+  let stdio = @mcp.StdioTransport::new()
 
   // Read and write a byte
-  @mcp.write("Enter a character: ")
+  stdio.write("Enter a character: ")
   let byte = @mcp.get_char()
-  @mcp.write("\nYou entered: ")
+  stdio.write("\nYou entered: ")
   @mcp.put_char(byte)
-  @mcp.write("\n")
+  stdio.write("\n")
 
   // Read and write a line
-  @mcp.write("Enter a line: ")
+  stdio.write("Enter a line: ")
   let line = try {
-    @mcp.read_line!()
+    stdio.read_line!()
   } catch {
     err => return println(err.to_string())
   }
-  @mcp.write("\nYou entered: ")
-  @mcp.write(line)
+  stdio.write("\nYou entered: ")
+  stdio.write(line)
 
   //
   @mcp.restore_terminal()

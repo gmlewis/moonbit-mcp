@@ -1,35 +1,32 @@
 ///|
-pub struct Server {}
+pub struct Server {
+  tools : Map[String, &MCPTool]
+  mut transport : &Transport
+}
 
 ///|
 pub fn Server::new() -> Server {
-  ...
-  Server::{  }
+  let tools = {}
+  let transport = StdioTransport::new()
+  Server::{ tools, transport }
 }
 
 ///|
-pub fn Server::with_stdio_transport(_self : Server) -> Unit {
-  ...
+pub fn Server::with_stdio_transport(self : Server) -> Unit {
+  self.transport = StdioTransport::new()
 }
 
 ///|
-pub(all) type ToolFunc (Json?) -> CallToolResult
-
-///|
-pub fn Server::with_new_tool(
-  _self : Server,
-  name : String,
-  description : String,
-  tool_func : ToolFunc
-) -> Unit {
-  ...
+pub fn Server::with_tool(self : Server, tool : &MCPTool) -> Unit {
+  let t = tool.as_tool()
+  self.tools[t.name] = tool
 }
 
 ///|
 pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
 
 ///|
-pub fn Server::with_new_prompt(
+pub fn Server::with_prompt(
   _self : Server,
   name : String,
   description : String,
@@ -42,7 +39,7 @@ pub fn Server::with_new_prompt(
 pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
 
 ///|
-pub fn Server::with_new_resource(
+pub fn Server::with_resource(
   _self : Server,
   uri : String,
   name : String,
