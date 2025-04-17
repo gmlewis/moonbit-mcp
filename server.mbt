@@ -12,8 +12,8 @@ pub fn Server::new() -> Server {
 }
 
 ///|
-pub fn Server::with_stdio_transport(self : Server) -> Unit {
-  self.transport = StdioTransport::new()
+pub fn Server::with_stdio_transport(self : Server, stdio : &Transport) -> Unit {
+  self.transport = stdio
 }
 
 ///|

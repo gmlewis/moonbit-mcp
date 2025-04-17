@@ -1,6 +1,7 @@
 {
   "is-main": true,
   "import": [
+    "gmlewis/jsonrpc2",
     "gmlewis/io",
     "gmlewis/mcp"
   ]

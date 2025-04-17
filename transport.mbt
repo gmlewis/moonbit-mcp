@@ -1,37 +1,125 @@
 ///|
-pub trait Transport {
-  /// Read one line from stdin as a String (including the newline).
-  read_line(Self) -> String!@io.IOError
-  /// Write a string to stdout.
-  write(Self, String) -> Unit
+pub struct Context {}
+
+///|
+pub fn Context::new() -> Context {
+  Context::{  }
 }
 
 ///|
-pub struct StdioTransport {}
+pub type! TransportError String derive(Show, Eq)
+
+///| Transport describes the minimal contract for a MCP transport that a client or server can communicate over.
+pub trait Transport {
+  /// Starts processing messages on the transport, including any connection steps that might need to be taken.
+  ///
+  /// This method should only be called after callbacks are installed, or else messages may be lost.
+  ///
+  /// NOTE: This method should not be called explicitly when using Client, Server, or Protocol classes,
+  /// as they will implicitly call start().
+  start(Self, Context) -> TransportError?
+
+  /// Sends a JSON-RPC message (call, notification, or response).
+  send(Self, Context, @jsonrpc2.Message) -> TransportError?
+
+  /// Closes the connection.
+  close(Self) -> TransportError?
+
+  /// with_close_handler sets the callback for when the connection is closed for any reason.
+  /// This should be invoked when Close() is called as well.
+  with_close_handler(Self, () -> Unit) -> Unit
+
+  /// with_error_handler sets the callback for when an error occurs.
+  /// Note that errors are not necessarily fatal; they are used for reporting any kind of exceptional condition out of band.
+  with_error_handler(Self, (TransportError) -> Unit) -> Unit
+
+  /// with_message_handler sets the callback for when a message (call, notification, or response) is received over the connection.
+  /// Partially deserializes the messages to pass a @jsonrpc2.Message
+  with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
+}
+
+///|
+pub struct StdioTransport {
+  mut close_handler : (() -> Unit)?
+  mut error_handler : ((TransportError) -> Unit)?
+  mut message_handler : ((Context, @jsonrpc2.Message) -> Unit)?
+  mut reader : &@jsonrpc2.Reader?
+  mut writer : &@jsonrpc2.Writer?
+}
 
 ///|
 pub fn StdioTransport::new() -> StdioTransport {
-  StdioTransport::{  }
-}
-
-///|
-pub impl Transport for StdioTransport with read_line(_self) {
-  let buf = @io.Buffer::new()
-  for {
-    let byte = get_char()
-    let (_, err) = buf.write_byte(byte)
-    guard err is None else { raise err.unwrap() }
-    if byte == b'\n' {
-      break
-    }
+  let close_handler = None
+  let error_handler = None
+  let message_handler = None
+  let reader = None
+  let writer = None
+  let self = StdioTransport::{
+    close_handler,
+    error_handler,
+    message_handler,
+    reader,
+    writer,
   }
-  buf.to_string()
+  let reader = @jsonrpc2.line_framer().reader(self)
+  let writer = @jsonrpc2.line_framer().writer(self)
+  self.reader = Some(reader)
+  self.writer = Some(writer)
+  self
 }
 
 ///|
-pub impl Transport for StdioTransport with write(_self, s) {
-  let bytes = @base64.str2bytes(s)
+pub impl Transport for StdioTransport with start(_self, _context) {
+  set_raw_mode()
+  None
+}
+
+///|
+pub impl Transport for StdioTransport with close(self) {
+  if self.close_handler is Some(handler) {
+    handler()
+  }
+  restore_terminal()
+  None
+}
+
+///|
+pub impl Transport for StdioTransport with with_close_handler(self, handler) {
+  self.close_handler = Some(handler)
+}
+
+///|
+pub impl Transport for StdioTransport with with_error_handler(self, handler) {
+  self.error_handler = Some(handler)
+}
+
+///|
+pub impl Transport for StdioTransport with with_message_handler(self, handler) {
+  self.message_handler = Some(handler)
+}
+
+///|
+pub impl @io.ByteReader for StdioTransport with read_byte(_self) {
+  let byte = get_char()
+  (byte, None)
+}
+
+///|
+pub impl @io.Writer for StdioTransport with write(_self, bytes) {
   for i in 0..<bytes.length() {
     put_char(bytes[i])
   }
+  (bytes.length(), None)
+}
+
+///|
+pub impl Transport for StdioTransport with send(self, _context, message) {
+  let result = self.writer.unwrap().write(message)
+  guard result is (_, None) else {
+    if self.error_handler is Some(handler) {
+      handler(TransportError(result.1.to_string()))
+    }
+    return Some(TransportError("Failed to send message: \{result.1}"))
+  }
+  None
 }

@@ -1,7 +1,6 @@
 package "gmlewis/mcp"
 
 import(
-  "gmlewis/io"
   "gmlewis/jsonrpc2"
 )
 
@@ -277,6 +276,12 @@ impl Eq for CompleteResultCompletion
 impl Show for CompleteResultCompletion
 impl ToJson for CompleteResultCompletion
 impl @moonbitlang/core/json.FromJson for CompleteResultCompletion
+
+pub struct Context {
+}
+impl Context {
+  new() -> Self
+}
 
 pub(all) struct CreateMessageRequest {
   params : CreateMessageRequestParams
@@ -1279,7 +1284,7 @@ impl Server {
   run(Self) -> Unit
   with_prompt(Self, String, String, PromptFunc) -> Unit
   with_resource(Self, String, String, String, String, ResourceFunc) -> Unit
-  with_stdio_transport(Self) -> Unit
+  with_stdio_transport(Self, &Transport) -> Unit
   with_tool(Self, &MCPTool) -> Unit
 }
 
@@ -1398,10 +1403,17 @@ impl ToJson for SetLevelRequestParams
 impl @moonbitlang/core/json.FromJson for SetLevelRequestParams
 
 pub struct StdioTransport {
+  mut close_handler : (() -> Unit)?
+  mut error_handler : ((TransportError) -> Unit)?
+  mut message_handler : ((Context, @jsonrpc2.Message) -> Unit)?
+  mut reader : &@jsonrpc2.Reader?
+  mut writer : &@jsonrpc2.Writer?
 }
 impl StdioTransport {
   new() -> Self
 }
+impl @gmlewis/io.ByteReader for StdioTransport
+impl @gmlewis/io.Writer for StdioTransport
 impl Transport for StdioTransport
 
 pub(all) struct SubscribeRequest {
@@ -1518,6 +1530,10 @@ impl Show for ToolListChangedNotificationParams
 impl ToJson for ToolListChangedNotificationParams
 impl @moonbitlang/core/json.FromJson for ToolListChangedNotificationParams
 
+pub type! TransportError String
+impl Eq for TransportError
+impl Show for TransportError
+
 pub(all) struct UnsubscribeRequest {
   params : UnsubscribeRequestParams
 }
@@ -1563,7 +1579,11 @@ pub(open) trait MCPTool {
 }
 
 pub trait Transport {
-  read_line(Self) -> String!@io.IOError
-  write(Self, String) -> Unit
+  start(Self, Context) -> TransportError?
+  send(Self, Context, @jsonrpc2.Message) -> TransportError?
+  close(Self) -> TransportError?
+  with_close_handler(Self, () -> Unit) -> Unit
+  with_error_handler(Self, (TransportError) -> Unit) -> Unit
+  with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
 }
 

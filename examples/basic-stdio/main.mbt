@@ -1,25 +1,52 @@
 ///|
 fn main {
-  @mcp.set_raw_mode()
   let stdio = @mcp.StdioTransport::new()
-
-  // Read and write a byte
-  stdio.write("Enter a character: ")
-  let byte = @mcp.get_char()
-  stdio.write("\nYou entered: ")
-  @mcp.put_char(byte)
-  stdio.write("\n")
-
-  // Read and write a line
-  stdio.write("Enter a line: ")
-  let line = try {
-    stdio.read_line!()
-  } catch {
-    err => return println(err.to_string())
-  }
-  stdio.write("\nYou entered: ")
-  stdio.write(line)
+    ..with_close_handler(close_handler)
+    ..with_error_handler(error_handler)
+    ..with_message_handler(message_handler)
 
   //
-  @mcp.restore_terminal()
+  let ctx = @mcp.Context::new()
+  stdio.start(ctx) |> ignore()
+
+  // Send a call
+  let params = { "key1": "value1" }.to_json()
+  guard stdio.send(
+      ctx,
+      @jsonrpc2.new_call(@jsonrpc2.ID::number(1), "method1", params),
+    )
+    is None else {
+    println("Failed to send message")
+  }
+
+  // Send a notification
+  let params = { "key2": "value2" }.to_json()
+  guard stdio.send(ctx, @jsonrpc2.new_notification("method2", params)) is None else {
+    println("Failed to send message")
+  }
+
+  // Send a response
+  let result = Ok(params)
+  guard stdio.send(ctx, @jsonrpc2.new_response(@jsonrpc2.ID::number(1), result))
+    is None else {
+    println("Failed to send message")
+  }
+
+  //
+  stdio.close() |> ignore()
+}
+
+///|
+fn close_handler() -> Unit {
+  println("close_handler called")
+}
+
+///|
+fn error_handler(error : @mcp.TransportError) -> Unit {
+  println("Error: \{error}")
+}
+
+///|
+fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
+  println("Message: \{message}")
 }
