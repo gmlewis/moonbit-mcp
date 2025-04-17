@@ -6,12 +6,13 @@ const MAX_TIMEOUT_MILLIS = 600_000 // 10 minutes
 
 ///|
 pub struct Context {
+  start_time_unix_nanos : Int64
   timeout_millis : Int?
 }
 
 ///|
 pub fn Context::new() -> Context {
-  Context::{ timeout_millis: None }
+  Context::{ start_time_unix_nanos: 0, timeout_millis: None }
 }
 
 ///|
@@ -71,6 +72,7 @@ pub struct StdioTransport {
   mut message_handler : ((Context, @jsonrpc2.Message) -> Unit)?
   mut reader : &@jsonrpc2.Reader?
   mut writer : &@jsonrpc2.Writer?
+  in_flight_requests : Map[Int64, Context]
 }
 
 ///|
@@ -82,6 +84,7 @@ pub fn StdioTransport::new() -> StdioTransport {
   let message_handler = None
   let reader = None
   let writer = None
+  let in_flight_requests = {}
   let self = StdioTransport::{
     default_timeout_millis,
     max_timeout_millis,
@@ -91,6 +94,7 @@ pub fn StdioTransport::new() -> StdioTransport {
     message_handler,
     reader,
     writer,
+    in_flight_requests,
   }
   let reader = @jsonrpc2.line_framer().reader(self)
   let writer = @jsonrpc2.line_framer().writer(self)
@@ -157,6 +161,12 @@ pub impl @io.Writer for StdioTransport with write(_self, bytes) {
 pub impl Transport for StdioTransport with send_request(self, context, message) {
   self.last_id += 1
   let id = @jsonrpc2.ID::number(self.last_id)
+  let context = if context.timeout_millis is None {
+    context.with_timeout(self.default_timeout_millis)
+  } else {
+    context
+  }
+  self.in_flight_requests[self.last_id] = context
   self.send(context, message.to_call(id))
 }
 

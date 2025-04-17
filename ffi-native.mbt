@@ -10,3 +10,9 @@ pub extern "C" fn set_raw_mode() -> Unit = "set_raw_mode"
 
 ///|
 pub extern "C" fn restore_terminal() -> Unit = "restore_terminal"
+
+///|
+extern type TimeSpec
+
+///|
+pub extern "C" fn clock_gettime(clk_id : Int, tp : TimeSpec) -> Int = "clock_gettime"
