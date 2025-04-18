@@ -7,23 +7,17 @@ import(
 // Values
 const MCP_VERSION : String = "2025-03-26"
 
-fn clock_gettime(Int, TimeSpec) -> Int
-
-fn get_char() -> Byte
-
-fn put_char(Byte) -> Unit
-
 fn raw_audio(AudioContent) -> Bytes!
 
 fn raw_data(BlobResourceContents) -> Bytes!
 
 fn raw_image(ImageContent) -> Bytes!
 
-fn restore_terminal() -> Unit
-
-fn set_raw_mode() -> Unit
-
 fn unix_nanos() -> Int64
+
+fn write_stderr(String) -> Unit
+
+fn write_stdout(String) -> Unit
 
 // Types and methods
 pub(all) struct Annotations {
@@ -1387,8 +1381,6 @@ impl Eq for TextResourceContents
 impl Show for TextResourceContents
 impl ToJson for TextResourceContents
 impl @moonbitlang/core/json.FromJson for TextResourceContents
-
-type TimeSpec
 
 pub(all) struct Tool {
   annotations : ToolAnnotations?

@@ -2,6 +2,7 @@
 fn main {
   let now = @mcp.unix_nanos()
   println("Current time in nanoseconds since epoch: \{now}")
+  @mcp.write_stderr("This line should only go to stderr.\n")
 
   //
   let stdio = @mcp.StdioTransport::new()

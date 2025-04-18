@@ -22,17 +22,17 @@ fn main {
 
 ///|
 fn close_handler() -> Unit {
-  println("close_handler called")
+  @mcp.write_stderr("close_handler called\n")
 }
 
 ///|
 fn error_handler(error : @mcp.TransportError) -> Unit {
-  println("Error: \{error}")
+  @mcp.write_stderr("Error: \{error}\n")
 }
 
 ///|
 fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
-  println("Message: \{message}")
+  @mcp.write_stderr("Message: \{message}\n")
 }
 
 ///|
