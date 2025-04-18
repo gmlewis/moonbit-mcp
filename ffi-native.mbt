@@ -69,3 +69,11 @@ fn write_fd(fd : Int, s : String) -> Unit {
     println("Error writing to stderr")
   }
 }
+
+///|
+extern "C" fn posix_sleep(seconds : Int) -> Int = "sleep"
+
+///|
+pub fn sleep(seconds : Int) -> Unit {
+  posix_sleep(seconds) |> ignore()
+}
