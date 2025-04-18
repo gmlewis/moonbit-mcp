@@ -1311,6 +1311,8 @@ impl @moonbitlang/core/json.FromJson for SetLevelRequestParams
 pub struct StdioTransport {
   mut default_timeout_millis : Int
   mut max_timeout_millis : Int
+  mut ping_frequency_seconds : Int
+  mut ping_timeout_millis : Int
   mut last_id : Int64
   mut close_handler : (() -> Unit)?
   mut error_handler : ((TransportError) -> Unit)?
@@ -1597,6 +1599,8 @@ pub trait Transport {
   with_close_handler(Self, () -> Unit) -> Unit
   with_error_handler(Self, (TransportError) -> Unit) -> Unit
   with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
+  with_ping_frequency_seconds(Self, Int) -> Unit
+  with_ping_timeout_millis(Self, Int) -> Unit
   with_timeout(Self, Int) -> Unit
   with_max_timeout(Self, Int) -> Unit
 }

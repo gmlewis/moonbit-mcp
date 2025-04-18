@@ -1,4 +1,10 @@
 ///|
+const DEFAULT_PING_FREQUENCY_SECONDS = 5
+
+///|
+const DEFAULT_PING_TIMEOUT_MILLIS = 1_000 // 1 second
+
+///|
 const DEFAULT_TIMEOUT_MILLIS = 10_000 // 10 seconds
 
 ///|
@@ -67,6 +73,12 @@ pub trait Transport {
   /// Partially deserializes the messages to pass a @jsonrpc2.Message
   with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
 
+  // with_ping_frequency_seconds sets the frequency of pings to the server.
+  with_ping_frequency_seconds(Self, Int) -> Unit
+
+  // with_ping_timeout_millis sets the timeout for pings to the server.
+  with_ping_timeout_millis(Self, Int) -> Unit
+
   // with_timeout sets the default timeout for requests.
   with_timeout(Self, Int) -> Unit
 
@@ -78,6 +90,8 @@ pub trait Transport {
 pub struct StdioTransport {
   mut default_timeout_millis : Int
   mut max_timeout_millis : Int
+  mut ping_frequency_seconds : Int
+  mut ping_timeout_millis : Int
   mut last_id : Int64
   mut close_handler : (() -> Unit)?
   mut error_handler : ((TransportError) -> Unit)?
@@ -91,6 +105,8 @@ pub struct StdioTransport {
 pub fn StdioTransport::new() -> StdioTransport {
   let default_timeout_millis = DEFAULT_TIMEOUT_MILLIS
   let max_timeout_millis = MAX_TIMEOUT_MILLIS
+  let ping_frequency_seconds = DEFAULT_PING_FREQUENCY_SECONDS
+  let ping_timeout_millis = DEFAULT_PING_TIMEOUT_MILLIS
   let close_handler = None
   let error_handler = None
   let message_handler = None
@@ -100,6 +116,8 @@ pub fn StdioTransport::new() -> StdioTransport {
   let self = StdioTransport::{
     default_timeout_millis,
     max_timeout_millis,
+    ping_frequency_seconds,
+    ping_timeout_millis,
     last_id: 0,
     close_handler,
     error_handler,
@@ -143,6 +161,22 @@ pub impl Transport for StdioTransport with with_error_handler(self, handler) {
 ///|
 pub impl Transport for StdioTransport with with_message_handler(self, handler) {
   self.message_handler = Some(handler)
+}
+
+///|
+pub impl Transport for StdioTransport with with_ping_frequency_seconds(
+  self,
+  seconds
+) {
+  self.ping_frequency_seconds = seconds
+}
+
+///|
+pub impl Transport for StdioTransport with with_ping_timeout_millis(
+  self,
+  timeout
+) {
+  self.ping_timeout_millis = timeout
 }
 
 ///|
