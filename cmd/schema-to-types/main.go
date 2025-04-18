@@ -264,20 +264,14 @@ func (d *Definition) convertEnumAnyOf(out *outBufsT, name, prefix string) string
 	lines := []string{
 		prefix + "///|",
 		fmt.Sprintf(prefix+"pub trait %v: Show + ToJson {", name),
-		prefix + "  unused(Self) -> Unit",
+		prefix + "  unused(Self) -> Unit // compiler workaround",
 		prefix + "}",
 		"",
 		prefix + "///|",
 		fmt.Sprintf(prefix+"pub impl Eq for &%v with op_equal(_self, _other) {", name),
-		prefix + "  false // unused",
+		prefix + "  false // unused - compiler workaround",
 		prefix + "}",
 	}
-
-	// toJSONLines := []string{
-	// prefix + "///|",
-	// fmt.Sprintf(prefix+"pub impl ToJson for %v with to_json(self) {", name),
-	// prefix + "  match self {",
-	// }
 
 	var fromJSONOptions []string
 	fromJSONLines := []string{
@@ -285,25 +279,9 @@ func (d *Definition) convertEnumAnyOf(out *outBufsT, name, prefix string) string
 		fmt.Sprintf(prefix+"pub impl @json.FromJson for &%v with from_json(json, path) {", name),
 	}
 
-	// if len(d.Enum) > 0 {
-	// 	fromJSONOptions = make([]string, 0, len(d.Enum))
-	// 	fromJSONLines = append(fromJSONLines,
-	// 		prefix+"  guard json is String(s) else {",
-	// 		prefix+`    raise @json.JsonDecodeError((path, "expected string"))`,
-	// 		prefix+"  }",
-	// 		prefix+"  match s {",
-	// 	)
-	// } else {
-	//
-	// }
-
 	for _, def := range d.AnyOf {
 		refType, _ := def.refType(name, nil)
 		refType = strings.TrimSuffix(refType, "?")
-		// lines = append(lines, fmt.Sprintf(prefix+"  %v(%[1]v)", refType))
-		// toJSONLines = append(toJSONLines,
-		// 	fmt.Sprintf(prefix+"    %v(v) => v.to_json(),", refType),
-		// )
 		implLines := []string{
 			prefix + "///|",
 			fmt.Sprintf(prefix+"pub impl %v for %v with unused(_self) {", name, refType),
@@ -320,25 +298,10 @@ func (d *Definition) convertEnumAnyOf(out *outBufsT, name, prefix string) string
 		)
 	}
 
-	// lines = append(lines, prefix+"} derive(Show, Eq)")
-
-	// toJSONLines = append(toJSONLines, prefix+"  }")
-	// toJSONLines = append(toJSONLines, prefix+"}")
-	// out.typesJSONEnumsFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
-
-	// if len(d.Enum) > 0 {
-	// 	fromJSONLines = append(fromJSONLines,
-	// 		prefix+"  _ =>",
-	// 		prefix+"  raise @json.JsonDecodeError(",
-	// 		fmt.Sprintf(prefix+`    (path, "expected one of: '%v'; got '\{s}'"),`, strings.Join(fromJSONOptions, "', '")),
-	// 		prefix+"  )",
-	// 		prefix+"}")
-	// } else {
 	fromJSONLines = append(fromJSONLines,
 		prefix+"  raise @json.JsonDecodeError(",
 		fmt.Sprintf(prefix+`    (path, "expected one of: %v; got: \{@json.stringify(json)}"),`, strings.Join(fromJSONOptions, ", ")),
 		prefix+"  )")
-	// }
 	fromJSONLines = append(fromJSONLines, prefix+"}")
 	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
 
@@ -367,7 +330,6 @@ func (d *Definition) convertEnumStrings(out *outBufsT, name, prefix string) stri
 		fmt.Sprintf(prefix+"pub impl @json.FromJson for %v with from_json(json, path) {", name),
 	}
 
-	// if len(d.Enum) > 0 {
 	fromJSONOptions = make([]string, 0, len(d.Enum))
 	fromJSONLines = append(fromJSONLines,
 		prefix+"  guard json is String(s) else {",
@@ -375,15 +337,11 @@ func (d *Definition) convertEnumStrings(out *outBufsT, name, prefix string) stri
 		prefix+"  }",
 		prefix+"  match s {",
 	)
-	// } else {
-	//
-	// }
 
 	for _, rawEnum := range d.Enum {
 		enumBuf, err := json.Marshal(rawEnum)
 		must(err)
 		noQuotesValue := strings.ReplaceAll(string(enumBuf), `"`, "")
-		// lines = append(lines, fmt.Sprintf(prefix+"  %v_%v // = %v", name, titleCase(noQuotesValue), string(enumBuf)))
 		enumName := titleCase(noQuotesValue)
 		// special case: change "None" to "NoServers" for `IncludeContext`:
 		if enumName == "None" {
@@ -401,19 +359,12 @@ func (d *Definition) convertEnumStrings(out *outBufsT, name, prefix string) stri
 	toJSONLines = append(toJSONLines, prefix+"}")
 	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(toJSONLines, "\n") + "\n")
 
-	// if len(d.Enum) > 0 {
 	fromJSONLines = append(fromJSONLines,
 		prefix+"  _ =>",
 		prefix+"  raise @json.JsonDecodeError(",
 		fmt.Sprintf(prefix+`    (path, "expected one of: '%v'; got '\{s}'"),`, strings.Join(fromJSONOptions, "', '")),
 		prefix+"  )",
 		prefix+"}")
-	// } else {
-	// 	fromJSONLines = append(fromJSONLines,
-	// 		prefix+"  raise @json.JsonDecodeError(",
-	// 		fmt.Sprintf(prefix+`    (path, "expected one of: %v; got: \{@json.stringify(json)}"),`, strings.Join(fromJSONOptions, ", ")),
-	// 		prefix+"  )")
-	// }
 	fromJSONLines = append(fromJSONLines, prefix+"}")
 	out.typesJSONEnumsFile.WriteString("\n" + strings.Join(fromJSONLines, "\n") + "\n")
 

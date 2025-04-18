@@ -95,12 +95,12 @@ pub(all) struct CallToolResult {
 
 ///|
 pub trait CallToolResultContent: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &CallToolResultContent with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -180,32 +180,32 @@ pub(all) struct ClientCapabilitiesRoots {
 
 ///|
 pub trait ClientNotification: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ClientNotification with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
 pub trait ClientRequest: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ClientRequest with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
 pub trait ClientResult: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ClientResult with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -233,12 +233,12 @@ pub(all) struct CompleteRequestParamsArgument {
 
 ///|
 pub trait CompleteRequestParamsRef: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &CompleteRequestParamsRef with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -357,12 +357,12 @@ pub(all) struct CreateMessageResult {
 
 ///|
 pub trait CreateMessageResultContent: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &CreateMessageResultContent with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -399,12 +399,12 @@ pub(all) struct EmbeddedResource {
 
 ///|
 pub trait EmbeddedResourceResource: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &EmbeddedResourceResource with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -1215,12 +1215,12 @@ pub(all) struct PromptMessage {
 
 ///|
 pub trait PromptMessageContent: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &PromptMessageContent with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -1272,12 +1272,12 @@ pub(all) struct ReadResourceResult {
 
 ///|
 pub trait ReadResourceResultContents: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ReadResourceResultContents with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -1551,12 +1551,12 @@ pub(all) struct SamplingMessage {
 
 ///|
 pub trait SamplingMessageContent: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &SamplingMessageContent with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
@@ -1601,32 +1601,32 @@ pub(all) struct ServerCapabilitiesTools {
 
 ///|
 pub trait ServerNotification: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ServerNotification with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
 pub trait ServerRequest: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ServerRequest with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|
 pub trait ServerResult: Show + ToJson {
-  unused(Self) -> Unit
+  unused(Self) -> Unit // compiler workaround
 }
 
 ///|
 pub impl Eq for &ServerResult with op_equal(_self, _other) {
-  false // unused
+  false // unused - compiler workaround
 }
 
 ///|

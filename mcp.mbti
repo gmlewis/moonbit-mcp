@@ -13,6 +13,8 @@ fn raw_data(BlobResourceContents) -> Bytes!
 
 fn raw_image(ImageContent) -> Bytes!
 
+fn sleep(Int) -> Unit
+
 fn unix_nanos() -> Int64
 
 fn write_stderr(String) -> Unit
