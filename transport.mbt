@@ -12,12 +12,24 @@ pub struct Context {
 
 ///|
 pub fn Context::new() -> Context {
-  Context::{ start_time_unix_nanos: 0, timeout_millis: None }
+  let start_time_unix_nanos = unix_nanos()
+  Context::{ start_time_unix_nanos, timeout_millis: None }
 }
 
 ///|
 pub fn Context::with_timeout(self : Context, timeout_millis : Int) -> Context {
-  Context::{ ..self, timeout_millis: Some(timeout_millis) }
+  let start_time_unix_nanos = unix_nanos()
+  Context::{
+    ..self,
+    start_time_unix_nanos,
+    timeout_millis: Some(timeout_millis),
+  }
+}
+
+///|
+fn Context::now(self : Context) -> Context {
+  let start_time_unix_nanos = unix_nanos()
+  Context::{ ..self, start_time_unix_nanos, }
 }
 
 ///|
@@ -164,7 +176,7 @@ pub impl Transport for StdioTransport with send_request(self, context, message) 
   let context = if context.timeout_millis is None {
     context.with_timeout(self.default_timeout_millis)
   } else {
-    context
+    context.now()
   }
   self.in_flight_requests[self.last_id] = context
   self.send(context, message.to_call(id))
