@@ -1,10 +1,10 @@
 {
   "name": "gmlewis/mcp",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "deps": {
     "gmlewis/base64": "0.14.3",
     "gmlewis/io": "0.22.1",
-    "gmlewis/jsonrpc2": "0.0.4"
+    "gmlewis/jsonrpc2": "0.0.5"
   },
   "readme": "README.md",
   "repository": "https://github.com/gmlewis/moonbit-jsonrpc2",
