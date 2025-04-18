@@ -86,7 +86,7 @@ pub fn CallToolRequest::from_message(
 pub(all) struct CallToolResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  content : Array[CallToolResultContent]
+  content : Array[&CallToolResultContent]
   /// Whether the tool call ended in an error.
   ///
   /// If not set, this is assumed to be false (the call was successful).
@@ -94,12 +94,14 @@ pub(all) struct CallToolResult {
 } derive(Show, Eq)
 
 ///|
-pub(all) enum CallToolResultContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-  EmbeddedResource(EmbeddedResource)
-} derive(Show, Eq)
+pub trait CallToolResultContent: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &CallToolResultContent with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 pub impl MCPResponse for CallToolResult with to_response(self, id) {
@@ -177,35 +179,34 @@ pub(all) struct ClientCapabilitiesRoots {
 } derive(Show, Eq)
 
 ///|
-pub(all) enum ClientNotification {
-  CancelledNotification(CancelledNotification)
-  InitializedNotification(InitializedNotification)
-  ProgressNotification(ProgressNotification)
-  RootsListChangedNotification(RootsListChangedNotification)
-} derive(Show, Eq)
+pub trait ClientNotification: Show + ToJson {
+  unused(Self) -> Unit
+}
 
 ///|
-pub(all) enum ClientRequest {
-  InitializeRequest(InitializeRequest)
-  PingRequest(PingRequest)
-  ListResourcesRequest(ListResourcesRequest)
-  ReadResourceRequest(ReadResourceRequest)
-  SubscribeRequest(SubscribeRequest)
-  UnsubscribeRequest(UnsubscribeRequest)
-  ListPromptsRequest(ListPromptsRequest)
-  GetPromptRequest(GetPromptRequest)
-  ListToolsRequest(ListToolsRequest)
-  CallToolRequest(CallToolRequest)
-  SetLevelRequest(SetLevelRequest)
-  CompleteRequest(CompleteRequest)
-} derive(Show, Eq)
+pub impl Eq for &ClientNotification with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
-pub(all) enum ClientResult {
-  CustomResult(CustomResult)
-  CreateMessageResult(CreateMessageResult)
-  ListRootsResult(ListRootsResult)
-} derive(Show, Eq)
+pub trait ClientRequest: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &ClientRequest with op_equal(_self, _other) {
+  false // unused
+}
+
+///|
+pub trait ClientResult: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &ClientResult with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 /// CompleteRequest: A request from the client to the server, to ask for completion options.
@@ -218,7 +219,7 @@ pub(all) struct CompleteRequest {
 pub(all) struct CompleteRequestParams {
   /// The argument's information
   argument : CompleteRequestParamsArgument
-  ref_ : CompleteRequestParamsRef
+  ref_ : &CompleteRequestParamsRef
 } derive(Show, Eq)
 
 ///|
@@ -231,10 +232,14 @@ pub(all) struct CompleteRequestParamsArgument {
 } derive(Show, Eq)
 
 ///|
-pub(all) enum CompleteRequestParamsRef {
-  PromptReference(PromptReference)
-  ResourceReference(ResourceReference)
-} derive(Show, Eq)
+pub trait CompleteRequestParamsRef: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &CompleteRequestParamsRef with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 pub impl MCPRequest for CompleteRequest with to_call(self, id) {
@@ -342,7 +347,7 @@ pub fn CreateMessageRequest::from_message(
 pub(all) struct CreateMessageResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  content : CreateMessageResultContent
+  content : &CreateMessageResultContent
   /// The name of the model that generated the message.
   model : String
   role : Role
@@ -351,11 +356,14 @@ pub(all) struct CreateMessageResult {
 } derive(Show, Eq)
 
 ///|
-pub(all) enum CreateMessageResultContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-} derive(Show, Eq)
+pub trait CreateMessageResultContent: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &CreateMessageResultContent with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 pub impl MCPResponse for CreateMessageResult with to_response(self, id) {
@@ -385,15 +393,19 @@ pub(all) struct Cursor {} derive(Show, Eq)
 pub(all) struct EmbeddedResource {
   /// Optional annotations for the client.
   annotations : Annotations?
-  resource : EmbeddedResourceResource
+  resource : &EmbeddedResourceResource
   /// JSON-RPC: "type" = "resource"
 } derive(Show, Eq)
 
 ///|
-pub(all) enum EmbeddedResourceResource {
-  TextResourceContents(TextResourceContents)
-  BlobResourceContents(BlobResourceContents)
-} derive(Show, Eq)
+pub trait EmbeddedResourceResource: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &EmbeddedResourceResource with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 /// GetPromptRequest: Used by the client to get a prompt provided by the server.
@@ -1197,17 +1209,19 @@ pub fn PromptListChangedNotification::from_message(
 /// This is similar to `SamplingMessage`, but also supports the embedding of
 /// resources from the MCP server.
 pub(all) struct PromptMessage {
-  content : PromptMessageContent
+  content : &PromptMessageContent
   role : Role
 } derive(Show, Eq)
 
 ///|
-pub(all) enum PromptMessageContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-  EmbeddedResource(EmbeddedResource)
-} derive(Show, Eq)
+pub trait PromptMessageContent: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &PromptMessageContent with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 /// PromptReference: Identifies a prompt.
@@ -1253,14 +1267,18 @@ pub fn ReadResourceRequest::from_message(
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
-  contents : Array[ReadResourceResultContents]
+  contents : Array[&ReadResourceResultContents]
 } derive(Show, Eq)
 
 ///|
-pub(all) enum ReadResourceResultContents {
-  TextResourceContents(TextResourceContents)
-  BlobResourceContents(BlobResourceContents)
-} derive(Show, Eq)
+pub trait ReadResourceResultContents: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &ReadResourceResultContents with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 pub impl MCPResponse for ReadResourceResult with to_response(self, id) {
@@ -1527,16 +1545,19 @@ pub fn RootsListChangedNotification::from_message(
 ///|
 /// SamplingMessage: Describes a message issued to or received from an LLM API.
 pub(all) struct SamplingMessage {
-  content : SamplingMessageContent
+  content : &SamplingMessageContent
   role : Role
 } derive(Show, Eq)
 
 ///|
-pub(all) enum SamplingMessageContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-} derive(Show, Eq)
+pub trait SamplingMessageContent: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &SamplingMessageContent with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 /// ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
@@ -1579,35 +1600,34 @@ pub(all) struct ServerCapabilitiesTools {
 } derive(Show, Eq)
 
 ///|
-pub(all) enum ServerNotification {
-  CancelledNotification(CancelledNotification)
-  ProgressNotification(ProgressNotification)
-  ResourceListChangedNotification(ResourceListChangedNotification)
-  ResourceUpdatedNotification(ResourceUpdatedNotification)
-  PromptListChangedNotification(PromptListChangedNotification)
-  ToolListChangedNotification(ToolListChangedNotification)
-  LoggingMessageNotification(LoggingMessageNotification)
-} derive(Show, Eq)
+pub trait ServerNotification: Show + ToJson {
+  unused(Self) -> Unit
+}
 
 ///|
-pub(all) enum ServerRequest {
-  PingRequest(PingRequest)
-  CreateMessageRequest(CreateMessageRequest)
-  ListRootsRequest(ListRootsRequest)
-} derive(Show, Eq)
+pub impl Eq for &ServerNotification with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
-pub(all) enum ServerResult {
-  CustomResult(CustomResult)
-  InitializeResult(InitializeResult)
-  ListResourcesResult(ListResourcesResult)
-  ReadResourceResult(ReadResourceResult)
-  ListPromptsResult(ListPromptsResult)
-  GetPromptResult(GetPromptResult)
-  ListToolsResult(ListToolsResult)
-  CallToolResult(CallToolResult)
-  CompleteResult(CompleteResult)
-} derive(Show, Eq)
+pub trait ServerRequest: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &ServerRequest with op_equal(_self, _other) {
+  false // unused
+}
+
+///|
+pub trait ServerResult: Show + ToJson {
+  unused(Self) -> Unit
+}
+
+///|
+pub impl Eq for &ServerResult with op_equal(_self, _other) {
+  false // unused
+}
 
 ///|
 /// SetLevelRequest: A request from the client to the server, to enable or adjust logging.

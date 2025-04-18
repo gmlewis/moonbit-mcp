@@ -36,12 +36,12 @@ impl @mcp.MCPTool for SayHelloTool with call_tool(_self, json) {
 ///|
 fn say_hello(json : Json?) -> @mcp.CallToolResult {
   guard json is Some(json) else {
-    return @mcp.new_call_tool_error_result("Invalid JSON")
+    return @mcp.CallToolResult::new([@mcp.TextContent::new("Invalid JSON")])
   }
   let args : Result[SayHelloArguments, _] = @json.from_json?(json)
   guard args is Ok(args) else {
-    return @mcp.new_call_tool_error_result("Invalid arguments")
+    return @mcp.CallToolResult::new([@mcp.TextContent::new("Invalid arguments")])
   }
-  let greeting = @mcp.new_call_tool_text_result("Hello, \{args.submitter}!")
+  let greeting = @mcp.TextContent::new("Hello, \{args.submitter}!")
   @mcp.CallToolResult::new([greeting])
 }

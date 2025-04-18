@@ -58,7 +58,7 @@ pub fn CallToolRequest::new(params : CallToolRequestParams) -> CallToolRequest {
 pub fn CallToolResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Json,
-  content : Array[CallToolResultContent],
+  content : Array[&CallToolResultContent],
   /// Whether the tool call ended in an error.
   ///
   /// If not set, this is assumed to be false (the call was successful).
@@ -120,7 +120,7 @@ pub fn CompleteRequestParamsArgument::new(
 pub fn CompleteRequestParams::new(
   /// The argument's information
   argument : CompleteRequestParamsArgument,
-  ref_ : CompleteRequestParamsRef
+  ref_ : &CompleteRequestParamsRef
 ) -> CompleteRequestParams {
   CompleteRequestParams::{ argument, ref_ }
 }
@@ -190,7 +190,7 @@ pub fn CreateMessageRequest::new(
 pub fn CreateMessageResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Json,
-  content : CreateMessageResultContent,
+  content : &CreateMessageResultContent,
   /// The name of the model that generated the message.
   model : String,
   role : Role,
@@ -209,7 +209,7 @@ pub fn Cursor::new() -> Cursor {
 pub fn EmbeddedResource::new(
   /// Optional annotations for the client.
   annotations? : Annotations,
-  resource : EmbeddedResourceResource
+  resource : &EmbeddedResourceResource
 ) -> EmbeddedResource {
   EmbeddedResource::{ annotations, resource }
 }
@@ -648,7 +648,7 @@ pub fn PromptListChangedNotification::new(
 
 ///|
 pub fn PromptMessage::new(
-  content : PromptMessageContent,
+  content : &PromptMessageContent,
   role : Role
 ) -> PromptMessage {
   PromptMessage::{ content, role }
@@ -681,7 +681,7 @@ pub fn ReadResourceRequest::new(
 pub fn ReadResourceResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Json,
-  contents : Array[ReadResourceResultContents]
+  contents : Array[&ReadResourceResultContents]
 ) -> ReadResourceResult {
   ReadResourceResult::{ _meta, contents }
 }
@@ -835,7 +835,7 @@ pub fn RootsListChangedNotification::new(
 
 ///|
 pub fn SamplingMessage::new(
-  content : SamplingMessageContent,
+  content : &SamplingMessageContent,
   role : Role
 ) -> SamplingMessage {
   SamplingMessage::{ content, role }

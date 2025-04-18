@@ -207,7 +207,7 @@ pub impl @json.FromJson for CallToolResult with from_json(json, path) {
   guard obj["content"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[Array[CallToolResultContent], _] = @json.from_json?(json)
+  let v : Result[Array[&CallToolResultContent], _] = @json.from_json?(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
@@ -408,7 +408,7 @@ pub impl @json.FromJson for CompleteRequestParams with from_json(json, path) {
   guard obj["ref"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'ref'"))
   }
-  let v : Result[CompleteRequestParamsRef, _] = @json.from_json?(json)
+  let v : Result[&CompleteRequestParamsRef, _] = @json.from_json?(json)
   guard v is Ok(ref_) else {
     raise @json.JsonDecodeError((path, "expected field 'ref'"))
   }
@@ -675,7 +675,7 @@ pub impl @json.FromJson for CreateMessageResult with from_json(json, path) {
   guard obj["content"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[CreateMessageResultContent, _] = @json.from_json?(json)
+  let v : Result[&CreateMessageResultContent, _] = @json.from_json?(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
@@ -745,7 +745,7 @@ pub impl @json.FromJson for EmbeddedResource with from_json(json, path) {
   guard obj["resource"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'resource'"))
   }
-  let v : Result[EmbeddedResourceResource, _] = @json.from_json?(json)
+  let v : Result[&EmbeddedResourceResource, _] = @json.from_json?(json)
   guard v is Ok(resource) else {
     raise @json.JsonDecodeError((path, "expected field 'resource'"))
   }
@@ -2237,7 +2237,7 @@ pub impl @json.FromJson for PromptMessage with from_json(json, path) {
   guard obj["content"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[PromptMessageContent, _] = @json.from_json?(json)
+  let v : Result[&PromptMessageContent, _] = @json.from_json?(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
@@ -2347,7 +2347,7 @@ pub impl @json.FromJson for ReadResourceResult with from_json(json, path) {
   guard obj["contents"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'contents'"))
   }
-  let v : Result[Array[ReadResourceResultContents], _] = @json.from_json?(json)
+  let v : Result[Array[&ReadResourceResultContents], _] = @json.from_json?(json)
   guard v is Ok(contents) else {
     raise @json.JsonDecodeError((path, "expected field 'contents'"))
   }
@@ -2869,7 +2869,7 @@ pub impl @json.FromJson for SamplingMessage with from_json(json, path) {
   guard obj["content"] is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[SamplingMessageContent, _] = @json.from_json?(json)
+  let v : Result[&SamplingMessageContent, _] = @json.from_json?(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }

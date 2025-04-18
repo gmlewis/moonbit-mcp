@@ -5,11 +5,11 @@ import(
 )
 
 // Values
+const MCP_VERSION : String = "2025-03-26"
+
+fn clock_gettime(Int, TimeSpec) -> Int
+
 fn get_char() -> Byte
-
-fn new_call_tool_error_result(annotations? : Annotations, String) -> CallToolResult
-
-fn new_call_tool_text_result(annotations? : Annotations, String) -> CallToolResultContent
 
 fn put_char(Byte) -> Unit
 
@@ -45,6 +45,10 @@ impl AudioContent {
   new(annotations? : Annotations, String, String) -> Self
   raw_audio(Self) -> Bytes!
 }
+impl CallToolResultContent for AudioContent
+impl CreateMessageResultContent for AudioContent
+impl PromptMessageContent for AudioContent
+impl SamplingMessageContent for AudioContent
 impl Eq for AudioContent
 impl Show for AudioContent
 impl ToJson for AudioContent
@@ -59,6 +63,8 @@ impl BlobResourceContents {
   new(String, mimeType? : String, String) -> Self
   raw_data(Self) -> Bytes!
 }
+impl EmbeddedResourceResource for BlobResourceContents
+impl ReadResourceResultContents for BlobResourceContents
 impl Eq for BlobResourceContents
 impl Show for BlobResourceContents
 impl ToJson for BlobResourceContents
@@ -71,6 +77,7 @@ impl CallToolRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(CallToolRequestParams) -> Self
 }
+impl ClientRequest for CallToolRequest
 impl MCPRequest for CallToolRequest
 impl Eq for CallToolRequest
 impl Show for CallToolRequest
@@ -91,29 +98,19 @@ impl @moonbitlang/core/json.FromJson for CallToolRequestParams
 
 pub(all) struct CallToolResult {
   _meta : Json?
-  content : Array[CallToolResultContent]
+  content : Array[&CallToolResultContent]
   isError : Bool?
 }
 impl CallToolResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Json, Array[CallToolResultContent], isError? : Bool) -> Self
+  new(_meta? : Json, Array[&CallToolResultContent], isError? : Bool) -> Self
 }
 impl MCPResponse for CallToolResult
+impl ServerResult for CallToolResult
 impl Eq for CallToolResult
 impl Show for CallToolResult
 impl ToJson for CallToolResult
 impl @moonbitlang/core/json.FromJson for CallToolResult
-
-pub(all) enum CallToolResultContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-  EmbeddedResource(EmbeddedResource)
-}
-impl Eq for CallToolResultContent
-impl Show for CallToolResultContent
-impl ToJson for CallToolResultContent
-impl @moonbitlang/core/json.FromJson for CallToolResultContent
 
 pub(all) struct CancelledNotification {
   params : CancelledNotificationParams
@@ -122,7 +119,9 @@ impl CancelledNotification {
   from_message(@jsonrpc2.Message) -> Self?
   new(CancelledNotificationParams) -> Self
 }
+impl ClientNotification for CancelledNotification
 impl MCPNotification for CancelledNotification
+impl ServerNotification for CancelledNotification
 impl Eq for CancelledNotification
 impl Show for CancelledNotification
 impl ToJson for CancelledNotification
@@ -164,46 +163,6 @@ impl Show for ClientCapabilitiesRoots
 impl ToJson for ClientCapabilitiesRoots
 impl @moonbitlang/core/json.FromJson for ClientCapabilitiesRoots
 
-pub enum ClientNotification {
-  CancelledNotification(CancelledNotification)
-  InitializedNotification(InitializedNotification)
-  ProgressNotification(ProgressNotification)
-  RootsListChangedNotification(RootsListChangedNotification)
-}
-impl Eq for ClientNotification
-impl Show for ClientNotification
-impl ToJson for ClientNotification
-impl @moonbitlang/core/json.FromJson for ClientNotification
-
-pub enum ClientRequest {
-  InitializeRequest(InitializeRequest)
-  PingRequest(PingRequest)
-  ListResourcesRequest(ListResourcesRequest)
-  ReadResourceRequest(ReadResourceRequest)
-  SubscribeRequest(SubscribeRequest)
-  UnsubscribeRequest(UnsubscribeRequest)
-  ListPromptsRequest(ListPromptsRequest)
-  GetPromptRequest(GetPromptRequest)
-  ListToolsRequest(ListToolsRequest)
-  CallToolRequest(CallToolRequest)
-  SetLevelRequest(SetLevelRequest)
-  CompleteRequest(CompleteRequest)
-}
-impl Eq for ClientRequest
-impl Show for ClientRequest
-impl ToJson for ClientRequest
-impl @moonbitlang/core/json.FromJson for ClientRequest
-
-pub enum ClientResult {
-  CustomResult(CustomResult)
-  CreateMessageResult(CreateMessageResult)
-  ListRootsResult(ListRootsResult)
-}
-impl Eq for ClientResult
-impl Show for ClientResult
-impl ToJson for ClientResult
-impl @moonbitlang/core/json.FromJson for ClientResult
-
 pub(all) struct CompleteRequest {
   params : CompleteRequestParams
 }
@@ -211,6 +170,7 @@ impl CompleteRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(CompleteRequestParams) -> Self
 }
+impl ClientRequest for CompleteRequest
 impl MCPRequest for CompleteRequest
 impl Eq for CompleteRequest
 impl Show for CompleteRequest
@@ -219,10 +179,10 @@ impl @moonbitlang/core/json.FromJson for CompleteRequest
 
 pub(all) struct CompleteRequestParams {
   argument : CompleteRequestParamsArgument
-  ref_ : CompleteRequestParamsRef
+  ref_ : &CompleteRequestParamsRef
 }
 impl CompleteRequestParams {
-  new(CompleteRequestParamsArgument, CompleteRequestParamsRef) -> Self
+  new(CompleteRequestParamsArgument, &CompleteRequestParamsRef) -> Self
 }
 impl Eq for CompleteRequestParams
 impl Show for CompleteRequestParams
@@ -241,15 +201,6 @@ impl Show for CompleteRequestParamsArgument
 impl ToJson for CompleteRequestParamsArgument
 impl @moonbitlang/core/json.FromJson for CompleteRequestParamsArgument
 
-pub enum CompleteRequestParamsRef {
-  PromptReference(PromptReference)
-  ResourceReference(ResourceReference)
-}
-impl Eq for CompleteRequestParamsRef
-impl Show for CompleteRequestParamsRef
-impl ToJson for CompleteRequestParamsRef
-impl @moonbitlang/core/json.FromJson for CompleteRequestParamsRef
-
 pub(all) struct CompleteResult {
   _meta : Json?
   completion : CompleteResultCompletion
@@ -259,6 +210,7 @@ impl CompleteResult {
   new(_meta? : Json, CompleteResultCompletion) -> Self
 }
 impl MCPResponse for CompleteResult
+impl ServerResult for CompleteResult
 impl Eq for CompleteResult
 impl Show for CompleteResult
 impl ToJson for CompleteResult
@@ -278,9 +230,12 @@ impl ToJson for CompleteResultCompletion
 impl @moonbitlang/core/json.FromJson for CompleteResultCompletion
 
 pub struct Context {
+  start_time_unix_nanos : Int64
+  timeout_millis : Int?
 }
 impl Context {
   new() -> Self
+  with_timeout(Self, Int) -> Self
 }
 
 pub(all) struct CreateMessageRequest {
@@ -291,6 +246,7 @@ impl CreateMessageRequest {
   new(CreateMessageRequestParams) -> Self
 }
 impl MCPRequest for CreateMessageRequest
+impl ServerRequest for CreateMessageRequest
 impl Eq for CreateMessageRequest
 impl Show for CreateMessageRequest
 impl ToJson for CreateMessageRequest
@@ -316,30 +272,21 @@ impl @moonbitlang/core/json.FromJson for CreateMessageRequestParams
 
 pub(all) struct CreateMessageResult {
   _meta : Json?
-  content : CreateMessageResultContent
+  content : &CreateMessageResultContent
   model : String
   role : Role
   stopReason : String?
 }
 impl CreateMessageResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Json, CreateMessageResultContent, String, Role, stopReason? : String) -> Self
+  new(_meta? : Json, &CreateMessageResultContent, String, Role, stopReason? : String) -> Self
 }
+impl ClientResult for CreateMessageResult
 impl MCPResponse for CreateMessageResult
 impl Eq for CreateMessageResult
 impl Show for CreateMessageResult
 impl ToJson for CreateMessageResult
 impl @moonbitlang/core/json.FromJson for CreateMessageResult
-
-pub enum CreateMessageResultContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-}
-impl Eq for CreateMessageResultContent
-impl Show for CreateMessageResultContent
-impl ToJson for CreateMessageResultContent
-impl @moonbitlang/core/json.FromJson for CreateMessageResultContent
 
 pub(all) struct Cursor {
 }
@@ -358,7 +305,9 @@ impl CustomResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(_meta? : Json) -> Self
 }
+impl ClientResult for CustomResult
 impl MCPResponse for CustomResult
+impl ServerResult for CustomResult
 impl Eq for CustomResult
 impl Show for CustomResult
 impl ToJson for CustomResult
@@ -366,24 +315,17 @@ impl @moonbitlang/core/json.FromJson for CustomResult
 
 pub(all) struct EmbeddedResource {
   annotations : Annotations?
-  resource : EmbeddedResourceResource
+  resource : &EmbeddedResourceResource
 }
 impl EmbeddedResource {
-  new(annotations? : Annotations, EmbeddedResourceResource) -> Self
+  new(annotations? : Annotations, &EmbeddedResourceResource) -> Self
 }
+impl CallToolResultContent for EmbeddedResource
+impl PromptMessageContent for EmbeddedResource
 impl Eq for EmbeddedResource
 impl Show for EmbeddedResource
 impl ToJson for EmbeddedResource
 impl @moonbitlang/core/json.FromJson for EmbeddedResource
-
-pub enum EmbeddedResourceResource {
-  TextResourceContents(TextResourceContents)
-  BlobResourceContents(BlobResourceContents)
-}
-impl Eq for EmbeddedResourceResource
-impl Show for EmbeddedResourceResource
-impl ToJson for EmbeddedResourceResource
-impl @moonbitlang/core/json.FromJson for EmbeddedResourceResource
 
 pub(all) struct GetPromptRequest {
   params : GetPromptRequestParams
@@ -392,6 +334,7 @@ impl GetPromptRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(GetPromptRequestParams) -> Self
 }
+impl ClientRequest for GetPromptRequest
 impl MCPRequest for GetPromptRequest
 impl Eq for GetPromptRequest
 impl Show for GetPromptRequest
@@ -420,6 +363,7 @@ impl GetPromptResult {
   new(_meta? : Json, description? : String, Array[PromptMessage]) -> Self
 }
 impl MCPResponse for GetPromptResult
+impl ServerResult for GetPromptResult
 impl Eq for GetPromptResult
 impl Show for GetPromptResult
 impl ToJson for GetPromptResult
@@ -434,6 +378,10 @@ impl ImageContent {
   new(annotations? : Annotations, String, String) -> Self
   raw_image(Self) -> Bytes!
 }
+impl CallToolResultContent for ImageContent
+impl CreateMessageResultContent for ImageContent
+impl PromptMessageContent for ImageContent
+impl SamplingMessageContent for ImageContent
 impl Eq for ImageContent
 impl Show for ImageContent
 impl ToJson for ImageContent
@@ -451,7 +399,7 @@ impl Show for Implementation
 impl ToJson for Implementation
 impl @moonbitlang/core/json.FromJson for Implementation
 
-pub enum IncludeContext {
+pub(all) enum IncludeContext {
   AllServers
   NoServers
   ThisServer
@@ -468,6 +416,7 @@ impl InitializeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(InitializeRequestParams) -> Self
 }
+impl ClientRequest for InitializeRequest
 impl MCPRequest for InitializeRequest
 impl Eq for InitializeRequest
 impl Show for InitializeRequest
@@ -499,6 +448,7 @@ impl InitializeResult {
   new(_meta? : Json, ServerCapabilities, instructions? : String, String, Implementation) -> Self
 }
 impl MCPResponse for InitializeResult
+impl ServerResult for InitializeResult
 impl Eq for InitializeResult
 impl Show for InitializeResult
 impl ToJson for InitializeResult
@@ -511,6 +461,7 @@ impl InitializedNotification {
   from_message(@jsonrpc2.Message) -> Self?
   new(params? : InitializedNotificationParams) -> Self
 }
+impl ClientNotification for InitializedNotification
 impl MCPNotification for InitializedNotification
 impl Eq for InitializedNotification
 impl Show for InitializedNotification
@@ -535,6 +486,7 @@ impl ListPromptsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListPromptsRequestParams) -> Self
 }
+impl ClientRequest for ListPromptsRequest
 impl MCPRequest for ListPromptsRequest
 impl Eq for ListPromptsRequest
 impl Show for ListPromptsRequest
@@ -562,6 +514,7 @@ impl ListPromptsResult {
   new(_meta? : Json, nextCursor? : String, Array[Prompt]) -> Self
 }
 impl MCPResponse for ListPromptsResult
+impl ServerResult for ListPromptsResult
 impl Eq for ListPromptsResult
 impl Show for ListPromptsResult
 impl ToJson for ListPromptsResult
@@ -613,6 +566,7 @@ impl ListResourcesRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListResourcesRequestParams) -> Self
 }
+impl ClientRequest for ListResourcesRequest
 impl MCPRequest for ListResourcesRequest
 impl Eq for ListResourcesRequest
 impl Show for ListResourcesRequest
@@ -640,6 +594,7 @@ impl ListResourcesResult {
   new(_meta? : Json, nextCursor? : String, Array[Resource]) -> Self
 }
 impl MCPResponse for ListResourcesResult
+impl ServerResult for ListResourcesResult
 impl Eq for ListResourcesResult
 impl Show for ListResourcesResult
 impl ToJson for ListResourcesResult
@@ -653,6 +608,7 @@ impl ListRootsRequest {
   new(params? : ListRootsRequestParams) -> Self
 }
 impl MCPRequest for ListRootsRequest
+impl ServerRequest for ListRootsRequest
 impl Eq for ListRootsRequest
 impl Show for ListRootsRequest
 impl ToJson for ListRootsRequest
@@ -688,6 +644,7 @@ impl ListRootsResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(_meta? : Json, Array[Root]) -> Self
 }
+impl ClientResult for ListRootsResult
 impl MCPResponse for ListRootsResult
 impl Eq for ListRootsResult
 impl Show for ListRootsResult
@@ -701,6 +658,7 @@ impl ListToolsRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : ListToolsRequestParams) -> Self
 }
+impl ClientRequest for ListToolsRequest
 impl MCPRequest for ListToolsRequest
 impl Eq for ListToolsRequest
 impl Show for ListToolsRequest
@@ -728,12 +686,13 @@ impl ListToolsResult {
   new(_meta? : Json, nextCursor? : String, Array[Tool]) -> Self
 }
 impl MCPResponse for ListToolsResult
+impl ServerResult for ListToolsResult
 impl Eq for ListToolsResult
 impl Show for ListToolsResult
 impl ToJson for ListToolsResult
 impl @moonbitlang/core/json.FromJson for ListToolsResult
 
-pub enum LoggingLevel {
+pub(all) enum LoggingLevel {
   Alert
   Critical
   Debug
@@ -756,6 +715,7 @@ impl LoggingMessageNotification {
   new(LoggingMessageNotificationParams) -> Self
 }
 impl MCPNotification for LoggingMessageNotification
+impl ServerNotification for LoggingMessageNotification
 impl Eq for LoggingMessageNotification
 impl Show for LoggingMessageNotification
 impl ToJson for LoggingMessageNotification
@@ -870,7 +830,9 @@ impl PingRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(params? : PingRequestParams) -> Self
 }
+impl ClientRequest for PingRequest
 impl MCPRequest for PingRequest
+impl ServerRequest for PingRequest
 impl Eq for PingRequest
 impl Show for PingRequest
 impl ToJson for PingRequest
@@ -905,7 +867,9 @@ impl ProgressNotification {
   from_message(@jsonrpc2.Message) -> Self?
   new(ProgressNotificationParams) -> Self
 }
+impl ClientNotification for ProgressNotification
 impl MCPNotification for ProgressNotification
+impl ServerNotification for ProgressNotification
 impl Eq for ProgressNotification
 impl Show for ProgressNotification
 impl ToJson for ProgressNotification
@@ -971,6 +935,7 @@ impl PromptListChangedNotification {
   new(params? : PromptListChangedNotificationParams) -> Self
 }
 impl MCPNotification for PromptListChangedNotification
+impl ServerNotification for PromptListChangedNotification
 impl Eq for PromptListChangedNotification
 impl Show for PromptListChangedNotification
 impl ToJson for PromptListChangedNotification
@@ -988,27 +953,16 @@ impl ToJson for PromptListChangedNotificationParams
 impl @moonbitlang/core/json.FromJson for PromptListChangedNotificationParams
 
 pub(all) struct PromptMessage {
-  content : PromptMessageContent
+  content : &PromptMessageContent
   role : Role
 }
 impl PromptMessage {
-  new(PromptMessageContent, Role) -> Self
+  new(&PromptMessageContent, Role) -> Self
 }
 impl Eq for PromptMessage
 impl Show for PromptMessage
 impl ToJson for PromptMessage
 impl @moonbitlang/core/json.FromJson for PromptMessage
-
-pub enum PromptMessageContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-  EmbeddedResource(EmbeddedResource)
-}
-impl Eq for PromptMessageContent
-impl Show for PromptMessageContent
-impl ToJson for PromptMessageContent
-impl @moonbitlang/core/json.FromJson for PromptMessageContent
 
 pub(all) struct PromptReference {
   name : String
@@ -1016,6 +970,7 @@ pub(all) struct PromptReference {
 impl PromptReference {
   new(String) -> Self
 }
+impl CompleteRequestParamsRef for PromptReference
 impl Eq for PromptReference
 impl Show for PromptReference
 impl ToJson for PromptReference
@@ -1028,6 +983,7 @@ impl ReadResourceRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(ReadResourceRequestParams) -> Self
 }
+impl ClientRequest for ReadResourceRequest
 impl MCPRequest for ReadResourceRequest
 impl Eq for ReadResourceRequest
 impl Show for ReadResourceRequest
@@ -1047,26 +1003,18 @@ impl @moonbitlang/core/json.FromJson for ReadResourceRequestParams
 
 pub(all) struct ReadResourceResult {
   _meta : Json?
-  contents : Array[ReadResourceResultContents]
+  contents : Array[&ReadResourceResultContents]
 }
 impl ReadResourceResult {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Json, Array[ReadResourceResultContents]) -> Self
+  new(_meta? : Json, Array[&ReadResourceResultContents]) -> Self
 }
 impl MCPResponse for ReadResourceResult
+impl ServerResult for ReadResourceResult
 impl Eq for ReadResourceResult
 impl Show for ReadResourceResult
 impl ToJson for ReadResourceResult
 impl @moonbitlang/core/json.FromJson for ReadResourceResult
-
-pub enum ReadResourceResultContents {
-  TextResourceContents(TextResourceContents)
-  BlobResourceContents(BlobResourceContents)
-}
-impl Eq for ReadResourceResultContents
-impl Show for ReadResourceResultContents
-impl ToJson for ReadResourceResultContents
-impl @moonbitlang/core/json.FromJson for ReadResourceResultContents
 
 pub(all) struct Request {
   method_ : String
@@ -1142,6 +1090,7 @@ impl ResourceListChangedNotification {
   new(params? : ResourceListChangedNotificationParams) -> Self
 }
 impl MCPNotification for ResourceListChangedNotification
+impl ServerNotification for ResourceListChangedNotification
 impl Eq for ResourceListChangedNotification
 impl Show for ResourceListChangedNotification
 impl ToJson for ResourceListChangedNotification
@@ -1164,6 +1113,7 @@ pub(all) struct ResourceReference {
 impl ResourceReference {
   new(String) -> Self
 }
+impl CompleteRequestParamsRef for ResourceReference
 impl Eq for ResourceReference
 impl Show for ResourceReference
 impl ToJson for ResourceReference
@@ -1192,6 +1142,7 @@ impl ResourceUpdatedNotification {
   new(ResourceUpdatedNotificationParams) -> Self
 }
 impl MCPNotification for ResourceUpdatedNotification
+impl ServerNotification for ResourceUpdatedNotification
 impl Eq for ResourceUpdatedNotification
 impl Show for ResourceUpdatedNotification
 impl ToJson for ResourceUpdatedNotification
@@ -1208,7 +1159,7 @@ impl Show for ResourceUpdatedNotificationParams
 impl ToJson for ResourceUpdatedNotificationParams
 impl @moonbitlang/core/json.FromJson for ResourceUpdatedNotificationParams
 
-pub enum Role {
+pub(all) enum Role {
   Assistant
   User
 }
@@ -1236,6 +1187,7 @@ impl RootsListChangedNotification {
   from_message(@jsonrpc2.Message) -> Self?
   new(params? : RootsListChangedNotificationParams) -> Self
 }
+impl ClientNotification for RootsListChangedNotification
 impl MCPNotification for RootsListChangedNotification
 impl Eq for RootsListChangedNotification
 impl Show for RootsListChangedNotification
@@ -1254,29 +1206,21 @@ impl ToJson for RootsListChangedNotificationParams
 impl @moonbitlang/core/json.FromJson for RootsListChangedNotificationParams
 
 pub(all) struct SamplingMessage {
-  content : SamplingMessageContent
+  content : &SamplingMessageContent
   role : Role
 }
 impl SamplingMessage {
-  new(SamplingMessageContent, Role) -> Self
+  new(&SamplingMessageContent, Role) -> Self
 }
 impl Eq for SamplingMessage
 impl Show for SamplingMessage
 impl ToJson for SamplingMessage
 impl @moonbitlang/core/json.FromJson for SamplingMessage
 
-pub enum SamplingMessageContent {
-  TextContent(TextContent)
-  ImageContent(ImageContent)
-  AudioContent(AudioContent)
-}
-impl Eq for SamplingMessageContent
-impl Show for SamplingMessageContent
-impl ToJson for SamplingMessageContent
-impl @moonbitlang/core/json.FromJson for SamplingMessageContent
-
 pub struct Server {
-  tools : Map[String, &MCPTool]
+  prompts : Map[String, PromptFunc]
+  resources : Map[String, ResourceFunc]
+  tools : Map[String, ServerTool]
   mut transport : &Transport
 }
 impl Server {
@@ -1285,7 +1229,7 @@ impl Server {
   with_prompt(Self, String, String, PromptFunc) -> Unit
   with_resource(Self, String, String, String, String, ResourceFunc) -> Unit
   with_stdio_transport(Self, &Transport) -> Unit
-  with_tool(Self, &MCPTool) -> Unit
+  with_tool(Self, &MCPTool, list_changed~ : Bool = ..) -> Unit
 }
 
 pub(all) struct ServerCapabilities {
@@ -1338,45 +1282,10 @@ impl Show for ServerCapabilitiesTools
 impl ToJson for ServerCapabilitiesTools
 impl @moonbitlang/core/json.FromJson for ServerCapabilitiesTools
 
-pub enum ServerNotification {
-  CancelledNotification(CancelledNotification)
-  ProgressNotification(ProgressNotification)
-  ResourceListChangedNotification(ResourceListChangedNotification)
-  ResourceUpdatedNotification(ResourceUpdatedNotification)
-  PromptListChangedNotification(PromptListChangedNotification)
-  ToolListChangedNotification(ToolListChangedNotification)
-  LoggingMessageNotification(LoggingMessageNotification)
+pub struct ServerTool {
+  tool : &MCPTool
+  list_changed : Bool
 }
-impl Eq for ServerNotification
-impl Show for ServerNotification
-impl ToJson for ServerNotification
-impl @moonbitlang/core/json.FromJson for ServerNotification
-
-pub enum ServerRequest {
-  PingRequest(PingRequest)
-  CreateMessageRequest(CreateMessageRequest)
-  ListRootsRequest(ListRootsRequest)
-}
-impl Eq for ServerRequest
-impl Show for ServerRequest
-impl ToJson for ServerRequest
-impl @moonbitlang/core/json.FromJson for ServerRequest
-
-pub enum ServerResult {
-  CustomResult(CustomResult)
-  InitializeResult(InitializeResult)
-  ListResourcesResult(ListResourcesResult)
-  ReadResourceResult(ReadResourceResult)
-  ListPromptsResult(ListPromptsResult)
-  GetPromptResult(GetPromptResult)
-  ListToolsResult(ListToolsResult)
-  CallToolResult(CallToolResult)
-  CompleteResult(CompleteResult)
-}
-impl Eq for ServerResult
-impl Show for ServerResult
-impl ToJson for ServerResult
-impl @moonbitlang/core/json.FromJson for ServerResult
 
 pub(all) struct SetLevelRequest {
   params : SetLevelRequestParams
@@ -1385,6 +1294,7 @@ impl SetLevelRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(SetLevelRequestParams) -> Self
 }
+impl ClientRequest for SetLevelRequest
 impl MCPRequest for SetLevelRequest
 impl Eq for SetLevelRequest
 impl Show for SetLevelRequest
@@ -1403,11 +1313,15 @@ impl ToJson for SetLevelRequestParams
 impl @moonbitlang/core/json.FromJson for SetLevelRequestParams
 
 pub struct StdioTransport {
+  mut default_timeout_millis : Int
+  mut max_timeout_millis : Int
+  mut last_id : Int64
   mut close_handler : (() -> Unit)?
   mut error_handler : ((TransportError) -> Unit)?
   mut message_handler : ((Context, @jsonrpc2.Message) -> Unit)?
   mut reader : &@jsonrpc2.Reader?
   mut writer : &@jsonrpc2.Writer?
+  in_flight_requests : Map[Int64, Context]
 }
 impl StdioTransport {
   new() -> Self
@@ -1423,6 +1337,7 @@ impl SubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(SubscribeRequestParams) -> Self
 }
+impl ClientRequest for SubscribeRequest
 impl MCPRequest for SubscribeRequest
 impl Eq for SubscribeRequest
 impl Show for SubscribeRequest
@@ -1447,6 +1362,10 @@ pub(all) struct TextContent {
 impl TextContent {
   new(annotations? : Annotations, String) -> Self
 }
+impl CallToolResultContent for TextContent
+impl CreateMessageResultContent for TextContent
+impl PromptMessageContent for TextContent
+impl SamplingMessageContent for TextContent
 impl Eq for TextContent
 impl Show for TextContent
 impl ToJson for TextContent
@@ -1460,10 +1379,14 @@ pub(all) struct TextResourceContents {
 impl TextResourceContents {
   new(mimeType? : String, String, String) -> Self
 }
+impl EmbeddedResourceResource for TextResourceContents
+impl ReadResourceResultContents for TextResourceContents
 impl Eq for TextResourceContents
 impl Show for TextResourceContents
 impl ToJson for TextResourceContents
 impl @moonbitlang/core/json.FromJson for TextResourceContents
+
+type TimeSpec
 
 pub(all) struct Tool {
   annotations : ToolAnnotations?
@@ -1514,6 +1437,7 @@ impl ToolListChangedNotification {
   new(params? : ToolListChangedNotificationParams) -> Self
 }
 impl MCPNotification for ToolListChangedNotification
+impl ServerNotification for ToolListChangedNotification
 impl Eq for ToolListChangedNotification
 impl Show for ToolListChangedNotification
 impl ToJson for ToolListChangedNotification
@@ -1541,6 +1465,7 @@ impl UnsubscribeRequest {
   from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
   new(UnsubscribeRequestParams) -> Self
 }
+impl ClientRequest for UnsubscribeRequest
 impl MCPRequest for UnsubscribeRequest
 impl Eq for UnsubscribeRequest
 impl Show for UnsubscribeRequest
@@ -1558,15 +1483,82 @@ impl Show for UnsubscribeRequestParams
 impl ToJson for UnsubscribeRequestParams
 impl @moonbitlang/core/json.FromJson for UnsubscribeRequestParams
 
+impl Eq for &CallToolResultContent
+impl @moonbitlang/core/json.FromJson for &CallToolResultContent
+
+impl Eq for &ClientNotification
+impl @moonbitlang/core/json.FromJson for &ClientNotification
+
+impl Eq for &ClientRequest
+impl @moonbitlang/core/json.FromJson for &ClientRequest
+
+impl Eq for &ClientResult
+impl @moonbitlang/core/json.FromJson for &ClientResult
+
+impl Eq for &CompleteRequestParamsRef
+impl @moonbitlang/core/json.FromJson for &CompleteRequestParamsRef
+
+impl Eq for &CreateMessageResultContent
+impl @moonbitlang/core/json.FromJson for &CreateMessageResultContent
+
+impl Eq for &EmbeddedResourceResource
+impl @moonbitlang/core/json.FromJson for &EmbeddedResourceResource
+
+impl Eq for &PromptMessageContent
+impl @moonbitlang/core/json.FromJson for &PromptMessageContent
+
+impl Eq for &ReadResourceResultContents
+impl @moonbitlang/core/json.FromJson for &ReadResourceResultContents
+
+impl Eq for &SamplingMessageContent
+impl @moonbitlang/core/json.FromJson for &SamplingMessageContent
+
+impl Eq for &ServerNotification
+impl @moonbitlang/core/json.FromJson for &ServerNotification
+
+impl Eq for &ServerRequest
+impl @moonbitlang/core/json.FromJson for &ServerRequest
+
+impl Eq for &ServerResult
+impl @moonbitlang/core/json.FromJson for &ServerResult
+
 // Type aliases
 
 // Traits
-pub trait MCPRequest {
-  to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
+pub trait CallToolResultContent : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ClientNotification : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ClientRequest : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ClientResult : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait CompleteRequestParamsRef : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait CreateMessageResultContent : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait EmbeddedResourceResource : Show + ToJson {
+  unused(Self) -> Unit
 }
 
 pub trait MCPNotification {
   to_notification(Self) -> @jsonrpc2.Message
+}
+
+pub trait MCPRequest {
+  to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
 }
 
 pub trait MCPResponse {
@@ -1578,12 +1570,40 @@ pub(open) trait MCPTool {
   call_tool(Self, Json?) -> CallToolResult
 }
 
+pub trait PromptMessageContent : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ReadResourceResultContents : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait SamplingMessageContent : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ServerNotification : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ServerRequest : Show + ToJson {
+  unused(Self) -> Unit
+}
+
+pub trait ServerResult : Show + ToJson {
+  unused(Self) -> Unit
+}
+
 pub trait Transport {
   start(Self, Context) -> TransportError?
-  send(Self, Context, @jsonrpc2.Message) -> TransportError?
+  send_request(Self, Context, &MCPRequest) -> TransportError?
+  send_notification(Self, Context, &MCPNotification) -> TransportError?
+  send_response(Self, Context, @jsonrpc2.ID, &MCPResponse) -> TransportError?
   close(Self) -> TransportError?
   with_close_handler(Self, () -> Unit) -> Unit
   with_error_handler(Self, (TransportError) -> Unit) -> Unit
   with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
+  with_timeout(Self, Int) -> Unit
+  with_max_timeout(Self, Int) -> Unit
 }
 
