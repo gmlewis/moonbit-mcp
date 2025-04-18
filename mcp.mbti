@@ -23,6 +23,8 @@ fn restore_terminal() -> Unit
 
 fn set_raw_mode() -> Unit
 
+fn unix_nanos() -> Int64
+
 // Types and methods
 pub(all) struct Annotations {
   audience : Array[Role]?

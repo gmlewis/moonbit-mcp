@@ -1,5 +1,9 @@
 ///|
 fn main {
+  let now = @mcp.unix_nanos()
+  println("Current time in nanoseconds since epoch: \{now}")
+
+  //
   let stdio = @mcp.StdioTransport::new()
     ..with_close_handler(close_handler)
     ..with_error_handler(error_handler)
