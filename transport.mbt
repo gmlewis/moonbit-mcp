@@ -258,7 +258,7 @@ fn StdioTransport::start_ping(self : StdioTransport) -> Unit {
   if self.ping_frequency_seconds == 0 {
     return
   }
-  run_async(fn() { self.ping_worker!() })
+  // run_async(fn() { self.ping_worker!() })
   // let ping = @jsonrpc2.Message::new_ping()
   // let ctx = Context::new().with_timeout(self.ping_timeout_millis)
   // self.send(ctx, ping)
@@ -271,18 +271,3 @@ async fn StdioTransport::ping_worker(_self : StdioTransport) -> Unit {
   // let transport = StdioTransport::new()
   // transport.send(ctx, ping)
 }
-
-///|
-// `run_async` spawn a new coroutine and execute an async function in it
-fn run_async(f : async () -> Unit) -> Unit = "%async.run"
-
-///|
-// `suspend` will suspend the execution of the current coroutine.
-// The suspension will be handled by a callback passed to `suspend`
-async fn suspend[T, E : Error](
-  // `f` is a callback for handling suspension
-  // the first parameter of `f` is used to resume the execution of the coroutine normally
-  // the second parameter of `f` is used to cancel the execution of the current coroutine
-  // by throwing an error at suspension point
-  f : ((T) -> Unit, (E) -> Unit) -> Unit
-) -> T!E = "%async.suspend"

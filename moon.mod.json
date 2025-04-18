@@ -4,7 +4,9 @@
   "deps": {
     "gmlewis/base64": "0.14.3",
     "gmlewis/io": "0.22.1",
-    "gmlewis/jsonrpc2": "0.0.5"
+    "gmlewis/jsonrpc2": "0.0.5",
+    "peter-jerry-ye/async": "0.1.3",
+    "tonyfettes/uv": "0.1.19"
   },
   "readme": "README.md",
   "repository": "https://github.com/gmlewis/moonbit-jsonrpc2",

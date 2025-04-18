@@ -2,10 +2,12 @@
   "import": [
     "gmlewis/base64",
     "gmlewis/jsonrpc2",
-    "gmlewis/io"
+    "gmlewis/io",
+    "tonyfettes/uv"
   ],
   "native-stub": [ "termio.c" ],
   "targets": {
-    "ffi-native": [ "native" ]
+    "ffi-native.mbt": [ "native" ],
+    "ffi-notnative.mbt": [ "not", "native" ]
   }
 }
