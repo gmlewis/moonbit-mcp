@@ -49,7 +49,7 @@ pub trait Transport {
   ///
   /// NOTE: This method should not be called explicitly when using Client, Server, or Protocol classes,
   /// as they will implicitly call start().
-  start(Self, Context) -> TransportError?
+  start(Self) -> TransportError?
 
   /// Sends an MCPRequest.
   send_request(Self, Context, &MCPRequest) -> TransportError?
@@ -88,7 +88,7 @@ pub trait Transport {
 }
 
 ///|
-pub struct StdioTransport {
+struct StdioTransport {
   mut default_timeout_millis : Int
   mut max_timeout_millis : Int
   mut ping_frequency_seconds : Int
@@ -100,6 +100,7 @@ pub struct StdioTransport {
   mut reader : &@jsonrpc2.Reader?
   mut writer : &@jsonrpc2.Writer?
   in_flight_requests : Map[Int64, Context]
+  uv : @uv.Loop?
 }
 
 ///|
@@ -114,6 +115,14 @@ pub fn StdioTransport::new() -> StdioTransport {
   let reader = None
   let writer = None
   let in_flight_requests = {}
+  let uv = try {
+    Some(@uv.Loop::new!())
+  } catch {
+    e => {
+      write_stderr("Failed to create uv loop: \{e}\n")
+      None
+    }
+  }
   let self = StdioTransport::{
     default_timeout_millis,
     max_timeout_millis,
@@ -126,6 +135,7 @@ pub fn StdioTransport::new() -> StdioTransport {
     reader,
     writer,
     in_flight_requests,
+    uv,
   }
   let reader = @jsonrpc2.line_framer().reader(self)
   let writer = @jsonrpc2.line_framer().writer(self)
@@ -135,8 +145,11 @@ pub fn StdioTransport::new() -> StdioTransport {
 }
 
 ///|
-pub impl Transport for StdioTransport with start(self, _context) {
+pub impl Transport for StdioTransport with start(self) {
   set_raw_mode()
+  guard self.uv is Some(uv) else {
+    return Some(TransportError("uv loop is not initialized"))
+  }
   self.start_ping()
   None
 }
@@ -145,6 +158,13 @@ pub impl Transport for StdioTransport with start(self, _context) {
 pub impl Transport for StdioTransport with close(self) {
   if self.close_handler is Some(handler) {
     handler()
+  }
+  if self.uv is Some(uv) {
+    try {
+      uv.close!()
+    } catch {
+      e => write_stderr("Failed to close uv loop: \{e}\n")
+    }
   }
   restore_terminal()
   None

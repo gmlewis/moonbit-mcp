@@ -1,9 +1,9 @@
 ///|
 fn main {
   let stdio = @mcp.StdioTransport::new()
-    ..with_close_handler(close_handler)
-    ..with_error_handler(error_handler)
-    ..with_message_handler(message_handler)
+  // ..with_close_handler(close_handler)
+  // ..with_error_handler(error_handler)
+  // ..with_message_handler(message_handler)
 
   //
   @mcp.Server::new()
@@ -20,20 +20,20 @@ fn main {
   .run()
 }
 
-///|
-fn close_handler() -> Unit {
-  @mcp.write_stderr("close_handler called\n")
-}
+// ///|
+// fn close_handler() -> Unit {
+//   @mcp.write_stderr("close_handler called\n")
+// }
 
-///|
-fn error_handler(error : @mcp.TransportError) -> Unit {
-  @mcp.write_stderr("Error: \{error}\n")
-}
+// ///|
+// fn error_handler(error : @mcp.TransportError) -> Unit {
+//   @mcp.write_stderr("Error: \{error}\n")
+// }
 
-///|
-fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
-  @mcp.write_stderr("Message: \{message}\n")
-}
+// ///|
+// fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
+//   @mcp.write_stderr("Message: \{message}\n")
+// }
 
 ///|
 struct Content {
