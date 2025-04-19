@@ -1,9 +1,23 @@
 ///|
 struct Server {
-  prompts : Map[String, PromptFunc]
-  resources : Map[String, ResourceFunc]
+  name : String
+  version : String
+  prompts : Map[String, ServerPrompt]
+  resources : Map[String, ServerResource]
   tools : Map[String, ServerTool]
   mut transport : &Transport?
+}
+
+///|
+pub struct ServerPrompt {
+  tool : &MCPPrompt
+  list_changed : Bool
+}
+
+///|
+pub struct ServerResource {
+  tool : &MCPResource
+  list_changed : Bool
 }
 
 ///|
@@ -13,63 +27,58 @@ pub struct ServerTool {
 }
 
 ///|
-pub fn Server::new() -> Server {
+pub fn Server::new(name~ : String, version~ : String) -> Server {
   let prompts = {}
   let resources = {}
   let tools = {}
   let transport = None
-  Server::{ prompts, resources, tools, transport }
+  Server::{ name, version, prompts, resources, tools, transport }
 }
 
 ///|
-pub fn Server::with_stdio_transport(self : Server, stdio : &Transport) -> Unit {
-  self.transport = Some(stdio)
-}
-
-///|
-pub fn Server::with_tool(
+pub fn Server::tool(
   self : Server,
+  name : String,
   tool : &MCPTool,
   list_changed~ : Bool = false
 ) -> Unit {
-  let t = tool.as_tool()
-  self.tools[t.name] = ServerTool::{ tool, list_changed }
+  self.tools[name] = ServerTool::{ tool, list_changed }
 }
 
 ///|
 pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
 
 ///|
-pub fn Server::with_prompt(
-  _self : Server,
+pub fn Server::prompt(
+  self : Server,
   name : String,
-  description : String,
-  prompt_func : PromptFunc
+  prompt : &MCPPrompt,
+  list_changed~ : Bool = false
+  // description : String,
 ) -> Unit {
-  ...
+  self.prompts[name] = ServerPrompt::{ prompt, list_changed }
 }
 
 ///|
 pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
 
 ///|
-pub fn Server::with_resource(
-  _self : Server,
-  uri : String,
+pub fn Server::resource(
+  self : Server,
   name : String,
-  description : String,
-  mime_type : String,
-  resource_func : ResourceFunc
+  resource : &MCPResource,
+  list_changed~ : Bool = false
+  // uri : String,
+  // description : String,
+  // mime_type : String,
+  // resource_func : ResourceFunc
 ) -> Unit {
-  ...
+  self.resources[name] = ServerResource::{ resource, list_changed }
 }
 
 ///|
-pub fn Server::run(self : Server) -> Unit {
-  guard self.transport is Some(transport) else {
-    write_stderr("Transport not set\n")
-    return
-  }
+pub fn Server::connect(self : Server, transport : &Transport) -> Unit {
+  self.transport = Some(transport)
 
   // create the handlers and register the tools, prompts, and resources.
   transport

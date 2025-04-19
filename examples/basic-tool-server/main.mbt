@@ -1,39 +1,23 @@
 ///|
 fn main {
-  let stdio = @mcp.StdioTransport::new()
-  // ..with_close_handler(close_handler)
-  // ..with_error_handler(error_handler)
-  // ..with_message_handler(message_handler)
-
-  //
-  @mcp.Server::new()
-  ..with_stdio_transport(stdio)
-  ..with_tool(SayHelloTool::new())
-  ..with_prompt("prompt_test", "This is a test prompt", prompt_test)
-  ..with_resource(
-    "test://resource", "resource_test", "This is a test resource", "application/json",
-    resource_test,
+  @mcp.Server::new(name="Basic", version="0.1.0")
+  ..tool(@mcp.tool(name="add", properties={"a":
+  ..tool("hello", SayHelloTool::new())
+  ..prompt("prompt_test", PromptTest::new())
+  ..resource("greeting", Resource::new("greeting://{name}"))
+  ..resource(
+    "resource_test",
+    Resource::new(
+      "test://resource", "This is a test resource", "application/json",
+    ),
   )
-  ..with_resource(
-    "file://app_logs", "app_logs", "The app logs", "text/plain", app_logs,
+  ..resource(
+    "app_logs",
+    Resource::new("file://app_logs", "The app logs", "text/plain"),
   )
-  .run()
+  .connect(@mcp.StdioTransport::new())
 }
-
-// ///|
-// fn close_handler() -> Unit {
-//   @mcp.write_stderr("close_handler called\n")
-// }
-
-// ///|
-// fn error_handler(error : @mcp.TransportError) -> Unit {
-//   @mcp.write_stderr("Error: \{error}\n")
-// }
-
-// ///|
-// fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
-//   @mcp.write_stderr("Message: \{message}\n")
-// }
+// ..prompt("prompt_test", "This is a test prompt", prompt_test)
 
 ///|
 struct Content {
