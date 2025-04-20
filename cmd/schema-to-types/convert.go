@@ -160,7 +160,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 
 	toJSONLines = append(toJSONLines, prefix+"  obj.to_json()", "}")
 	fromJSONLines = append(fromJSONLines,
-		fmt.Sprintf(prefix+"  %v::{ ", name)+strings.Join(fromJSONLastLineFields, ", ")+" }",
+		prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }",
 		prefix+"}")
 	lines = append(lines,
 		prefix+"} derive(Show, Eq)")
@@ -169,7 +169,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 
 	newLines = append(newLines,
 		fmt.Sprintf(prefix+") -> %v {", name),
-		fmt.Sprintf(prefix+"  %v::{ ", name)+strings.Join(fromJSONLastLineFields, ", ")+" }",
+		prefix+"  { "+strings.Join(fromJSONLastLineFields, ", ")+" }",
 		prefix+"}")
 	out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
 

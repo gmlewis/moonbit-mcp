@@ -34,7 +34,7 @@ pub impl @json.FromJson for Annotations with from_json(json, path) {
       }
     None => None
   }
-  Annotations::{ audience, priority }
+  { audience, priority }
 }
 
 ///|
@@ -79,7 +79,7 @@ pub impl @json.FromJson for AudioContent with from_json(json, path) {
   guard obj["type"] == Some(String("audio")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='audio'"))
   }
-  AudioContent::{ annotations, data, mimeType }
+  { annotations, data, mimeType }
 }
 
 ///|
@@ -120,7 +120,7 @@ pub impl @json.FromJson for BlobResourceContents with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  BlobResourceContents::{ blob, mimeType, uri }
+  { blob, mimeType, uri }
 }
 
 ///|
@@ -153,7 +153,7 @@ pub impl @json.FromJson for CallToolRequestParams with from_json(json, path) {
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  CallToolRequestParams::{ arguments, name }
+  { arguments, name }
 }
 
 ///|
@@ -175,7 +175,7 @@ pub impl @json.FromJson for CallToolRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  CallToolRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -219,7 +219,7 @@ pub impl @json.FromJson for CallToolResult with from_json(json, path) {
       }
     None => None
   }
-  CallToolResult::{ _meta, content, isError }
+  { _meta, content, isError }
 }
 
 ///|
@@ -255,7 +255,7 @@ pub impl @json.FromJson for CancelledNotificationParams with from_json(
   guard v is Ok(requestId) else {
     raise @json.JsonDecodeError((path, "expected field 'requestId'"))
   }
-  CancelledNotificationParams::{ reason, requestId }
+  { reason, requestId }
 }
 
 ///|
@@ -277,7 +277,7 @@ pub impl @json.FromJson for CancelledNotification with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  CancelledNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -302,7 +302,7 @@ pub impl @json.FromJson for ClientCapabilitiesRoots with from_json(json, path) {
       }
     None => None
   }
-  ClientCapabilitiesRoots::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -349,7 +349,7 @@ pub impl @json.FromJson for ClientCapabilities with from_json(json, path) {
       }
     None => None
   }
-  ClientCapabilities::{ experimental, roots, sampling }
+  { experimental, roots, sampling }
 }
 
 ///|
@@ -382,7 +382,7 @@ pub impl @json.FromJson for CompleteRequestParamsArgument with from_json(
   guard v is Ok(value) else {
     raise @json.JsonDecodeError((path, "expected field 'value'"))
   }
-  CompleteRequestParamsArgument::{ name, value }
+  { name, value }
 }
 
 ///|
@@ -412,7 +412,7 @@ pub impl @json.FromJson for CompleteRequestParams with from_json(json, path) {
   guard v is Ok(ref_) else {
     raise @json.JsonDecodeError((path, "expected field 'ref'"))
   }
-  CompleteRequestParams::{ argument, ref_ }
+  { argument, ref_ }
 }
 
 ///|
@@ -434,7 +434,7 @@ pub impl @json.FromJson for CompleteRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  CompleteRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -478,7 +478,7 @@ pub impl @json.FromJson for CompleteResultCompletion with from_json(json, path) 
   guard v is Ok(values) else {
     raise @json.JsonDecodeError((path, "expected field 'values'"))
   }
-  CompleteResultCompletion::{ hasMore, total, values }
+  { hasMore, total, values }
 }
 
 ///|
@@ -511,7 +511,7 @@ pub impl @json.FromJson for CompleteResult with from_json(json, path) {
   guard v is Ok(completion) else {
     raise @json.JsonDecodeError((path, "expected field 'completion'"))
   }
-  CompleteResult::{ _meta, completion }
+  { _meta, completion }
 }
 
 ///|
@@ -610,7 +610,7 @@ pub impl @json.FromJson for CreateMessageRequestParams with from_json(
       }
     None => None
   }
-  CreateMessageRequestParams::{
+  {
     includeContext,
     maxTokens,
     messages,
@@ -641,7 +641,7 @@ pub impl @json.FromJson for CreateMessageRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  CreateMessageRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -701,7 +701,7 @@ pub impl @json.FromJson for CreateMessageResult with from_json(json, path) {
       }
     None => None
   }
-  CreateMessageResult::{ _meta, content, model, role, stopReason }
+  { _meta, content, model, role, stopReason }
 }
 
 ///|
@@ -738,7 +738,7 @@ pub impl @json.FromJson for EmbeddedResource with from_json(json, path) {
   guard obj["type"] == Some(String("resource")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='resource'"))
   }
-  EmbeddedResource::{ annotations, resource }
+  { annotations, resource }
 }
 
 ///|
@@ -771,7 +771,7 @@ pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  GetPromptRequestParams::{ arguments, name }
+  { arguments, name }
 }
 
 ///|
@@ -793,7 +793,7 @@ pub impl @json.FromJson for GetPromptRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  GetPromptRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -837,7 +837,7 @@ pub impl @json.FromJson for GetPromptResult with from_json(json, path) {
   guard v is Ok(messages) else {
     raise @json.JsonDecodeError((path, "expected field 'messages'"))
   }
-  GetPromptResult::{ _meta, description, messages }
+  { _meta, description, messages }
 }
 
 ///|
@@ -882,7 +882,7 @@ pub impl @json.FromJson for ImageContent with from_json(json, path) {
   guard obj["type"] == Some(String("image")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='image'"))
   }
-  ImageContent::{ annotations, data, mimeType }
+  { annotations, data, mimeType }
 }
 
 ///|
@@ -912,7 +912,7 @@ pub impl @json.FromJson for Implementation with from_json(json, path) {
   guard v is Ok(version) else {
     raise @json.JsonDecodeError((path, "expected field 'version'"))
   }
-  Implementation::{ name, version }
+  { name, version }
 }
 
 ///|
@@ -950,7 +950,7 @@ pub impl @json.FromJson for InitializeRequestParams with from_json(json, path) {
   guard v is Ok(protocolVersion) else {
     raise @json.JsonDecodeError((path, "expected field 'protocolVersion'"))
   }
-  InitializeRequestParams::{ capabilities, clientInfo, protocolVersion }
+  { capabilities, clientInfo, protocolVersion }
 }
 
 ///|
@@ -972,7 +972,7 @@ pub impl @json.FromJson for InitializeRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  InitializeRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1032,13 +1032,7 @@ pub impl @json.FromJson for InitializeResult with from_json(json, path) {
   guard v is Ok(serverInfo) else {
     raise @json.JsonDecodeError((path, "expected field 'serverInfo'"))
   }
-  InitializeResult::{
-    _meta,
-    capabilities,
-    instructions,
-    protocolVersion,
-    serverInfo,
-  }
+  { _meta, capabilities, instructions, protocolVersion, serverInfo }
 }
 
 ///|
@@ -1066,7 +1060,7 @@ pub impl @json.FromJson for InitializedNotificationParams with from_json(
       }
     None => None
   }
-  InitializedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -1091,7 +1085,7 @@ pub impl @json.FromJson for InitializedNotification with from_json(json, path) {
       }
     None => None
   }
-  InitializedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -1116,7 +1110,7 @@ pub impl @json.FromJson for ListPromptsRequestParams with from_json(json, path) 
       }
     None => None
   }
-  ListPromptsRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -1141,7 +1135,7 @@ pub impl @json.FromJson for ListPromptsRequest with from_json(json, path) {
       }
     None => None
   }
-  ListPromptsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1185,7 +1179,7 @@ pub impl @json.FromJson for ListPromptsResult with from_json(json, path) {
   guard v is Ok(prompts) else {
     raise @json.JsonDecodeError((path, "expected field 'prompts'"))
   }
-  ListPromptsResult::{ _meta, nextCursor, prompts }
+  { _meta, nextCursor, prompts }
 }
 
 ///|
@@ -1213,7 +1207,7 @@ pub impl @json.FromJson for ListResourceTemplatesRequestParams with from_json(
       }
     None => None
   }
-  ListResourceTemplatesRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -1241,7 +1235,7 @@ pub impl @json.FromJson for ListResourceTemplatesRequest with from_json(
       }
     None => None
   }
-  ListResourceTemplatesRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1288,7 +1282,7 @@ pub impl @json.FromJson for ListResourceTemplatesResult with from_json(
   guard v is Ok(resourceTemplates) else {
     raise @json.JsonDecodeError((path, "expected field 'resourceTemplates'"))
   }
-  ListResourceTemplatesResult::{ _meta, nextCursor, resourceTemplates }
+  { _meta, nextCursor, resourceTemplates }
 }
 
 ///|
@@ -1316,7 +1310,7 @@ pub impl @json.FromJson for ListResourcesRequestParams with from_json(
       }
     None => None
   }
-  ListResourcesRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -1341,7 +1335,7 @@ pub impl @json.FromJson for ListResourcesRequest with from_json(json, path) {
       }
     None => None
   }
-  ListResourcesRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1385,7 +1379,7 @@ pub impl @json.FromJson for ListResourcesResult with from_json(json, path) {
   guard v is Ok(resources) else {
     raise @json.JsonDecodeError((path, "expected field 'resources'"))
   }
-  ListResourcesResult::{ _meta, nextCursor, resources }
+  { _meta, nextCursor, resources }
 }
 
 ///|
@@ -1413,7 +1407,7 @@ pub impl @json.FromJson for ListRootsRequestParams_meta with from_json(
       }
     None => None
   }
-  ListRootsRequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
@@ -1438,7 +1432,7 @@ pub impl @json.FromJson for ListRootsRequestParams with from_json(json, path) {
       }
     None => None
   }
-  ListRootsRequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -1463,7 +1457,7 @@ pub impl @json.FromJson for ListRootsRequest with from_json(json, path) {
       }
     None => None
   }
-  ListRootsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1496,7 +1490,7 @@ pub impl @json.FromJson for ListRootsResult with from_json(json, path) {
   guard v is Ok(roots) else {
     raise @json.JsonDecodeError((path, "expected field 'roots'"))
   }
-  ListRootsResult::{ _meta, roots }
+  { _meta, roots }
 }
 
 ///|
@@ -1521,7 +1515,7 @@ pub impl @json.FromJson for ListToolsRequestParams with from_json(json, path) {
       }
     None => None
   }
-  ListToolsRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -1546,7 +1540,7 @@ pub impl @json.FromJson for ListToolsRequest with from_json(json, path) {
       }
     None => None
   }
-  ListToolsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -1590,7 +1584,7 @@ pub impl @json.FromJson for ListToolsResult with from_json(json, path) {
   guard v is Ok(tools) else {
     raise @json.JsonDecodeError((path, "expected field 'tools'"))
   }
-  ListToolsResult::{ _meta, nextCursor, tools }
+  { _meta, nextCursor, tools }
 }
 
 ///|
@@ -1634,7 +1628,7 @@ pub impl @json.FromJson for LoggingMessageNotificationParams with from_json(
       }
     None => None
   }
-  LoggingMessageNotificationParams::{ data, level, logger }
+  { data, level, logger }
 }
 
 ///|
@@ -1659,7 +1653,7 @@ pub impl @json.FromJson for LoggingMessageNotification with from_json(
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  LoggingMessageNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -1684,7 +1678,7 @@ pub impl @json.FromJson for ModelHint with from_json(json, path) {
       }
     None => None
   }
-  ModelHint::{ name, }
+  { name, }
 }
 
 ///|
@@ -1742,7 +1736,7 @@ pub impl @json.FromJson for ModelPreferences with from_json(json, path) {
       }
     None => None
   }
-  ModelPreferences::{ costPriority, hints, intelligencePriority, speedPriority }
+  { costPriority, hints, intelligencePriority, speedPriority }
 }
 
 ///|
@@ -1767,7 +1761,7 @@ pub impl @json.FromJson for NotificationParams with from_json(json, path) {
       }
     None => None
   }
-  NotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -1800,7 +1794,7 @@ pub impl @json.FromJson for Notification with from_json(json, path) {
       }
     None => None
   }
-  Notification::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -1825,7 +1819,7 @@ pub impl @json.FromJson for PaginatedRequestParams with from_json(json, path) {
       }
     None => None
   }
-  PaginatedRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -1858,7 +1852,7 @@ pub impl @json.FromJson for PaginatedRequest with from_json(json, path) {
       }
     None => None
   }
-  PaginatedRequest::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -1894,7 +1888,7 @@ pub impl @json.FromJson for PaginatedResult with from_json(json, path) {
       }
     None => None
   }
-  PaginatedResult::{ _meta, nextCursor }
+  { _meta, nextCursor }
 }
 
 ///|
@@ -1919,7 +1913,7 @@ pub impl @json.FromJson for PingRequestParams_meta with from_json(json, path) {
       }
     None => None
   }
-  PingRequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
@@ -1944,7 +1938,7 @@ pub impl @json.FromJson for PingRequestParams with from_json(json, path) {
       }
     None => None
   }
-  PingRequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -1969,7 +1963,7 @@ pub impl @json.FromJson for PingRequest with from_json(json, path) {
       }
     None => None
   }
-  PingRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -2024,7 +2018,7 @@ pub impl @json.FromJson for ProgressNotificationParams with from_json(
       }
     None => None
   }
-  ProgressNotificationParams::{ message, progress, progressToken, total }
+  { message, progress, progressToken, total }
 }
 
 ///|
@@ -2046,7 +2040,7 @@ pub impl @json.FromJson for ProgressNotification with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  ProgressNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -2090,7 +2084,7 @@ pub impl @json.FromJson for Prompt with from_json(json, path) {
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  Prompt::{ arguments, description, name }
+  { arguments, description, name }
 }
 
 ///|
@@ -2134,7 +2128,7 @@ pub impl @json.FromJson for PromptArgument with from_json(json, path) {
       }
     None => None
   }
-  PromptArgument::{ description, name, required }
+  { description, name, required }
 }
 
 ///|
@@ -2162,7 +2156,7 @@ pub impl @json.FromJson for PromptListChangedNotificationParams with from_json(
       }
     None => None
   }
-  PromptListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -2190,7 +2184,7 @@ pub impl @json.FromJson for PromptListChangedNotification with from_json(
       }
     None => None
   }
-  PromptListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -2220,7 +2214,7 @@ pub impl @json.FromJson for PromptMessage with from_json(json, path) {
   guard v is Ok(role) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  PromptMessage::{ content, role }
+  { content, role }
 }
 
 ///|
@@ -2246,7 +2240,7 @@ pub impl @json.FromJson for PromptReference with from_json(json, path) {
   guard obj["type"] == Some(String("ref/prompt")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='ref/prompt'"))
   }
-  PromptReference::{ name, }
+  { name, }
 }
 
 ///|
@@ -2268,7 +2262,7 @@ pub impl @json.FromJson for ReadResourceRequestParams with from_json(json, path)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  ReadResourceRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -2290,7 +2284,7 @@ pub impl @json.FromJson for ReadResourceRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  ReadResourceRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -2323,7 +2317,7 @@ pub impl @json.FromJson for ReadResourceResult with from_json(json, path) {
   guard v is Ok(contents) else {
     raise @json.JsonDecodeError((path, "expected field 'contents'"))
   }
-  ReadResourceResult::{ _meta, contents }
+  { _meta, contents }
 }
 
 ///|
@@ -2348,7 +2342,7 @@ pub impl @json.FromJson for RequestParams_meta with from_json(json, path) {
       }
     None => None
   }
-  RequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
@@ -2373,7 +2367,7 @@ pub impl @json.FromJson for RequestParams with from_json(json, path) {
       }
     None => None
   }
-  RequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -2406,7 +2400,7 @@ pub impl @json.FromJson for Request with from_json(json, path) {
       }
     None => None
   }
-  Request::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -2480,7 +2474,7 @@ pub impl @json.FromJson for Resource with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  Resource::{ annotations, description, mimeType, name, size, uri }
+  { annotations, description, mimeType, name, size, uri }
 }
 
 ///|
@@ -2513,7 +2507,7 @@ pub impl @json.FromJson for ResourceContents with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  ResourceContents::{ mimeType, uri }
+  { mimeType, uri }
 }
 
 ///|
@@ -2541,7 +2535,7 @@ pub impl @json.FromJson for ResourceListChangedNotificationParams with from_json
       }
     None => None
   }
-  ResourceListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -2569,7 +2563,7 @@ pub impl @json.FromJson for ResourceListChangedNotification with from_json(
       }
     None => None
   }
-  ResourceListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -2595,7 +2589,7 @@ pub impl @json.FromJson for ResourceReference with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  ResourceReference::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -2658,7 +2652,7 @@ pub impl @json.FromJson for ResourceTemplate with from_json(json, path) {
   guard v is Ok(uriTemplate) else {
     raise @json.JsonDecodeError((path, "expected field 'uriTemplate'"))
   }
-  ResourceTemplate::{ annotations, description, mimeType, name, uriTemplate }
+  { annotations, description, mimeType, name, uriTemplate }
 }
 
 ///|
@@ -2683,7 +2677,7 @@ pub impl @json.FromJson for ResourceUpdatedNotificationParams with from_json(
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  ResourceUpdatedNotificationParams::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -2708,7 +2702,7 @@ pub impl @json.FromJson for ResourceUpdatedNotification with from_json(
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  ResourceUpdatedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -2733,7 +2727,7 @@ pub impl @json.FromJson for CustomResult with from_json(json, path) {
       }
     None => None
   }
-  CustomResult::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -2766,7 +2760,7 @@ pub impl @json.FromJson for Root with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  Root::{ name, uri }
+  { name, uri }
 }
 
 ///|
@@ -2794,7 +2788,7 @@ pub impl @json.FromJson for RootsListChangedNotificationParams with from_json(
       }
     None => None
   }
-  RootsListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -2822,7 +2816,7 @@ pub impl @json.FromJson for RootsListChangedNotification with from_json(
       }
     None => None
   }
-  RootsListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -2852,7 +2846,7 @@ pub impl @json.FromJson for SamplingMessage with from_json(json, path) {
   guard v is Ok(role) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  SamplingMessage::{ content, role }
+  { content, role }
 }
 
 ///|
@@ -2877,7 +2871,7 @@ pub impl @json.FromJson for ServerCapabilitiesPrompts with from_json(json, path)
       }
     None => None
   }
-  ServerCapabilitiesPrompts::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -2916,7 +2910,7 @@ pub impl @json.FromJson for ServerCapabilitiesResources with from_json(
       }
     None => None
   }
-  ServerCapabilitiesResources::{ listChanged, subscribe }
+  { listChanged, subscribe }
 }
 
 ///|
@@ -2941,7 +2935,7 @@ pub impl @json.FromJson for ServerCapabilitiesTools with from_json(json, path) {
       }
     None => None
   }
-  ServerCapabilitiesTools::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -3021,14 +3015,7 @@ pub impl @json.FromJson for ServerCapabilities with from_json(json, path) {
       }
     None => None
   }
-  ServerCapabilities::{
-    completions,
-    experimental,
-    logging,
-    prompts,
-    resources,
-    tools,
-  }
+  { completions, experimental, logging, prompts, resources, tools }
 }
 
 ///|
@@ -3050,7 +3037,7 @@ pub impl @json.FromJson for SetLevelRequestParams with from_json(json, path) {
   guard v is Ok(level) else {
     raise @json.JsonDecodeError((path, "expected field 'level'"))
   }
-  SetLevelRequestParams::{ level, }
+  { level, }
 }
 
 ///|
@@ -3072,7 +3059,7 @@ pub impl @json.FromJson for SetLevelRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  SetLevelRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -3094,7 +3081,7 @@ pub impl @json.FromJson for SubscribeRequestParams with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  SubscribeRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -3116,7 +3103,7 @@ pub impl @json.FromJson for SubscribeRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  SubscribeRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -3153,7 +3140,7 @@ pub impl @json.FromJson for TextContent with from_json(json, path) {
   guard obj["type"] == Some(String("text")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='text'"))
   }
-  TextContent::{ annotations, text }
+  { annotations, text }
 }
 
 ///|
@@ -3194,7 +3181,7 @@ pub impl @json.FromJson for TextResourceContents with from_json(json, path) {
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  TextResourceContents::{ mimeType, text, uri }
+  { mimeType, text, uri }
 }
 
 ///|
@@ -3234,7 +3221,7 @@ pub impl @json.FromJson for ToolInputSchema with from_json(json, path) {
   guard obj["type"] == Some(String("object")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='object'"))
   }
-  ToolInputSchema::{ properties, required }
+  { properties, required }
 }
 
 ///|
@@ -3286,7 +3273,7 @@ pub impl @json.FromJson for Tool with from_json(json, path) {
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  Tool::{ annotations, description, inputSchema, name }
+  { annotations, description, inputSchema, name }
 }
 
 ///|
@@ -3355,13 +3342,7 @@ pub impl @json.FromJson for ToolAnnotations with from_json(json, path) {
       }
     None => None
   }
-  ToolAnnotations::{
-    destructiveHint,
-    idempotentHint,
-    openWorldHint,
-    readOnlyHint,
-    title,
-  }
+  { destructiveHint, idempotentHint, openWorldHint, readOnlyHint, title }
 }
 
 ///|
@@ -3389,7 +3370,7 @@ pub impl @json.FromJson for ToolListChangedNotificationParams with from_json(
       }
     None => None
   }
-  ToolListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -3417,7 +3398,7 @@ pub impl @json.FromJson for ToolListChangedNotification with from_json(
       }
     None => None
   }
-  ToolListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -3439,7 +3420,7 @@ pub impl @json.FromJson for UnsubscribeRequestParams with from_json(json, path) 
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  UnsubscribeRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -3461,5 +3442,5 @@ pub impl @json.FromJson for UnsubscribeRequest with from_json(json, path) {
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  UnsubscribeRequest::{ params, }
+  { params, }
 }

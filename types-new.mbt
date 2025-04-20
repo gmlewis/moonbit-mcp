@@ -14,7 +14,7 @@ pub fn Annotations::new(
   /// the data is entirely optional.
   priority? : Double
 ) -> Annotations {
-  Annotations::{ audience, priority }
+  { audience, priority }
 }
 
 ///|
@@ -26,7 +26,7 @@ pub fn AudioContent::new(
   /// The MIME type of the audio. Different providers may support different audio types.
   mimeType : String
 ) -> AudioContent {
-  AudioContent::{ annotations, data, mimeType }
+  { annotations, data, mimeType }
 }
 
 ///|
@@ -38,7 +38,7 @@ pub fn BlobResourceContents::new(
   /// The URI of this resource.
   uri : String
 ) -> BlobResourceContents {
-  BlobResourceContents::{ blob, mimeType, uri }
+  { blob, mimeType, uri }
 }
 
 ///|
@@ -46,12 +46,12 @@ pub fn CallToolRequestParams::new(
   arguments? : Json,
   name : String
 ) -> CallToolRequestParams {
-  CallToolRequestParams::{ arguments, name }
+  { arguments, name }
 }
 
 ///|
 pub fn CallToolRequest::new(params : CallToolRequestParams) -> CallToolRequest {
-  CallToolRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -64,7 +64,7 @@ pub fn CallToolResult::new(
   /// If not set, this is assumed to be false (the call was successful).
   isError? : Bool
 ) -> CallToolResult {
-  CallToolResult::{ _meta, content, isError }
+  { _meta, content, isError }
 }
 
 ///|
@@ -76,14 +76,14 @@ pub fn CancelledNotificationParams::new(
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : @jsonrpc2.ID
 ) -> CancelledNotificationParams {
-  CancelledNotificationParams::{ reason, requestId }
+  { reason, requestId }
 }
 
 ///|
 pub fn CancelledNotification::new(
   params : CancelledNotificationParams
 ) -> CancelledNotification {
-  CancelledNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -91,7 +91,7 @@ pub fn ClientCapabilitiesRoots::new(
   /// Whether the client supports notifications for changes to the roots list.
   listChanged? : Bool
 ) -> ClientCapabilitiesRoots {
-  ClientCapabilitiesRoots::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -103,7 +103,7 @@ pub fn ClientCapabilities::new(
   /// Present if the client supports sampling from an LLM.
   sampling? : Json
 ) -> ClientCapabilities {
-  ClientCapabilities::{ experimental, roots, sampling }
+  { experimental, roots, sampling }
 }
 
 ///|
@@ -113,7 +113,7 @@ pub fn CompleteRequestParamsArgument::new(
   /// The value of the argument to use for completion matching.
   value : String
 ) -> CompleteRequestParamsArgument {
-  CompleteRequestParamsArgument::{ name, value }
+  { name, value }
 }
 
 ///|
@@ -122,12 +122,12 @@ pub fn CompleteRequestParams::new(
   argument : CompleteRequestParamsArgument,
   ref_ : &CompleteRequestParamsRef
 ) -> CompleteRequestParams {
-  CompleteRequestParams::{ argument, ref_ }
+  { argument, ref_ }
 }
 
 ///|
 pub fn CompleteRequest::new(params : CompleteRequestParams) -> CompleteRequest {
-  CompleteRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -139,7 +139,7 @@ pub fn CompleteResultCompletion::new(
   /// An array of completion values. Must not exceed 100 items.
   values : Array[String]
 ) -> CompleteResultCompletion {
-  CompleteResultCompletion::{ hasMore, total, values }
+  { hasMore, total, values }
 }
 
 ///|
@@ -148,7 +148,7 @@ pub fn CompleteResult::new(
   _meta? : Json,
   completion : CompleteResultCompletion
 ) -> CompleteResult {
-  CompleteResult::{ _meta, completion }
+  { _meta, completion }
 }
 
 ///|
@@ -167,7 +167,7 @@ pub fn CreateMessageRequestParams::new(
   systemPrompt? : String,
   temperature? : Double
 ) -> CreateMessageRequestParams {
-  CreateMessageRequestParams::{
+  {
     includeContext,
     maxTokens,
     messages,
@@ -183,7 +183,7 @@ pub fn CreateMessageRequestParams::new(
 pub fn CreateMessageRequest::new(
   params : CreateMessageRequestParams
 ) -> CreateMessageRequest {
-  CreateMessageRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -197,7 +197,7 @@ pub fn CreateMessageResult::new(
   /// The reason why sampling stopped, if known.
   stopReason? : String
 ) -> CreateMessageResult {
-  CreateMessageResult::{ _meta, content, model, role, stopReason }
+  { _meta, content, model, role, stopReason }
 }
 
 ///|
@@ -206,7 +206,7 @@ pub fn EmbeddedResource::new(
   annotations? : Annotations,
   resource : &EmbeddedResourceResource
 ) -> EmbeddedResource {
-  EmbeddedResource::{ annotations, resource }
+  { annotations, resource }
 }
 
 ///|
@@ -216,14 +216,14 @@ pub fn GetPromptRequestParams::new(
   /// The name of the prompt or prompt template.
   name : String
 ) -> GetPromptRequestParams {
-  GetPromptRequestParams::{ arguments, name }
+  { arguments, name }
 }
 
 ///|
 pub fn GetPromptRequest::new(
   params : GetPromptRequestParams
 ) -> GetPromptRequest {
-  GetPromptRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -234,7 +234,7 @@ pub fn GetPromptResult::new(
   description? : String,
   messages : Array[PromptMessage]
 ) -> GetPromptResult {
-  GetPromptResult::{ _meta, description, messages }
+  { _meta, description, messages }
 }
 
 ///|
@@ -246,12 +246,12 @@ pub fn ImageContent::new(
   /// The MIME type of the image. Different providers may support different image types.
   mimeType : String
 ) -> ImageContent {
-  ImageContent::{ annotations, data, mimeType }
+  { annotations, data, mimeType }
 }
 
 ///|
 pub fn Implementation::new(name : String, version : String) -> Implementation {
-  Implementation::{ name, version }
+  { name, version }
 }
 
 ///|
@@ -261,14 +261,14 @@ pub fn InitializeRequestParams::new(
   /// The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
   protocolVersion : String
 ) -> InitializeRequestParams {
-  InitializeRequestParams::{ capabilities, clientInfo, protocolVersion }
+  { capabilities, clientInfo, protocolVersion }
 }
 
 ///|
 pub fn InitializeRequest::new(
   params : InitializeRequestParams
 ) -> InitializeRequest {
-  InitializeRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -284,13 +284,7 @@ pub fn InitializeResult::new(
   protocolVersion : String,
   serverInfo : Implementation
 ) -> InitializeResult {
-  InitializeResult::{
-    _meta,
-    capabilities,
-    instructions,
-    protocolVersion,
-    serverInfo,
-  }
+  { _meta, capabilities, instructions, protocolVersion, serverInfo }
 }
 
 ///|
@@ -298,14 +292,14 @@ pub fn InitializedNotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> InitializedNotificationParams {
-  InitializedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn InitializedNotification::new(
   params? : InitializedNotificationParams
 ) -> InitializedNotification {
-  InitializedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -314,14 +308,14 @@ pub fn ListPromptsRequestParams::new(
   /// If provided, the server should return results starting after this cursor.
   cursor? : String
 ) -> ListPromptsRequestParams {
-  ListPromptsRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
 pub fn ListPromptsRequest::new(
   params? : ListPromptsRequestParams
 ) -> ListPromptsRequest {
-  ListPromptsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -333,7 +327,7 @@ pub fn ListPromptsResult::new(
   nextCursor? : String,
   prompts : Array[Prompt]
 ) -> ListPromptsResult {
-  ListPromptsResult::{ _meta, nextCursor, prompts }
+  { _meta, nextCursor, prompts }
 }
 
 ///|
@@ -342,14 +336,14 @@ pub fn ListResourceTemplatesRequestParams::new(
   /// If provided, the server should return results starting after this cursor.
   cursor? : String
 ) -> ListResourceTemplatesRequestParams {
-  ListResourceTemplatesRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
 pub fn ListResourceTemplatesRequest::new(
   params? : ListResourceTemplatesRequestParams
 ) -> ListResourceTemplatesRequest {
-  ListResourceTemplatesRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -361,7 +355,7 @@ pub fn ListResourceTemplatesResult::new(
   nextCursor? : String,
   resourceTemplates : Array[ResourceTemplate]
 ) -> ListResourceTemplatesResult {
-  ListResourceTemplatesResult::{ _meta, nextCursor, resourceTemplates }
+  { _meta, nextCursor, resourceTemplates }
 }
 
 ///|
@@ -370,14 +364,14 @@ pub fn ListResourcesRequestParams::new(
   /// If provided, the server should return results starting after this cursor.
   cursor? : String
 ) -> ListResourcesRequestParams {
-  ListResourcesRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
 pub fn ListResourcesRequest::new(
   params? : ListResourcesRequestParams
 ) -> ListResourcesRequest {
-  ListResourcesRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -389,7 +383,7 @@ pub fn ListResourcesResult::new(
   nextCursor? : String,
   resources : Array[Resource]
 ) -> ListResourcesResult {
-  ListResourcesResult::{ _meta, nextCursor, resources }
+  { _meta, nextCursor, resources }
 }
 
 ///|
@@ -397,21 +391,21 @@ pub fn ListRootsRequestParams_meta::new(
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken? : ProgressToken
 ) -> ListRootsRequestParams_meta {
-  ListRootsRequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
 pub fn ListRootsRequestParams::new(
   _meta? : ListRootsRequestParams_meta
 ) -> ListRootsRequestParams {
-  ListRootsRequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn ListRootsRequest::new(
   params? : ListRootsRequestParams
 ) -> ListRootsRequest {
-  ListRootsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -420,7 +414,7 @@ pub fn ListRootsResult::new(
   _meta? : Json,
   roots : Array[Root]
 ) -> ListRootsResult {
-  ListRootsResult::{ _meta, roots }
+  { _meta, roots }
 }
 
 ///|
@@ -429,14 +423,14 @@ pub fn ListToolsRequestParams::new(
   /// If provided, the server should return results starting after this cursor.
   cursor? : String
 ) -> ListToolsRequestParams {
-  ListToolsRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
 pub fn ListToolsRequest::new(
   params? : ListToolsRequestParams
 ) -> ListToolsRequest {
-  ListToolsRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -448,7 +442,7 @@ pub fn ListToolsResult::new(
   nextCursor? : String,
   tools : Array[Tool]
 ) -> ListToolsResult {
-  ListToolsResult::{ _meta, nextCursor, tools }
+  { _meta, nextCursor, tools }
 }
 
 ///|
@@ -460,14 +454,14 @@ pub fn LoggingMessageNotificationParams::new(
   /// An optional name of the logger issuing this message.
   logger? : String
 ) -> LoggingMessageNotificationParams {
-  LoggingMessageNotificationParams::{ data, level, logger }
+  { data, level, logger }
 }
 
 ///|
 pub fn LoggingMessageNotification::new(
   params : LoggingMessageNotificationParams
 ) -> LoggingMessageNotification {
-  LoggingMessageNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -483,7 +477,7 @@ pub fn ModelHint::new(
   ///  - `gemini-1.5-flash` could match `claude-3-haiku-20240307`
   name? : String
 ) -> ModelHint {
-  ModelHint::{ name, }
+  { name, }
 }
 
 ///|
@@ -509,7 +503,7 @@ pub fn ModelPreferences::new(
   /// the most important factor.
   speedPriority? : Double
 ) -> ModelPreferences {
-  ModelPreferences::{ costPriority, hints, intelligencePriority, speedPriority }
+  { costPriority, hints, intelligencePriority, speedPriority }
 }
 
 ///|
@@ -517,7 +511,7 @@ pub fn NotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> NotificationParams {
-  NotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -525,7 +519,7 @@ pub fn Notification::new(
   method_ : String,
   params? : NotificationParams
 ) -> Notification {
-  Notification::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -534,7 +528,7 @@ pub fn PaginatedRequestParams::new(
   /// If provided, the server should return results starting after this cursor.
   cursor? : String
 ) -> PaginatedRequestParams {
-  PaginatedRequestParams::{ cursor, }
+  { cursor, }
 }
 
 ///|
@@ -542,7 +536,7 @@ pub fn PaginatedRequest::new(
   method_ : String,
   params? : PaginatedRequestParams
 ) -> PaginatedRequest {
-  PaginatedRequest::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -553,7 +547,7 @@ pub fn PaginatedResult::new(
   /// If present, there may be more results available.
   nextCursor? : String
 ) -> PaginatedResult {
-  PaginatedResult::{ _meta, nextCursor }
+  { _meta, nextCursor }
 }
 
 ///|
@@ -561,19 +555,19 @@ pub fn PingRequestParams_meta::new(
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken? : ProgressToken
 ) -> PingRequestParams_meta {
-  PingRequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
 pub fn PingRequestParams::new(
   _meta? : PingRequestParams_meta
 ) -> PingRequestParams {
-  PingRequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn PingRequest::new(params? : PingRequestParams) -> PingRequest {
-  PingRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -587,14 +581,14 @@ pub fn ProgressNotificationParams::new(
   /// Total number of items to process (or total progress required), if known.
   total? : Double
 ) -> ProgressNotificationParams {
-  ProgressNotificationParams::{ message, progress, progressToken, total }
+  { message, progress, progressToken, total }
 }
 
 ///|
 pub fn ProgressNotification::new(
   params : ProgressNotificationParams
 ) -> ProgressNotification {
-  ProgressNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -606,7 +600,7 @@ pub fn Prompt::new(
   /// The name of the prompt or prompt template.
   name : String
 ) -> Prompt {
-  Prompt::{ arguments, description, name }
+  { arguments, description, name }
 }
 
 ///|
@@ -618,7 +612,7 @@ pub fn PromptArgument::new(
   /// Whether this argument must be provided.
   required? : Bool
 ) -> PromptArgument {
-  PromptArgument::{ description, name, required }
+  { description, name, required }
 }
 
 ///|
@@ -626,14 +620,14 @@ pub fn PromptListChangedNotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> PromptListChangedNotificationParams {
-  PromptListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn PromptListChangedNotification::new(
   params? : PromptListChangedNotificationParams
 ) -> PromptListChangedNotification {
-  PromptListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -641,7 +635,7 @@ pub fn PromptMessage::new(
   content : &PromptMessageContent,
   role : Role
 ) -> PromptMessage {
-  PromptMessage::{ content, role }
+  { content, role }
 }
 
 ///|
@@ -649,7 +643,7 @@ pub fn PromptReference::new(
   /// The name of the prompt or prompt template
   name : String
 ) -> PromptReference {
-  PromptReference::{ name, }
+  { name, }
 }
 
 ///|
@@ -657,14 +651,14 @@ pub fn ReadResourceRequestParams::new(
   /// The URI of the resource to read. The URI can use any protocol; it is up to the server how to interpret it.
   uri : String
 ) -> ReadResourceRequestParams {
-  ReadResourceRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
 pub fn ReadResourceRequest::new(
   params : ReadResourceRequestParams
 ) -> ReadResourceRequest {
-  ReadResourceRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -673,7 +667,7 @@ pub fn ReadResourceResult::new(
   _meta? : Json,
   contents : Array[&ReadResourceResultContents]
 ) -> ReadResourceResult {
-  ReadResourceResult::{ _meta, contents }
+  { _meta, contents }
 }
 
 ///|
@@ -681,17 +675,17 @@ pub fn RequestParams_meta::new(
   /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
   progressToken? : ProgressToken
 ) -> RequestParams_meta {
-  RequestParams_meta::{ progressToken, }
+  { progressToken, }
 }
 
 ///|
 pub fn RequestParams::new(_meta? : RequestParams_meta) -> RequestParams {
-  RequestParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn Request::new(method_ : String, params? : RequestParams) -> Request {
-  Request::{ method_, params }
+  { method_, params }
 }
 
 ///|
@@ -715,7 +709,7 @@ pub fn Resource::new(
   /// The URI of this resource.
   uri : String
 ) -> Resource {
-  Resource::{ annotations, description, mimeType, name, size, uri }
+  { annotations, description, mimeType, name, size, uri }
 }
 
 ///|
@@ -725,7 +719,7 @@ pub fn ResourceContents::new(
   /// The URI of this resource.
   uri : String
 ) -> ResourceContents {
-  ResourceContents::{ mimeType, uri }
+  { mimeType, uri }
 }
 
 ///|
@@ -733,14 +727,14 @@ pub fn ResourceListChangedNotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> ResourceListChangedNotificationParams {
-  ResourceListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn ResourceListChangedNotification::new(
   params? : ResourceListChangedNotificationParams
 ) -> ResourceListChangedNotification {
-  ResourceListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -748,7 +742,7 @@ pub fn ResourceReference::new(
   /// The URI or URI template of the resource.
   uri : String
 ) -> ResourceReference {
-  ResourceReference::{ uri, }
+  { uri, }
 }
 
 ///|
@@ -768,7 +762,7 @@ pub fn ResourceTemplate::new(
   /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
   uriTemplate : String
 ) -> ResourceTemplate {
-  ResourceTemplate::{ annotations, description, mimeType, name, uriTemplate }
+  { annotations, description, mimeType, name, uriTemplate }
 }
 
 ///|
@@ -776,14 +770,14 @@ pub fn ResourceUpdatedNotificationParams::new(
   /// The URI of the resource that has been updated. This might be a sub-resource of the one that the client actually subscribed to.
   uri : String
 ) -> ResourceUpdatedNotificationParams {
-  ResourceUpdatedNotificationParams::{ uri, }
+  { uri, }
 }
 
 ///|
 pub fn ResourceUpdatedNotification::new(
   params : ResourceUpdatedNotificationParams
 ) -> ResourceUpdatedNotification {
-  ResourceUpdatedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -791,7 +785,7 @@ pub fn CustomResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Json
 ) -> CustomResult {
-  CustomResult::{ _meta, }
+  { _meta, }
 }
 
 ///|
@@ -805,7 +799,7 @@ pub fn Root::new(
   /// other URI schemes.
   uri : String
 ) -> Root {
-  Root::{ name, uri }
+  { name, uri }
 }
 
 ///|
@@ -813,14 +807,14 @@ pub fn RootsListChangedNotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> RootsListChangedNotificationParams {
-  RootsListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn RootsListChangedNotification::new(
   params? : RootsListChangedNotificationParams
 ) -> RootsListChangedNotification {
-  RootsListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -828,7 +822,7 @@ pub fn SamplingMessage::new(
   content : &SamplingMessageContent,
   role : Role
 ) -> SamplingMessage {
-  SamplingMessage::{ content, role }
+  { content, role }
 }
 
 ///|
@@ -836,7 +830,7 @@ pub fn ServerCapabilitiesPrompts::new(
   /// Whether this server supports notifications for changes to the prompt list.
   listChanged? : Bool
 ) -> ServerCapabilitiesPrompts {
-  ServerCapabilitiesPrompts::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -846,7 +840,7 @@ pub fn ServerCapabilitiesResources::new(
   /// Whether this server supports subscribing to resource updates.
   subscribe? : Bool
 ) -> ServerCapabilitiesResources {
-  ServerCapabilitiesResources::{ listChanged, subscribe }
+  { listChanged, subscribe }
 }
 
 ///|
@@ -854,7 +848,7 @@ pub fn ServerCapabilitiesTools::new(
   /// Whether this server supports notifications for changes to the tool list.
   listChanged? : Bool
 ) -> ServerCapabilitiesTools {
-  ServerCapabilitiesTools::{ listChanged, }
+  { listChanged, }
 }
 
 ///|
@@ -872,14 +866,7 @@ pub fn ServerCapabilities::new(
   /// Present if the server offers any tools to call.
   tools? : ServerCapabilitiesTools
 ) -> ServerCapabilities {
-  ServerCapabilities::{
-    completions,
-    experimental,
-    logging,
-    prompts,
-    resources,
-    tools,
-  }
+  { completions, experimental, logging, prompts, resources, tools }
 }
 
 ///|
@@ -887,12 +874,12 @@ pub fn SetLevelRequestParams::new(
   /// The level of logging that the client wants to receive from the server. The server should send all logs at this level and higher (i.e., more severe) to the client as notifications/message.
   level : LoggingLevel
 ) -> SetLevelRequestParams {
-  SetLevelRequestParams::{ level, }
+  { level, }
 }
 
 ///|
 pub fn SetLevelRequest::new(params : SetLevelRequestParams) -> SetLevelRequest {
-  SetLevelRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -900,14 +887,14 @@ pub fn SubscribeRequestParams::new(
   /// The URI of the resource to subscribe to. The URI can use any protocol; it is up to the server how to interpret it.
   uri : String
 ) -> SubscribeRequestParams {
-  SubscribeRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
 pub fn SubscribeRequest::new(
   params : SubscribeRequestParams
 ) -> SubscribeRequest {
-  SubscribeRequest::{ params, }
+  { params, }
 }
 
 ///|
@@ -917,7 +904,7 @@ pub fn TextContent::new(
   /// The text content of the message.
   text : String
 ) -> TextContent {
-  TextContent::{ annotations, text }
+  { annotations, text }
 }
 
 ///|
@@ -929,7 +916,7 @@ pub fn TextResourceContents::new(
   /// The URI of this resource.
   uri : String
 ) -> TextResourceContents {
-  TextResourceContents::{ mimeType, text, uri }
+  { mimeType, text, uri }
 }
 
 ///|
@@ -937,7 +924,7 @@ pub fn ToolInputSchema::new(
   properties? : Json,
   required? : Array[String]
 ) -> ToolInputSchema {
-  ToolInputSchema::{ properties, required }
+  { properties, required }
 }
 
 ///|
@@ -953,7 +940,7 @@ pub fn Tool::new(
   /// The name of the tool.
   name : String
 ) -> Tool {
-  Tool::{ annotations, description, inputSchema, name }
+  { annotations, description, inputSchema, name }
 }
 
 ///|
@@ -986,13 +973,7 @@ pub fn ToolAnnotations::new(
   /// A human-readable title for the tool.
   title? : String
 ) -> ToolAnnotations {
-  ToolAnnotations::{
-    destructiveHint,
-    idempotentHint,
-    openWorldHint,
-    readOnlyHint,
-    title,
-  }
+  { destructiveHint, idempotentHint, openWorldHint, readOnlyHint, title }
 }
 
 ///|
@@ -1000,14 +981,14 @@ pub fn ToolListChangedNotificationParams::new(
   /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
   _meta? : Json
 ) -> ToolListChangedNotificationParams {
-  ToolListChangedNotificationParams::{ _meta, }
+  { _meta, }
 }
 
 ///|
 pub fn ToolListChangedNotification::new(
   params? : ToolListChangedNotificationParams
 ) -> ToolListChangedNotification {
-  ToolListChangedNotification::{ params, }
+  { params, }
 }
 
 ///|
@@ -1015,12 +996,12 @@ pub fn UnsubscribeRequestParams::new(
   /// The URI of the resource to unsubscribe from.
   uri : String
 ) -> UnsubscribeRequestParams {
-  UnsubscribeRequestParams::{ uri, }
+  { uri, }
 }
 
 ///|
 pub fn UnsubscribeRequest::new(
   params : UnsubscribeRequestParams
 ) -> UnsubscribeRequest {
-  UnsubscribeRequest::{ params, }
+  { params, }
 }
