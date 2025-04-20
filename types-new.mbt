@@ -201,11 +201,6 @@ pub fn CreateMessageResult::new(
 }
 
 ///|
-pub fn Cursor::new() -> Cursor {
-  Cursor::{  }
-}
-
-///|
 pub fn EmbeddedResource::new(
   /// Optional annotations for the client.
   annotations? : Annotations,
@@ -600,11 +595,6 @@ pub fn ProgressNotification::new(
   params : ProgressNotificationParams
 ) -> ProgressNotification {
   ProgressNotification::{ params, }
-}
-
-///|
-pub fn ProgressToken::new() -> ProgressToken {
-  ProgressToken::{  }
 }
 
 ///|

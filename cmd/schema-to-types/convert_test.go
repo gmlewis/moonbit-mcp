@@ -29,32 +29,9 @@ func TestConvert(t *testing.T) {
 				Type:        json.RawMessage(`"string"`),
 				name:        "Cursor",
 			},
-			wantTypesJSONFile: `
-///|
-pub impl ToJson for Cursor with to_json(_self) {
-  let obj = {}
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for Cursor with from_json(json, path) {
-  guard json is Object(_obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  Cursor::{  }
-}
-`,
-			wantTypesNewFile: `
-///|
-pub fn Cursor::new(
-) -> Cursor {
-  Cursor::{  }
-}
-`,
 			wantMBT: `///|
-/// Cursor: An opaque token used to represent a cursor for pagination.
-pub(all) struct Cursor {
-} derive(Show, Eq)`,
+/// An opaque token used to represent a cursor for pagination.
+type Cursor String`,
 		},
 	}
 

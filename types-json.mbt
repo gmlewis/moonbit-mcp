@@ -705,20 +705,6 @@ pub impl @json.FromJson for CreateMessageResult with from_json(json, path) {
 }
 
 ///|
-pub impl ToJson for Cursor with to_json(_self) {
-  let obj = {}
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for Cursor with from_json(json, path) {
-  guard json is Object(_obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  Cursor::{  }
-}
-
-///|
 pub impl ToJson for EmbeddedResource with to_json(self) {
   let obj = {}
   if self.annotations is Some(v) {
@@ -2061,20 +2047,6 @@ pub impl @json.FromJson for ProgressNotification with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
   ProgressNotification::{ params, }
-}
-
-///|
-pub impl ToJson for ProgressToken with to_json(_self) {
-  let obj = {}
-  obj.to_json()
-}
-
-///|
-pub impl @json.FromJson for ProgressToken with from_json(json, path) {
-  guard json is Object(_obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  ProgressToken::{  }
 }
 
 ///|

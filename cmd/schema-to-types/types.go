@@ -90,8 +90,25 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 			return "&" + enumName
 		}
 		return refType
+	case `["string","integer"]`:
+		d.helperStructsAndMethods = append(d.helperStructsAndMethods, fmt.Sprintf(`
+///|
+pub fn %v::string(s : String) -> %[1]v {
+  String(s)
+}
+
+///|
+pub fn %[1]v::number(n : Int) -> %[1]v {
+  Number(n)
+}
+`, propName))
+		return fmt.Sprintf(`pub enum %v {
+  String(String)
+  Number(Int)
+} derive(Show, Eq, FromJson, ToJson)
+`, propName)
 	default:
-		log.Fatalf("unhandled mooonBitType: %v", string(v))
+		log.Fatalf("prop %q unhandled mooonBitType: %v", propName, string(v))
 	}
 	return ""
 }
@@ -124,4 +141,31 @@ func titleCase(s string) string {
 		return s
 	}
 	return strings.ToUpper(s[0:1]) + s[1:]
+}
+
+func (d *Definition) cleanDescription(prefix string) string {
+	desc := strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)
+	// clean up trailing whitespace within description:
+	return strings.Replace(desc, " \n", "\n", -1)
+}
+
+func (d *Definition) convertType(out *outBufsT, propName, prefix string) string {
+	// strip the trailing ? since this is a top-level type and doesn't have
+	// "properties" or "required" fields.
+	typ := d.moonBitType(out, propName, d)
+	lines := []string{prefix + "///|"}
+	if d.Description != "" {
+		desc := d.cleanDescription(prefix)
+		lines = append(lines, fmt.Sprintf(prefix+"/// %v", desc))
+	}
+
+	if strings.HasSuffix(typ, "?") {
+		typ = strings.TrimSuffix(typ, "?")
+		lines = append(lines, fmt.Sprintf(prefix+"type %v %v", propName, typ))
+	} else {
+		// handle enum
+		lines = append(lines, typ)
+	}
+
+	return strings.Join(lines, "\n")
 }

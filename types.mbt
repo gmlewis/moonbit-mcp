@@ -382,8 +382,8 @@ pub fn CreateMessageResult::from_message(
 }
 
 ///|
-/// Cursor: An opaque token used to represent a cursor for pagination.
-pub(all) struct Cursor {} derive(Show, Eq)
+/// An opaque token used to represent a cursor for pagination.
+type Cursor String
 
 ///|
 /// EmbeddedResource: The contents of a resource, embedded into a prompt or tool call result.
@@ -1142,8 +1142,21 @@ pub fn ProgressNotification::from_message(
 }
 
 ///|
-/// ProgressToken: A progress token, used to associate progress notifications with the original request.
-pub(all) struct ProgressToken {} derive(Show, Eq)
+/// A progress token, used to associate progress notifications with the original request.
+pub enum ProgressToken {
+  String(String)
+  Number(Int)
+} derive(Show, Eq, FromJson, ToJson)
+
+///|
+pub fn ProgressToken::string(s : String) -> ProgressToken {
+  String(s)
+}
+
+///|
+pub fn ProgressToken::number(n : Int) -> ProgressToken {
+  Number(n)
+}
 
 ///|
 /// Prompt: A prompt or prompt template that the server offers.

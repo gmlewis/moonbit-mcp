@@ -43,12 +43,13 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	if len(d.Enum) > 0 {
 		return d.convertEnumStrings(out, name, prefix)
 	}
+	if len(d.Properties) == 0 {
+		return d.convertType(out, name, prefix)
+	}
 
 	lines := []string{prefix + "///|"}
 	if d.Description != "" {
-		desc := strings.Replace(d.Description, "\n", "\n"+prefix+"/// ", -1)
-		// clean up trailing whitespace within description:
-		desc = strings.Replace(desc, " \n", "\n", -1)
+		desc := d.cleanDescription(prefix)
 		lines = append(lines, fmt.Sprintf(prefix+"/// %v: %v", name, desc))
 	}
 	lines = append(lines, fmt.Sprintf(prefix+"pub(all) struct %v {", name))
@@ -91,9 +92,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	for _, propName := range props {
 		prop := d.Properties[propName]
 		if prop.Description != "" {
-			desc := strings.Replace(prop.Description, "\n", "\n"+prefix+"  /// ", -1)
-			// clean up trailing whitespace within description:
-			desc = strings.Replace(desc, " \n", "\n", -1)
+			desc := prop.cleanDescription(prefix + "  ")
 			comment := fmt.Sprintf(prefix+"  /// %v", desc)
 			lines = append(lines, comment)
 			newLines = append(newLines, comment)
