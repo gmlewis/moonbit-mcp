@@ -33,7 +33,7 @@ func safePropName(s string) string {
 	return s
 }
 
-func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definition) string {
+func (s *Schema) moonBitType(d *Definition, out *outBufsT, propName string, prop *Definition) string {
 	var suffix string
 	if slices.Contains(d.Required, propName) {
 		d.isRequired = true
@@ -62,7 +62,7 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 			}
 			return fmt.Sprintf("Array[%v]", arrayType)
 		}
-		arrayType := strings.TrimSuffix(prop.moonBitType(out, propName, prop.Items), "?")
+		arrayType := strings.TrimSuffix(s.moonBitType(prop, out, propName, prop.Items), "?")
 		return fmt.Sprintf("Array[%v]", arrayType) + suffix
 	case `"string"`:
 		if len(prop.Enum) > 0 {
@@ -77,7 +77,7 @@ func (d *Definition) moonBitType(out *outBufsT, propName string, prop *Definitio
 			return "Json" + suffix
 		}
 		subTypeName := d.name + titleCase(propName)
-		subType := prop.convert(out, subTypeName)
+		subType := s.convert(prop, out, subTypeName)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, subType)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, prop.helperStructsAndMethods...)
 		return subTypeName + suffix
@@ -149,10 +149,10 @@ func (d *Definition) cleanDescription(prefix string) string {
 	return strings.Replace(desc, " \n", "\n", -1)
 }
 
-func (d *Definition) convertType(out *outBufsT, propName, prefix string) string {
+func (s *Schema) convertType(d *Definition, out *outBufsT, propName, prefix string) string {
 	// strip the trailing ? since this is a top-level type and doesn't have
 	// "properties" or "required" fields.
-	typ := d.moonBitType(out, propName, d)
+	typ := s.moonBitType(d, out, propName, d)
 	lines := []string{prefix + "///|"}
 	if d.Description != "" {
 		desc := d.cleanDescription(prefix)
@@ -163,14 +163,33 @@ func (d *Definition) convertType(out *outBufsT, propName, prefix string) string 
 		typ = strings.TrimSuffix(typ, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"pub type %v %v derive(Show, Eq, FromJson, ToJson)", propName, typ))
 		if typ != "String" {
+			underlyingType, ok := s.Definitions[strings.TrimSuffix(typ, "_")]
+			if !ok {
+				log.Fatalf("%v: unhandled underlying type %v", propName, typ)
+			}
 			newLines := []string{
 				prefix + "///|",
 				fmt.Sprintf(prefix+"pub fn %v::new(", propName),
-				fmt.Sprintf(prefix+") -> %v {", propName),
-				fmt.Sprintf(prefix+"  %v::new(", typ),
-				prefix + "  )",
-				prefix + "}",
 			}
+
+			props := underlyingType.sortedProps()
+			for _, name := range props {
+				prop := underlyingType.Properties[name]
+				log.Printf("GML: underlyingType.Properties: %q: %#v", name, prop)
+			}
+
+			newLines = append(newLines, fmt.Sprintf(prefix+") -> %v {", propName))
+
+			for _, name := range props {
+				prop := underlyingType.Properties[name]
+				log.Printf("GML: underlyingType.Properties: %q: %#v", name, prop)
+			}
+
+			newLines = append(newLines,
+				fmt.Sprintf(prefix+"  %v::new(", typ),
+				prefix+"  )",
+				prefix+"}",
+			)
 			out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
 			d.genHelperMethods(nil)
 		}

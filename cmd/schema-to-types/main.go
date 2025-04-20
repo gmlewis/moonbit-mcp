@@ -67,7 +67,7 @@ func main() {
 	// Generate MoonBit source from the schema
 	for _, key := range keys {
 		def := schema.Definitions[key]
-		mbt := def.convert(out, key)
+		mbt := schema.convert(def, out, key)
 		if mbt == "" {
 			continue
 		}

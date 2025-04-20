@@ -39,7 +39,7 @@ var structsToSkip = map[string]skipType{
 	"@jsonrpc2.ID":         totallyIgnore, // `ResultId` converted to `@jsonrpc2.ID`
 }
 
-func (d *Definition) convert(out *outBufsT, name string) string {
+func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 	name = safeStructName(name)
 	d.name = name
 	var prefix string
@@ -60,7 +60,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		return d.convertEnumStrings(out, name, prefix)
 	}
 	if len(d.Properties) == 0 {
-		return d.convertType(out, name, prefix)
+		return s.convertType(d, out, name, prefix)
 	}
 
 	lines := []string{prefix + "///|"}
@@ -98,11 +98,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 		prefix + "  }",
 	}
 
-	props := make([]string, 0, len(d.Properties))
-	for key := range d.Properties {
-		props = append(props, key)
-	}
-	sort.Strings(props)
+	props := d.sortedProps()
 
 	jsonRPCConsts := map[string]string{}
 	for _, propName := range props {
@@ -128,7 +124,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 			continue
 		}
 		safeName := safePropName(propName)
-		mbtType := d.moonBitType(out, propName, prop)
+		mbtType := s.moonBitType(d, out, propName, prop)
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safeName, mbtType))
 		fromJSONLastLineFields = append(fromJSONLastLineFields, safeName)
 
@@ -193,4 +189,13 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 	d.genHelperMethods(jsonRPCConsts)
 
 	return strings.Join(lines, "\n")
+}
+
+func (d *Definition) sortedProps() []string {
+	props := make([]string, 0, len(d.Properties))
+	for key := range d.Properties {
+		props = append(props, key)
+	}
+	sort.Strings(props)
+	return props
 }

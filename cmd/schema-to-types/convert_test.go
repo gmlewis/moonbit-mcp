@@ -80,7 +80,7 @@ pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)`,
 			t.Parallel()
 			got := schema.Definitions[tt.name]
 			gotOutBufs := &outBufsT{}
-			gotMBT := got.convert(gotOutBufs, tt.name)
+			gotMBT := schema.convert(got, gotOutBufs, tt.name)
 
 			// Definitions is not comparable with cmp.Diff without a custom diff method.
 			// Therefore, check the serialization of it along with any extra fields.
