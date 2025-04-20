@@ -89,6 +89,26 @@ func main() {
 			out.typesNewFile.WriteString(category)
 		}
 
+		if def.AdditionalProperties != nil || def.AdditionalPropertiesBool != nil || def.AdditionalPropertiesSchema != nil {
+			safeName := safeStructName(key)
+			lines := []string{"///|"}
+			if def.Description != "" {
+				desc := def.cleanDescription("")
+				lines = append(lines, fmt.Sprintf("/// %v: %v", safeName, desc))
+			}
+			for name, prop := range def.Properties {
+				if prop.Description != "" {
+					desc := prop.cleanDescription("")
+					lines = append(lines, fmt.Sprintf("  /// %v? : Json - %v", name, desc))
+				}
+			}
+			lines = append(lines,
+				fmt.Sprintf("pub type %v Map[String, Json] derive(Show, Eq, FromJson, ToJson)", safeName),
+			)
+			out.typesFile.WriteString("\n" + strings.Join(lines, "\n") + "\n")
+			continue
+		}
+
 		mbt := schema.convert(def, out, key)
 		if mbt == "" {
 			continue

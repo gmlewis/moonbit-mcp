@@ -6,45 +6,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///|
-pub fn RequestParams_meta::new(
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken? : ProgressToken
-) -> RequestParams_meta {
-  { progressToken, }
-}
-
-///|
-pub fn RequestParams::new(_meta? : RequestParams_meta) -> RequestParams {
-  { _meta, }
-}
-
-///|
-pub fn Request::new(method_ : String, params? : RequestParams) -> Request {
+pub fn Request::new(method_ : String, params? : Map[String, Json]) -> Request {
   { method_, params }
-}
-
-///|
-pub fn NotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> NotificationParams {
-  { _meta, }
 }
 
 ///|
 pub fn Notification::new(
   method_ : String,
-  params? : NotificationParams
+  params? : Map[String, Json]
 ) -> Notification {
   { method_, params }
-}
-
-///|
-pub fn Result_::new(
-  /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json
-) -> Result_ {
-  { _meta, }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +24,7 @@ pub fn Result_::new(
 
 ///|
 pub fn EmptyResult::new() -> EmptyResult {
-  Result_::new()
+  Result_({})
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +74,7 @@ pub fn InitializeRequest::new(
 ///|
 pub fn InitializeResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   capabilities : ServerCapabilities,
   /// Instructions describing how to use the server and its features.
   ///
@@ -117,16 +88,8 @@ pub fn InitializeResult::new(
 }
 
 ///|
-pub fn InitializedNotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> InitializedNotificationParams {
-  { _meta, }
-}
-
-///|
 pub fn InitializedNotification::new(
-  params? : InitializedNotificationParams
+  params? : Map[String, Json]
 ) -> InitializedNotification {
   { params, }
 }
@@ -142,11 +105,11 @@ pub fn ClientCapabilitiesRoots::new(
 ///|
 pub fn ClientCapabilities::new(
   /// Experimental, non-standard capabilities that the client supports.
-  experimental? : Json,
+  experimental? : Map[String, Json],
   /// Present if the client supports listing roots.
   roots? : ClientCapabilitiesRoots,
   /// Present if the client supports sampling from an LLM.
-  sampling? : Json
+  sampling? : Map[String, Json]
 ) -> ClientCapabilities {
   { experimental, roots, sampling }
 }
@@ -180,11 +143,11 @@ pub fn ServerCapabilitiesTools::new(
 ///|
 pub fn ServerCapabilities::new(
   /// Present if the server supports argument autocompletion suggestions.
-  completions? : Json,
+  completions? : Map[String, Json],
   /// Experimental, non-standard capabilities that the server supports.
-  experimental? : Json,
+  experimental? : Map[String, Json],
   /// Present if the server supports sending log messages to the client.
-  logging? : Json,
+  logging? : Map[String, Json],
   /// Present if the server offers any prompt templates.
   prompts? : ServerCapabilitiesPrompts,
   /// Present if the server offers any resources to read.
@@ -205,22 +168,7 @@ pub fn Implementation::new(name : String, version : String) -> Implementation {
 ////////////////////////////////////////////////////////////////////////////////
 
 ///|
-pub fn PingRequestParams_meta::new(
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken? : ProgressToken
-) -> PingRequestParams_meta {
-  { progressToken, }
-}
-
-///|
-pub fn PingRequestParams::new(
-  _meta? : PingRequestParams_meta
-) -> PingRequestParams {
-  { _meta, }
-}
-
-///|
-pub fn PingRequest::new(params? : PingRequestParams) -> PingRequest {
+pub fn PingRequest::new(params? : Map[String, Json]) -> PingRequest {
   { params, }
 }
 
@@ -273,7 +221,7 @@ pub fn PaginatedRequest::new(
 ///|
 pub fn PaginatedResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String
@@ -304,7 +252,7 @@ pub fn ListResourcesRequest::new(
 ///|
 pub fn ListResourcesResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
@@ -332,7 +280,7 @@ pub fn ListResourceTemplatesRequest::new(
 ///|
 pub fn ListResourceTemplatesResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
@@ -359,23 +307,15 @@ pub fn ReadResourceRequest::new(
 ///|
 pub fn ReadResourceResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   contents : Array[&ReadResourceResultContents]
 ) -> ReadResourceResult {
   { _meta, contents }
 }
 
 ///|
-pub fn ResourceListChangedNotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> ResourceListChangedNotificationParams {
-  { _meta, }
-}
-
-///|
 pub fn ResourceListChangedNotification::new(
-  params? : ResourceListChangedNotificationParams
+  params? : Map[String, Json]
 ) -> ResourceListChangedNotification {
   { params, }
 }
@@ -526,7 +466,7 @@ pub fn ListPromptsRequest::new(
 ///|
 pub fn ListPromptsResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
@@ -538,7 +478,7 @@ pub fn ListPromptsResult::new(
 ///|
 pub fn GetPromptRequestParams::new(
   /// Arguments to use for templating the prompt.
-  arguments? : Json,
+  arguments? : Map[String, Json],
   /// The name of the prompt or prompt template.
   name : String
 ) -> GetPromptRequestParams {
@@ -555,7 +495,7 @@ pub fn GetPromptRequest::new(
 ///|
 pub fn GetPromptResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An optional description for the prompt.
   description? : String,
   messages : Array[PromptMessage]
@@ -605,16 +545,8 @@ pub fn EmbeddedResource::new(
 }
 
 ///|
-pub fn PromptListChangedNotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> PromptListChangedNotificationParams {
-  { _meta, }
-}
-
-///|
 pub fn PromptListChangedNotification::new(
-  params? : PromptListChangedNotificationParams
+  params? : Map[String, Json]
 ) -> PromptListChangedNotification {
   { params, }
 }
@@ -642,7 +574,7 @@ pub fn ListToolsRequest::new(
 ///|
 pub fn ListToolsResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
@@ -654,7 +586,7 @@ pub fn ListToolsResult::new(
 ///|
 pub fn CallToolResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   content : Array[&CallToolResultContent],
   /// Whether the tool call ended in an error.
   ///
@@ -666,7 +598,7 @@ pub fn CallToolResult::new(
 
 ///|
 pub fn CallToolRequestParams::new(
-  arguments? : Json,
+  arguments? : Map[String, Json],
   name : String
 ) -> CallToolRequestParams {
   { arguments, name }
@@ -678,16 +610,8 @@ pub fn CallToolRequest::new(params : CallToolRequestParams) -> CallToolRequest {
 }
 
 ///|
-pub fn ToolListChangedNotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> ToolListChangedNotificationParams {
-  { _meta, }
-}
-
-///|
 pub fn ToolListChangedNotification::new(
-  params? : ToolListChangedNotificationParams
+  params? : Map[String, Json]
 ) -> ToolListChangedNotification {
   { params, }
 }
@@ -727,7 +651,7 @@ pub fn ToolAnnotations::new(
 
 ///|
 pub fn ToolInputSchema::new(
-  properties? : Json,
+  properties? : Map[String, Json],
   required? : Array[String]
 ) -> ToolInputSchema {
   { properties, required }
@@ -797,7 +721,7 @@ pub fn CreateMessageRequestParams::new(
   maxTokens : Int64,
   messages : Array[SamplingMessage],
   /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
-  metadata? : Json,
+  metadata? : Map[String, Json],
   /// The server's preferences for which model to select. The client MAY ignore these preferences.
   modelPreferences? : ModelPreferences,
   stopSequences? : Array[String],
@@ -827,7 +751,7 @@ pub fn CreateMessageRequest::new(
 ///|
 pub fn CreateMessageResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   content : &CreateMessageResultContent,
   /// The name of the model that generated the message.
   model : String,
@@ -981,7 +905,7 @@ pub fn CompleteResultCompletion::new(
 ///|
 pub fn CompleteResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   completion : CompleteResultCompletion
 ) -> CompleteResult {
   { _meta, completion }
@@ -1008,31 +932,14 @@ pub fn PromptReference::new(
 ////////////////////////////////////////////////////////////////////////////////
 
 ///|
-pub fn ListRootsRequestParams_meta::new(
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken? : ProgressToken
-) -> ListRootsRequestParams_meta {
-  { progressToken, }
-}
-
-///|
-pub fn ListRootsRequestParams::new(
-  _meta? : ListRootsRequestParams_meta
-) -> ListRootsRequestParams {
-  { _meta, }
-}
-
-///|
-pub fn ListRootsRequest::new(
-  params? : ListRootsRequestParams
-) -> ListRootsRequest {
+pub fn ListRootsRequest::new(params? : Map[String, Json]) -> ListRootsRequest {
   { params, }
 }
 
 ///|
 pub fn ListRootsResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta? : Json,
+  _meta? : Map[String, Json],
   roots : Array[Root]
 ) -> ListRootsResult {
   { _meta, roots }
@@ -1053,16 +960,8 @@ pub fn Root::new(
 }
 
 ///|
-pub fn RootsListChangedNotificationParams::new(
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta? : Json
-) -> RootsListChangedNotificationParams {
-  { _meta, }
-}
-
-///|
 pub fn RootsListChangedNotification::new(
-  params? : RootsListChangedNotificationParams
+  params? : Map[String, Json]
 ) -> RootsListChangedNotification {
   { params, }
 }

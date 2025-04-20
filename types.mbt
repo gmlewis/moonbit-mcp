@@ -32,18 +32,7 @@ pub type Cursor String derive(Show, Eq, FromJson, ToJson)
 ///|
 pub(all) struct Request {
   method_ : String
-  params : RequestParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct RequestParams {
-  _meta : RequestParams_meta?
-} derive(Show, Eq)
-
-///|
-pub(all) struct RequestParams_meta {
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -66,13 +55,7 @@ pub fn Request::from_message(
 ///|
 pub(all) struct Notification {
   method_ : String
-  params : NotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct NotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -91,26 +74,8 @@ pub fn Notification::from_message(msg : @jsonrpc2.Message) -> Notification? {
 }
 
 ///|
-pub(all) struct Result_ {
-  /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
-} derive(Show, Eq)
-
-///|
-pub impl MCPResponse for Result_ with to_response(self, id) {
-  @jsonrpc2.new_response(id, Ok(self.to_json()))
-}
-
-///|
-pub fn Result_::from_message(
-  msg : @jsonrpc2.Message
-) -> (@jsonrpc2.ID, Result_)? {
-  guard msg is Response(res) else { return None }
-  guard res.result is Ok(json) else { return None }
-  let v : Result[Result_, _] = @json.from_json?(json)
-  guard v is Ok(result) else { return None }
-  Some((res.id, result))
-}
+/// _meta? : Json - This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
+pub type Result_ Map[String, Json] derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub const PARSE_ERROR = -32700
@@ -237,7 +202,7 @@ pub fn InitializeRequest::from_message(
 /// InitializeResult: After receiving an initialize request from the client, the server sends this response.
 pub(all) struct InitializeResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   capabilities : ServerCapabilities
   /// Instructions describing how to use the server and its features.
   ///
@@ -268,13 +233,7 @@ pub fn InitializeResult::from_message(
 /// InitializedNotification: This notification is sent from the client to the server after initialization has finished.
 pub(all) struct InitializedNotification {
   /// JSON-RPC: "method" = "notifications/initialized"
-  params : InitializedNotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct InitializedNotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -299,11 +258,11 @@ pub fn InitializedNotification::from_message(
 /// ClientCapabilities: Capabilities a client may support. Known capabilities are defined here, in this schema, but this is not a closed set: any client can define its own, additional capabilities.
 pub(all) struct ClientCapabilities {
   /// Experimental, non-standard capabilities that the client supports.
-  experimental : Json?
+  experimental : Map[String, Json]?
   /// Present if the client supports listing roots.
   roots : ClientCapabilitiesRoots?
   /// Present if the client supports sampling from an LLM.
-  sampling : Json?
+  sampling : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -317,11 +276,11 @@ pub(all) struct ClientCapabilitiesRoots {
 /// ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
 pub(all) struct ServerCapabilities {
   /// Present if the server supports argument autocompletion suggestions.
-  completions : Json?
+  completions : Map[String, Json]?
   /// Experimental, non-standard capabilities that the server supports.
-  experimental : Json?
+  experimental : Map[String, Json]?
   /// Present if the server supports sending log messages to the client.
-  logging : Json?
+  logging : Map[String, Json]?
   /// Present if the server offers any prompt templates.
   prompts : ServerCapabilitiesPrompts?
   /// Present if the server offers any resources to read.
@@ -368,18 +327,7 @@ pub(all) struct Implementation {
 /// PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
 pub(all) struct PingRequest {
   /// JSON-RPC: "method" = "ping"
-  params : PingRequestParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct PingRequestParams {
-  _meta : PingRequestParams_meta?
-} derive(Show, Eq)
-
-///|
-pub(all) struct PingRequestParams_meta {
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -478,7 +426,7 @@ pub fn PaginatedRequest::from_message(
 ///|
 pub(all) struct PaginatedResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
@@ -540,7 +488,7 @@ pub fn ListResourcesRequest::from_message(
 /// ListResourcesResult: The server's response to a resources/list request from the client.
 pub(all) struct ListResourcesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
@@ -599,7 +547,7 @@ pub fn ListResourceTemplatesRequest::from_message(
 /// ListResourceTemplatesResult: The server's response to a resources/templates/list request from the client.
 pub(all) struct ListResourceTemplatesResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
@@ -657,7 +605,7 @@ pub fn ReadResourceRequest::from_message(
 /// ReadResourceResult: The server's response to a resources/read request from the client.
 pub(all) struct ReadResourceResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   contents : Array[&ReadResourceResultContents]
 } derive(Show, Eq)
 
@@ -691,13 +639,7 @@ pub fn ReadResourceResult::from_message(
 /// ResourceListChangedNotification: An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ResourceListChangedNotification {
   /// JSON-RPC: "method" = "notifications/resources/list_changed"
-  params : ResourceListChangedNotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct ResourceListChangedNotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -934,7 +876,7 @@ pub fn ListPromptsRequest::from_message(
 /// ListPromptsResult: The server's response to a prompts/list request from the client.
 pub(all) struct ListPromptsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
@@ -967,7 +909,7 @@ pub(all) struct GetPromptRequest {
 ///|
 pub(all) struct GetPromptRequestParams {
   /// Arguments to use for templating the prompt.
-  arguments : Json?
+  arguments : Map[String, Json]?
   /// The name of the prompt or prompt template.
   name : String
 } derive(Show, Eq)
@@ -994,7 +936,7 @@ pub fn GetPromptRequest::from_message(
 /// GetPromptResult: The server's response to a prompts/get request from the client.
 pub(all) struct GetPromptResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An optional description for the prompt.
   description : String?
   messages : Array[PromptMessage]
@@ -1090,13 +1032,7 @@ pub impl Eq for &EmbeddedResourceResource with op_equal(_self, _other) {
 /// PromptListChangedNotification: An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct PromptListChangedNotification {
   /// JSON-RPC: "method" = "notifications/prompts/list_changed"
-  params : PromptListChangedNotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct PromptListChangedNotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -1162,7 +1098,7 @@ pub fn ListToolsRequest::from_message(
 /// ListToolsResult: The server's response to a tools/list request from the client.
 pub(all) struct ListToolsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor : String?
@@ -1198,7 +1134,7 @@ pub fn ListToolsResult::from_message(
 /// should be reported as an MCP error response.
 pub(all) struct CallToolResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   content : Array[&CallToolResultContent]
   /// Whether the tool call ended in an error.
   ///
@@ -1241,7 +1177,7 @@ pub(all) struct CallToolRequest {
 
 ///|
 pub(all) struct CallToolRequestParams {
-  arguments : Json?
+  arguments : Map[String, Json]?
   name : String
 } derive(Show, Eq)
 
@@ -1267,13 +1203,7 @@ pub fn CallToolRequest::from_message(
 /// ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ToolListChangedNotification {
   /// JSON-RPC: "method" = "notifications/tools/list_changed"
-  params : ToolListChangedNotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct ToolListChangedNotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -1356,7 +1286,7 @@ pub(all) struct Tool {
 ///|
 /// ToolInputSchema: A JSON Schema object defining the expected parameters for the tool.
 pub(all) struct ToolInputSchema {
-  properties : Json?
+  properties : Map[String, Json]?
   required : Array[String]?
   /// JSON-RPC: "type" = "object"
 } derive(Show, Eq)
@@ -1464,7 +1394,7 @@ pub(all) struct CreateMessageRequestParams {
   maxTokens : Int64
   messages : Array[SamplingMessage]
   /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
-  metadata : Json?
+  metadata : Map[String, Json]?
   /// The server's preferences for which model to select. The client MAY ignore these preferences.
   modelPreferences : ModelPreferences?
   stopSequences : Array[String]?
@@ -1502,7 +1432,7 @@ pub fn CreateMessageRequest::from_message(
 /// CreateMessageResult: The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.
 pub(all) struct CreateMessageResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   content : &CreateMessageResultContent
   /// The name of the model that generated the message.
   model : String
@@ -1715,7 +1645,7 @@ pub fn CompleteRequest::from_message(
 /// CompleteResult: The server's response to a completion/complete request
 pub(all) struct CompleteResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   completion : CompleteResultCompletion
 } derive(Show, Eq)
 
@@ -1775,18 +1705,7 @@ pub(all) struct PromptReference {
 /// structure or access specific locations that the client has permission to read from.
 pub(all) struct ListRootsRequest {
   /// JSON-RPC: "method" = "roots/list"
-  params : ListRootsRequestParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct ListRootsRequestParams {
-  _meta : ListRootsRequestParams_meta?
-} derive(Show, Eq)
-
-///|
-pub(all) struct ListRootsRequestParams_meta {
-  /// If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
-  progressToken : ProgressToken?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -1813,7 +1732,7 @@ pub fn ListRootsRequest::from_message(
 /// or file that the server can operate on.
 pub(all) struct ListRootsResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-  _meta : Json?
+  _meta : Map[String, Json]?
   roots : Array[Root]
 } derive(Show, Eq)
 
@@ -1852,13 +1771,7 @@ pub(all) struct Root {
 /// The server should then request an updated list of roots using the ListRootsRequest.
 pub(all) struct RootsListChangedNotification {
   /// JSON-RPC: "method" = "notifications/roots/list_changed"
-  params : RootsListChangedNotificationParams?
-} derive(Show, Eq)
-
-///|
-pub(all) struct RootsListChangedNotificationParams {
-  /// This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
-  _meta : Json?
+  params : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|

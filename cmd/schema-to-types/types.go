@@ -190,8 +190,9 @@ func (s *Schema) convertType(d *Definition, out *outBufsT, propName, prefix stri
 			}
 
 			newLines = append(newLines,
-				fmt.Sprintf(prefix+"  %v::new(", typ),
-				prefix+"  )",
+				// fmt.Sprintf(prefix+"  %v::new(", typ),
+				// prefix+"  )",
+				fmt.Sprintf(prefix+"  %v({})", typ),
 				prefix+"}",
 			)
 			out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
