@@ -172,7 +172,11 @@ func (s *Schema) convertType(d *Definition, out *outBufsT, propName, prefix stri
 				fmt.Sprintf(prefix+"pub fn %v::new(", propName),
 			}
 
-			props := underlyingType.sortedProps()
+			tsSource, ok := s.tsDefs.Get(propName)
+			if !ok {
+				log.Fatalf("unable to find tsSource for propName %q", propName)
+			}
+			props := underlyingType.sortedProps(tsSource)
 			for _, name := range props {
 				prop := underlyingType.Properties[name]
 				log.Printf("GML: underlyingType.Properties: %q: %#v", name, prop)

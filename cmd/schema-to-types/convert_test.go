@@ -9,7 +9,7 @@ import (
 )
 
 //go:embed testdata/2025-03-26/schema.json
-var schema20250326 []byte
+var jsonSchema20250326 []byte
 
 func TestConvert(t *testing.T) {
 	t.Parallel()
@@ -71,9 +71,11 @@ pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)`,
 	}
 
 	var schema *Schema
-	if err := json.Unmarshal(schema20250326, &schema); err != nil {
+	if err := json.Unmarshal(jsonSchema20250326, &schema); err != nil {
 		t.Fatal(err)
 	}
+	defs, _ := chunkify(string(tsSchema20250326))
+	schema.tsDefs = defs
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

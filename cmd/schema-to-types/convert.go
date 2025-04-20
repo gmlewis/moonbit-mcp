@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 )
@@ -40,6 +41,11 @@ var structsToSkip = map[string]skipType{
 }
 
 func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
+	tsSource, ok := s.tsDefs.Get(name)
+	if !ok {
+		log.Printf("unable to find tsSource for name %q", name)
+	}
+
 	name = safeStructName(name)
 	d.name = name
 	var prefix string
@@ -98,7 +104,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 		prefix + "  }",
 	}
 
-	props := d.sortedProps()
+	props := d.sortedProps(tsSource)
 
 	jsonRPCConsts := map[string]string{}
 	for _, propName := range props {
@@ -191,7 +197,10 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 	return strings.Join(lines, "\n")
 }
 
-func (d *Definition) sortedProps() []string {
+func (d *Definition) sortedProps(tsSource string) []string {
+	if tsSource != "" {
+		log.Printf("sortedProps:\n%v", tsSource)
+	}
 	props := make([]string, 0, len(d.Properties))
 	for key := range d.Properties {
 		props = append(props, key)

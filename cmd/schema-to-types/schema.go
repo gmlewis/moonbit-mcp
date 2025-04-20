@@ -2,11 +2,15 @@ package main
 
 import (
 	"encoding/json"
+
+	ord "github.com/wk8/go-ordered-map/v2"
 )
 
 type Schema struct {
 	Schema      string                 `json:"$schema"`
 	Definitions map[string]*Definition `json:"definitions"`
+	// original schema.ts source for each definition
+	tsDefs *ord.OrderedMap[string, string] `json:"-"`
 }
 
 type Definition struct {
