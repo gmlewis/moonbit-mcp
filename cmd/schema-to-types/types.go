@@ -17,7 +17,7 @@ var reservedKeywords = map[string]string{
 func safeStructName(s string) string {
 	switch s {
 	case "Result":
-		return "CustomResult"
+		return "Result_"
 	case "RequestId":
 		// Here we are renaming a RequestId to the @jsonrpc.ID type.
 		return "@jsonrpc2.ID"
@@ -161,7 +161,7 @@ func (d *Definition) convertType(out *outBufsT, propName, prefix string) string 
 
 	if strings.HasSuffix(typ, "?") {
 		typ = strings.TrimSuffix(typ, "?")
-		lines = append(lines, fmt.Sprintf(prefix+"type %v %v", propName, typ))
+		lines = append(lines, fmt.Sprintf(prefix+"pub type %v %v derive(Show, Eq, FromJson, ToJson)", propName, typ))
 	} else {
 		// handle enum
 		lines = append(lines, typ)

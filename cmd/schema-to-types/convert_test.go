@@ -31,7 +31,7 @@ func TestConvert(t *testing.T) {
 			},
 			wantMBT: `///|
 /// An opaque token used to represent a cursor for pagination.
-type Cursor String`,
+pub type Cursor String derive(Show, Eq, FromJson, ToJson)`,
 		},
 	}
 

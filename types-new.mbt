@@ -781,10 +781,10 @@ pub fn ResourceUpdatedNotification::new(
 }
 
 ///|
-pub fn CustomResult::new(
+pub fn Result_::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Json
-) -> CustomResult {
+) -> Result_ {
   { _meta, }
 }
 

@@ -14,8 +14,21 @@ const (
 	totallyIgnore
 )
 
+type patchFunc func(*Definition)
+
+var patches = map[string]patchFunc{
+	"EmptyResult": func(d *Definition) {
+		d.Description = "A response that indicates success but carries no data."
+	},
+	"ClientResult": func(d *Definition) {
+		d.AnyOf[0] = &Definition{Ref: "#/definitions/EmptyResult"}
+	},
+	"ServerResult": func(d *Definition) {
+		d.AnyOf[0] = &Definition{Ref: "#/definitions/EmptyResult"}
+	},
+}
+
 var structsToSkip = map[string]skipType{
-	"EmptyResult":          totallyIgnore,
 	"JSONRPCBatchRequest":  totallyIgnore,
 	"JSONRPCBatchResponse": totallyIgnore,
 	"JSONRPCError":         totallyIgnore,
@@ -35,6 +48,9 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 			return ""
 		}
 		prefix = "// "
+	}
+	if f, ok := patches[name]; ok {
+		f(d)
 	}
 
 	if len(d.Properties) == 0 && len(d.AnyOf) > 0 {

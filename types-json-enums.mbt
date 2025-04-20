@@ -212,7 +212,7 @@ pub impl @json.FromJson for &ClientRequest with from_json(json, path) {
 }
 
 ///|
-pub impl ClientResult for CustomResult with unused(_self) {
+pub impl ClientResult for EmptyResult with unused(_self) {
 
 }
 
@@ -228,7 +228,7 @@ pub impl ClientResult for ListRootsResult with unused(_self) {
 
 ///|
 pub impl @json.FromJson for &ClientResult with from_json(json, path) {
-  let v : Result[CustomResult, _] = @json.from_json?(json)
+  let v : Result[EmptyResult, _] = @json.from_json?(json)
   if v is Ok(v) {
     return v
   }
@@ -243,7 +243,7 @@ pub impl @json.FromJson for &ClientResult with from_json(json, path) {
   raise @json.JsonDecodeError(
     (
       path,
-      "expected one of: CustomResult, CreateMessageResult, ListRootsResult; got: \{@json.stringify(json)}",
+      "expected one of: EmptyResult, CreateMessageResult, ListRootsResult; got: \{@json.stringify(json)}",
     ),
   )
 }
@@ -660,7 +660,7 @@ pub impl @json.FromJson for &ServerRequest with from_json(json, path) {
 }
 
 ///|
-pub impl ServerResult for CustomResult with unused(_self) {
+pub impl ServerResult for EmptyResult with unused(_self) {
 
 }
 
@@ -706,7 +706,7 @@ pub impl ServerResult for CompleteResult with unused(_self) {
 
 ///|
 pub impl @json.FromJson for &ServerResult with from_json(json, path) {
-  let v : Result[CustomResult, _] = @json.from_json?(json)
+  let v : Result[EmptyResult, _] = @json.from_json?(json)
   if v is Ok(v) {
     return v
   }
@@ -745,7 +745,7 @@ pub impl @json.FromJson for &ServerResult with from_json(json, path) {
   raise @json.JsonDecodeError(
     (
       path,
-      "expected one of: CustomResult, InitializeResult, ListResourcesResult, ReadResourceResult, ListPromptsResult, GetPromptResult, ListToolsResult, CallToolResult, CompleteResult; got: \{@json.stringify(json)}",
+      "expected one of: EmptyResult, InitializeResult, ListResourcesResult, ReadResourceResult, ListPromptsResult, GetPromptResult, ListToolsResult, CallToolResult, CompleteResult; got: \{@json.stringify(json)}",
     ),
   )
 }

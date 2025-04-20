@@ -2706,7 +2706,7 @@ pub impl @json.FromJson for ResourceUpdatedNotification with from_json(
 }
 
 ///|
-pub impl ToJson for CustomResult with to_json(self) {
+pub impl ToJson for Result_ with to_json(self) {
   let obj = {}
   if self._meta is Some(v) {
     obj["_meta"] = v.to_json()
@@ -2715,7 +2715,7 @@ pub impl ToJson for CustomResult with to_json(self) {
 }
 
 ///|
-pub impl @json.FromJson for CustomResult with from_json(json, path) {
+pub impl @json.FromJson for Result_ with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
