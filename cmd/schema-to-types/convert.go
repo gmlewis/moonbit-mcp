@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 )
@@ -40,6 +41,11 @@ var structsToSkip = map[string]skipType{
 }
 
 func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
+	tsSource, ok := s.tsDefs.Get(name)
+	if !ok {
+		log.Printf("unable to find tsSource for name %q", name)
+	}
+
 	name = safeStructName(name)
 	d.name = name
 	var prefix string
@@ -61,6 +67,10 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 	}
 	if len(d.Properties) == 0 {
 		return s.convertType(d, out, name, prefix)
+	}
+
+	if d.AdditionalProperties != nil || d.AdditionalPropertiesBool != nil || d.AdditionalPropertiesSchema != nil {
+		log.Fatalf("%v has additionalProperies!", name)
 	}
 
 	lines := []string{prefix + "///|"}
@@ -98,7 +108,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 		prefix + "  }",
 	}
 
-	props := d.sortedProps()
+	props := d.sortedProps(tsSource)
 
 	jsonRPCConsts := map[string]string{}
 	for _, propName := range props {
@@ -109,6 +119,30 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 			lines = append(lines, comment)
 			newLines = append(newLines, comment)
 		}
+
+		if prop.AdditionalProperties != nil || prop.AdditionalPropertiesBool != nil || prop.AdditionalPropertiesSchema != nil {
+			lines = append(lines, fmt.Sprintf(prefix+"  %v : Map[String, Json]?", propName))
+			newLines = append(newLines, fmt.Sprintf(prefix+"  %v? : Map[String, Json],", propName))
+
+			toJSONLines = append(toJSONLines,
+				fmt.Sprintf(prefix+"  if self.%v is Some(v) {", propName),
+				fmt.Sprintf(prefix+"    obj[%q] = v.to_json()", propName),
+				prefix+"  }",
+			)
+			fromJSONLastLineFields = append(fromJSONLastLineFields, propName)
+			fromJSONLines = append(fromJSONLines,
+				fmt.Sprintf(prefix+`  let %v : Map[String, Json]? = match obj[%[1]q] {`, propName),
+				prefix+"    Some(v) =>",
+				prefix+"      match @json.from_json?(v) {",
+				prefix+"        Ok(v) => Some(v)",
+				prefix+"        Err(e) => raise e",
+				prefix+"      }",
+				prefix+"    None => None",
+				prefix+"  }",
+			)
+			continue
+		}
+
 		if len(prop.Const) > 0 {
 			value, err := json.Marshal(prop.Const)
 			must(err)
@@ -123,6 +157,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 			lines = append(lines, fmt.Sprintf(prefix+`  /// JSON-RPC: %q = %s`, propName, value))
 			continue
 		}
+
 		safeName := safePropName(propName)
 		mbtType := s.moonBitType(d, out, propName, prop)
 		lines = append(lines, fmt.Sprintf(prefix+"  %v : %v", safeName, mbtType))
@@ -191,7 +226,10 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 	return strings.Join(lines, "\n")
 }
 
-func (d *Definition) sortedProps() []string {
+func (d *Definition) sortedProps(tsSource string) []string {
+	if tsSource != "" {
+		log.Printf("sortedProps:\n%v", tsSource)
+	}
 	props := make([]string, 0, len(d.Properties))
 	for key := range d.Properties {
 		props = append(props, key)

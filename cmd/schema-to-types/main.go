@@ -11,13 +11,12 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"sort"
 	"strings"
 )
 
 var (
 	baseDir   = flag.String("dir", "../..", "Base directory to write auto-generated files into")
-	schemaURL = flag.String("schema", "https://github.com/modelcontextprotocol/specification/blob/main/schema/2025-03-26/schema.json", "Browser GitHub URL to latest MCP schema")
+	schemaURL = flag.String("schema", "https://github.com/modelcontextprotocol/specification/blob/main/schema/2025-03-26", "Browser GitHub URL to latest MCP schema dir")
 )
 
 const (
@@ -38,35 +37,78 @@ func main() {
 		url = rawPrefix + strings.Replace(url[len(githubPrefix):], "/blob/", "/refs/heads/", 1)
 	}
 
-	resp, err := http.Get(url)
-	must(err)
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	must(err)
+	jsonSchema := goGet(url + "/schema.json")
+	tsSchema := goGet(url + "/schema.ts")
+	defs, categories := chunkify(string(tsSchema))
 
 	var schema *Schema
-	must(json.Unmarshal(body, &schema))
+	must(json.Unmarshal(jsonSchema, &schema))
+	schema.tsDefs = defs
 
-	keys := make([]string, 0, len(schema.Definitions))
-	for key := range schema.Definitions {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	urlParts := strings.Split(strings.TrimSuffix(*schemaURL, "/schema.json"), "/")
-	mcpVersion := urlParts[len(urlParts)-1]
+	// urlParts := strings.Split(*schemaURL, "/")
+	// mcpVersion := urlParts[len(urlParts)-1]
+	commentRow := strings.Repeat("/", 80)
 
 	out := &outBufsT{}
-	fileHeader := autoGenHeader + fmt.Sprintf("// Generated from: %v\n", *schemaURL)
+	firstCategory, ok := categories.Get("")
+	if !ok {
+		log.Fatal("Unable to find first category")
+	}
+	fileHeader := autoGenHeader + fmt.Sprintf(`// Generated from: %v
+
+%v
+// %v
+%[2]v
+`, *schemaURL, commentRow, firstCategory)
 	out.typesFile.WriteString(fileHeader)
-	out.typesFile.WriteString(fmt.Sprintf("\n///|\npub const MCP_VERSION = %q\n", mcpVersion))
+	// out.typesFile.WriteString(fmt.Sprintf("\n///|\npub const MCP_VERSION = %q\n", mcpVersion))
 	out.typesJSONEnumsFile.WriteString(fileHeader)
 	out.typesJSONFile.WriteString(fileHeader)
 	out.typesNewFile.WriteString(fileHeader)
 
 	// Generate MoonBit source from the schema
-	for _, key := range keys {
-		def := schema.Definitions[key]
+	for pair := defs.Oldest(); pair != nil; pair = pair.Next() {
+		key := pair.Key
+		def, ok := schema.Definitions[key]
+		if !ok {
+			if key == "JSONRPC_VERSION" {
+				continue
+			}
+			if !strings.HasPrefix(pair.Value, "export const ") {
+				log.Fatalf("missing schema.Definitions[%q]: %v", key, pair.Value)
+			}
+			out.typesFile.WriteString("\n///|\npub " + pair.Value[7:len(pair.Value)-1] + "\n")
+			continue
+		}
+
+		if category, ok := categories.Get(key); ok {
+			category = fmt.Sprintf("\n%v\n// %v\n%[1]v\n", commentRow, category)
+			out.typesFile.WriteString(category)
+			out.typesJSONEnumsFile.WriteString(category)
+			out.typesJSONFile.WriteString(category)
+			out.typesNewFile.WriteString(category)
+		}
+
+		if def.AdditionalProperties != nil || def.AdditionalPropertiesBool != nil || def.AdditionalPropertiesSchema != nil {
+			safeName := safeStructName(key)
+			lines := []string{"///|"}
+			if def.Description != "" {
+				desc := def.cleanDescription("")
+				lines = append(lines, fmt.Sprintf("/// %v: %v", safeName, desc))
+			}
+			for name, prop := range def.Properties {
+				if prop.Description != "" {
+					desc := prop.cleanDescription("")
+					lines = append(lines, fmt.Sprintf("  /// %v? : Json - %v", name, desc))
+				}
+			}
+			lines = append(lines,
+				fmt.Sprintf("pub type %v Map[String, Json] derive(Show, Eq, FromJson, ToJson)", safeName),
+			)
+			out.typesFile.WriteString("\n" + strings.Join(lines, "\n") + "\n")
+			continue
+		}
+
 		mbt := schema.convert(def, out, key)
 		if mbt == "" {
 			continue
@@ -80,6 +122,15 @@ func main() {
 	out.writeBuffersToFiles(*baseDir)
 
 	log.Printf("Done.")
+}
+
+func goGet(url string) []byte {
+	resp, err := http.Get(url)
+	must(err)
+	defer resp.Body.Close()
+	buf, err := io.ReadAll(resp.Body)
+	must(err)
+	return buf
 }
 
 func must(err error) {
