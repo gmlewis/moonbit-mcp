@@ -16,26 +16,26 @@ fn main {
 
   //
   let ctx = @mcp.Context::new().with_timeout(1000)
-  stdio.start(ctx) |> ignore()
+  guard stdio.start() is None else { abort("Failed to start transport") }
 
   // Send a call
   guard stdio.send_request(ctx, @mcp.Request::new("method1")) is None else {
-    println("Failed to send message")
+    abort("Failed to send message")
   }
 
   // Send a notification
   guard stdio.send_notification(ctx, @mcp.Notification::new("method2")) is None else {
-    println("Failed to send message")
+    abort("Failed to send message")
   }
 
   // Send a response
   guard stdio.send_response(
       ctx,
       @jsonrpc2.ID::number(1),
-      @mcp.CustomResult::new(),
+      @mcp.EmptyResult::new(),
     )
     is None else {
-    println("Failed to send message")
+    abort("Failed to send message")
   }
 
   //

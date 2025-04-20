@@ -72,7 +72,7 @@ func (d *Definition) convert(out *outBufsT, name string) string {
 
 	newLines := []string{
 		prefix + "///|",
-		fmt.Sprintf("pub fn %v::new(", name),
+		fmt.Sprintf(prefix+"pub fn %v::new(", name),
 	}
 
 	selfVar := "self"

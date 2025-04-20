@@ -33,6 +33,41 @@ func TestConvert(t *testing.T) {
 /// An opaque token used to represent a cursor for pagination.
 pub type Cursor String derive(Show, Eq, FromJson, ToJson)`,
 		},
+		{
+			name: "EmptyResult",
+			want: &Definition{
+				Description: "A response that indicates success but carries no data.",
+				Ref:         "#/definitions/Result",
+				name:        "EmptyResult",
+				helperStructsAndMethods: []string{`///|
+pub impl MCPResponse for EmptyResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn EmptyResult::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID, EmptyResult)?  {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[EmptyResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}`},
+			},
+			wantTypesNewFile: `
+///|
+pub fn EmptyResult::new(
+  /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
+  _meta? : Json
+) -> EmptyResult {
+  Result_::new(
+    _meta?,
+  )
+}
+`,
+			wantMBT: `///|
+/// A response that indicates success but carries no data.
+pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)`,
+		},
 	}
 
 	var schema *Schema

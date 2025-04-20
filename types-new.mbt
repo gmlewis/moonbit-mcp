@@ -210,6 +210,14 @@ pub fn EmbeddedResource::new(
 }
 
 ///|
+pub fn EmptyResult::new(
+  /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
+  _meta? : Json
+) -> EmptyResult {
+  Result_::new(_meta?)
+}
+
+///|
 pub fn GetPromptRequestParams::new(
   /// Arguments to use for templating the prompt.
   arguments? : Json,

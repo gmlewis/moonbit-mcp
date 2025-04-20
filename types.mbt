@@ -412,6 +412,22 @@ pub impl Eq for &EmbeddedResourceResource with op_equal(_self, _other) {
 pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)
 
 ///|
+pub impl MCPResponse for EmptyResult with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn EmptyResult::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, EmptyResult)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[EmptyResult, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
+
+///|
 /// GetPromptRequest: Used by the client to get a prompt provided by the server.
 pub(all) struct GetPromptRequest {
   /// JSON-RPC: "method" = "prompts/get"
@@ -1485,6 +1501,22 @@ pub(all) struct Result_ {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Json?
 } derive(Show, Eq)
+
+///|
+pub impl MCPResponse for Result_ with to_response(self, id) {
+  @jsonrpc2.new_response(id, Ok(self.to_json()))
+}
+
+///|
+pub fn Result_::from_message(
+  msg : @jsonrpc2.Message
+) -> (@jsonrpc2.ID, Result_)? {
+  guard msg is Response(res) else { return None }
+  guard res.result is Ok(json) else { return None }
+  let v : Result[Result_, _] = @json.from_json?(json)
+  guard v is Ok(result) else { return None }
+  Some((res.id, result))
+}
 
 ///|
 pub(all) enum Role {

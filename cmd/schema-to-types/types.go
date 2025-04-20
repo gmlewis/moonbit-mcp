@@ -162,6 +162,18 @@ func (d *Definition) convertType(out *outBufsT, propName, prefix string) string 
 	if strings.HasSuffix(typ, "?") {
 		typ = strings.TrimSuffix(typ, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"pub type %v %v derive(Show, Eq, FromJson, ToJson)", propName, typ))
+		if typ != "String" {
+			newLines := []string{
+				prefix + "///|",
+				fmt.Sprintf(prefix+"pub fn %v::new(", propName),
+				fmt.Sprintf(prefix+") -> %v {", propName),
+				fmt.Sprintf(prefix+"  %v::new(", typ),
+				prefix + "  )",
+				prefix + "}",
+			}
+			out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
+			d.genHelperMethods(nil)
+		}
 	} else {
 		// handle enum
 		lines = append(lines, typ)

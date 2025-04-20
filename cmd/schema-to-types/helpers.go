@@ -11,7 +11,8 @@ func (d *Definition) genHelperMethods(jsonRPCConsts map[string]string) {
 		d.genRequestHelperMethods(jsonRPCConsts)
 	case strings.HasSuffix(d.name, "Notification"):
 		d.genNotificationHelperMethods(jsonRPCConsts)
-	case strings.HasSuffix(d.name, "Result"):
+	case strings.HasSuffix(d.name, "Result"),
+		strings.HasSuffix(d.name, "Result_"):
 		d.genResultHelperMethods()
 	}
 }
