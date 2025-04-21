@@ -98,10 +98,10 @@ pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)`,
 				helperStructsAndMethods: []string{
 					`///|
 pub(all) struct GetPromptRequestParams {
-  /// Arguments to use for templating the prompt.
-  arguments : Map[String, String]?
   /// The name of the prompt or prompt template.
   name : String
+  /// Arguments to use for templating the prompt.
+  arguments : Map[String, String]?
 } derive(Show, Eq)`,
 					`///|
 pub impl MCPRequest for GetPromptRequest with to_call(self, id) {
@@ -124,10 +124,10 @@ pub fn GetPromptRequest::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID,
 ///|
 pub impl ToJson for GetPromptRequestParams with to_json(self) {
   let obj = {}
+  obj["name"] = self.name.to_json()
   if self.arguments is Some(v) {
     obj["arguments"] = v.to_json()
   }
-  obj["name"] = self.name.to_json()
   obj.to_json()
 }
 
@@ -135,6 +135,13 @@ pub impl ToJson for GetPromptRequestParams with to_json(self) {
 pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
+  }
+  guard obj["name"] is Some(json) else {
+    raise @json.JsonDecodeError((path, "expected field 'name'"))
+  }
+  let v : Result[String, _] = @json.from_json?(json)
+  guard v is Ok(name) else {
+    raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
   let arguments : Map[String, String]? = match obj["arguments"] {
     Some(v) =>
@@ -144,14 +151,7 @@ pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
       }
     None => None
   }
-  guard obj["name"] is Some(json) else {
-    raise @json.JsonDecodeError((path, "expected field 'name'"))
-  }
-  let v : Result[String, _] = @json.from_json?(json)
-  guard v is Ok(name) else {
-    raise @json.JsonDecodeError((path, "expected field 'name'"))
-  }
-  { arguments, name }
+  { name, arguments }
 }
 
 ///|
@@ -179,12 +179,12 @@ pub impl @json.FromJson for GetPromptRequest with from_json(json, path) {
 			wantTypesNewFile: `
 ///|
 pub fn GetPromptRequestParams::new(
-  /// Arguments to use for templating the prompt.
-  arguments? : Map[String, String],
   /// The name of the prompt or prompt template.
   name : String,
+  /// Arguments to use for templating the prompt.
+  arguments? : Map[String, String],
 ) -> GetPromptRequestParams {
-  { arguments, name }
+  { name, arguments }
 }
 
 ///|

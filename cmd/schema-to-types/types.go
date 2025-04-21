@@ -6,6 +6,8 @@ import (
 	"log"
 	"slices"
 	"strings"
+
+	ord "github.com/wk8/go-ordered-map/v2"
 )
 
 var reservedKeywords = map[string]string{
@@ -77,6 +79,9 @@ func (s *Schema) moonBitType(d *Definition, out *outBufsT, propName string, prop
 			return "Json" + suffix
 		}
 		subTypeName := d.name + titleCase(propName)
+		if parentDef, ok := s.tsDefs.Get(d.name); ok {
+			s.tsDefs.AddPairs(ord.Pair[string, string]{Key: subTypeName, Value: unindent(parentDef)})
+		}
 		subType := s.convert(prop, out, subTypeName)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, subType)
 		d.helperStructsAndMethods = append(d.helperStructsAndMethods, prop.helperStructsAndMethods...)
@@ -111,6 +116,18 @@ pub fn %[1]v::number(n : Int) -> %[1]v {
 		log.Fatalf("prop %q unhandled mooonBitType: %v", propName, string(v))
 	}
 	return ""
+}
+
+func unindent(parent string) string {
+	lines := strings.Split(parent, "\n")
+	result := make([]string, 0, len(lines))
+	for _, line := range lines {
+		if !strings.HasPrefix(line, "    ") {
+			continue
+		}
+		result = append(result, line[2:])
+	}
+	return strings.Join(result, "\n")
 }
 
 func (d *Definition) refType(propName string, required []string) (refType string, anyOf []string) {
@@ -163,36 +180,13 @@ func (s *Schema) convertType(d *Definition, out *outBufsT, propName, prefix stri
 		typ = strings.TrimSuffix(typ, "?")
 		lines = append(lines, fmt.Sprintf(prefix+"pub type %v %v derive(Show, Eq, FromJson, ToJson)", propName, typ))
 		if typ != "String" {
-			underlyingType, ok := s.Definitions[strings.TrimSuffix(typ, "_")]
-			if !ok {
-				log.Fatalf("%v: unhandled underlying type %v", propName, typ)
-			}
 			newLines := []string{
 				prefix + "///|",
 				fmt.Sprintf(prefix+"pub fn %v::new(", propName),
-			}
-
-			tsSource, ok := s.tsDefs.Get(propName)
-			if !ok {
-				log.Fatalf("unable to find tsSource for propName %q", propName)
-			}
-			props := underlyingType.sortedProps(tsSource)
-			for _, name := range props {
-				prop := underlyingType.Properties[name]
-				log.Printf("GML: underlyingType.Properties: %q: %#v", name, prop)
-			}
-
-			newLines = append(newLines, fmt.Sprintf(prefix+") -> %v {", propName))
-
-			for _, name := range props {
-				prop := underlyingType.Properties[name]
-				log.Printf("GML: underlyingType.Properties: %q: %#v", name, prop)
-			}
-
-			newLines = append(newLines,
+				fmt.Sprintf(prefix+") -> %v {", propName),
 				fmt.Sprintf(prefix+"  %v({})", typ),
-				prefix+"}",
-			)
+				prefix + "}",
+			}
 			out.typesNewFile.WriteString("\n" + strings.Join(newLines, "\n") + "\n")
 			d.genHelperMethods(nil)
 		}

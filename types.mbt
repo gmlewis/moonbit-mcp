@@ -135,12 +135,12 @@ pub(all) struct CancelledNotification {
 
 ///|
 pub(all) struct CancelledNotificationParams {
-  /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
-  reason : String?
   /// The ID of the request to cancel.
   ///
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : @jsonrpc2.ID
+  /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
+  reason : String?
 } derive(Show, Eq)
 
 ///|
@@ -174,10 +174,10 @@ pub(all) struct InitializeRequest {
 
 ///|
 pub(all) struct InitializeRequestParams {
-  capabilities : ClientCapabilities
-  clientInfo : Implementation
   /// The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
   protocolVersion : String
+  capabilities : ClientCapabilities
+  clientInfo : Implementation
 } derive(Show, Eq)
 
 ///|
@@ -203,14 +203,14 @@ pub fn InitializeRequest::from_message(
 pub(all) struct InitializeResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Map[String, Json]?
+  /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
+  protocolVersion : String
   capabilities : ServerCapabilities
+  serverInfo : Implementation
   /// Instructions describing how to use the server and its features.
   ///
   /// This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
   instructions : String?
-  /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
-  protocolVersion : String
-  serverInfo : Implementation
 } derive(Show, Eq)
 
 ///|
@@ -232,8 +232,8 @@ pub fn InitializeResult::from_message(
 ///|
 /// InitializedNotification: This notification is sent from the client to the server after initialization has finished.
 pub(all) struct InitializedNotification {
-  /// JSON-RPC: "method" = "notifications/initialized"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "notifications/initialized"
 } derive(Show, Eq)
 
 ///|
@@ -275,12 +275,12 @@ pub(all) struct ClientCapabilitiesRoots {
 ///|
 /// ServerCapabilities: Capabilities that a server may support. Known capabilities are defined here, in this schema, but this is not a closed set: any server can define its own, additional capabilities.
 pub(all) struct ServerCapabilities {
-  /// Present if the server supports argument autocompletion suggestions.
-  completions : Map[String, Json]?
   /// Experimental, non-standard capabilities that the server supports.
   experimental : Map[String, Json]?
   /// Present if the server supports sending log messages to the client.
   logging : Map[String, Json]?
+  /// Present if the server supports argument autocompletion suggestions.
+  completions : Map[String, Json]?
   /// Present if the server offers any prompt templates.
   prompts : ServerCapabilitiesPrompts?
   /// Present if the server offers any resources to read.
@@ -326,8 +326,8 @@ pub(all) struct Implementation {
 ///|
 /// PingRequest: A ping, issued by either the server or the client, to check that the other party is still alive. The receiver must promptly respond, or else may be disconnected.
 pub(all) struct PingRequest {
-  /// JSON-RPC: "method" = "ping"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "ping"
 } derive(Show, Eq)
 
 ///|
@@ -361,14 +361,14 @@ pub(all) struct ProgressNotification {
 
 ///|
 pub(all) struct ProgressNotificationParams {
-  /// An optional message describing the current progress.
-  message : String?
   /// The progress thus far. This should increase every time progress is made, even if the total is unknown.
   progress : Double
   /// The progress token which was given in the initial request, used to associate this notification with the request that is proceeding.
   progressToken : ProgressToken
   /// Total number of items to process (or total progress required), if known.
   total : Double?
+  /// An optional message describing the current progress.
+  message : String?
 } derive(Show, Eq)
 
 ///|
@@ -455,8 +455,8 @@ pub fn PaginatedResult::from_message(
 ///|
 /// ListResourcesRequest: Sent from the client to request a list of resources the server has.
 pub(all) struct ListResourcesRequest {
-  /// JSON-RPC: "method" = "resources/list"
   params : ListResourcesRequestParams?
+  /// JSON-RPC: "method" = "resources/list"
 } derive(Show, Eq)
 
 ///|
@@ -514,8 +514,8 @@ pub fn ListResourcesResult::from_message(
 ///|
 /// ListResourceTemplatesRequest: Sent from the client to request a list of resource templates the server has.
 pub(all) struct ListResourceTemplatesRequest {
-  /// JSON-RPC: "method" = "resources/templates/list"
   params : ListResourceTemplatesRequestParams?
+  /// JSON-RPC: "method" = "resources/templates/list"
 } derive(Show, Eq)
 
 ///|
@@ -638,8 +638,8 @@ pub fn ReadResourceResult::from_message(
 ///|
 /// ResourceListChangedNotification: An optional notification from the server to the client, informing it that the list of resources it can read from has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ResourceListChangedNotification {
-  /// JSON-RPC: "method" = "notifications/resources/list_changed"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "notifications/resources/list_changed"
 } derive(Show, Eq)
 
 ///|
@@ -768,72 +768,72 @@ pub fn ResourceUpdatedNotification::from_message(
 ///|
 /// Resource: A known resource that the server is capable of reading.
 pub(all) struct Resource {
-  /// Optional annotations for the client.
-  annotations : Annotations?
+  /// The URI of this resource.
+  uri : String
+  /// A human-readable name for this resource.
+  ///
+  /// This can be used by clients to populate UI elements.
+  name : String
   /// A description of what this resource represents.
   ///
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description : String?
   /// The MIME type of this resource, if known.
   mimeType : String?
-  /// A human-readable name for this resource.
-  ///
-  /// This can be used by clients to populate UI elements.
-  name : String
+  /// Optional annotations for the client.
+  annotations : Annotations?
   /// The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.
   ///
   /// This can be used by Hosts to display file sizes and estimate context window usage.
   size : Int64?
-  /// The URI of this resource.
-  uri : String
 } derive(Show, Eq)
 
 ///|
 /// ResourceTemplate: A template description for resources available on the server.
 pub(all) struct ResourceTemplate {
-  /// Optional annotations for the client.
-  annotations : Annotations?
+  /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
+  uriTemplate : String
+  /// A human-readable name for the type of resource this template refers to.
+  ///
+  /// This can be used by clients to populate UI elements.
+  name : String
   /// A description of what this template is for.
   ///
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description : String?
   /// The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.
   mimeType : String?
-  /// A human-readable name for the type of resource this template refers to.
-  ///
-  /// This can be used by clients to populate UI elements.
-  name : String
-  /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
-  uriTemplate : String
+  /// Optional annotations for the client.
+  annotations : Annotations?
 } derive(Show, Eq)
 
 ///|
 /// ResourceContents: The contents of a specific resource or sub-resource.
 pub(all) struct ResourceContents {
-  /// The MIME type of this resource, if known.
-  mimeType : String?
   /// The URI of this resource.
   uri : String
+  /// The MIME type of this resource, if known.
+  mimeType : String?
 } derive(Show, Eq)
 
 ///|
 pub(all) struct TextResourceContents {
   /// The MIME type of this resource, if known.
   mimeType : String?
-  /// The text of the item. This must only be set if the item can actually be represented as text (not binary data).
-  text : String
   /// The URI of this resource.
   uri : String
+  /// The text of the item. This must only be set if the item can actually be represented as text (not binary data).
+  text : String
 } derive(Show, Eq)
 
 ///|
 pub(all) struct BlobResourceContents {
-  /// A base64-encoded string representing the binary data of the item.
-  blob : String
   /// The MIME type of this resource, if known.
   mimeType : String?
   /// The URI of this resource.
   uri : String
+  /// A base64-encoded string representing the binary data of the item.
+  blob : String
 } derive(Show, Eq)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -843,8 +843,8 @@ pub(all) struct BlobResourceContents {
 ///|
 /// ListPromptsRequest: Sent from the client to request a list of prompts and prompt templates the server has.
 pub(all) struct ListPromptsRequest {
-  /// JSON-RPC: "method" = "prompts/list"
   params : ListPromptsRequestParams?
+  /// JSON-RPC: "method" = "prompts/list"
 } derive(Show, Eq)
 
 ///|
@@ -908,10 +908,10 @@ pub(all) struct GetPromptRequest {
 
 ///|
 pub(all) struct GetPromptRequestParams {
-  /// Arguments to use for templating the prompt.
-  arguments : Map[String, String]?
   /// The name of the prompt or prompt template.
   name : String
+  /// Arguments to use for templating the prompt.
+  arguments : Map[String, String]?
 } derive(Show, Eq)
 
 ///|
@@ -961,21 +961,21 @@ pub fn GetPromptResult::from_message(
 ///|
 /// Prompt: A prompt or prompt template that the server offers.
 pub(all) struct Prompt {
-  /// A list of arguments to use for templating the prompt.
-  arguments : Array[PromptArgument]?
-  /// An optional description of what this prompt provides
-  description : String?
   /// The name of the prompt or prompt template.
   name : String
+  /// An optional description of what this prompt provides
+  description : String?
+  /// A list of arguments to use for templating the prompt.
+  arguments : Array[PromptArgument]?
 } derive(Show, Eq)
 
 ///|
 /// PromptArgument: Describes an argument that a prompt can accept.
 pub(all) struct PromptArgument {
-  /// A human-readable description of the argument.
-  description : String?
   /// The name of the argument.
   name : String
+  /// A human-readable description of the argument.
+  description : String?
   /// Whether this argument must be provided.
   required : Bool?
 } derive(Show, Eq)
@@ -992,8 +992,8 @@ pub(all) enum Role {
 /// This is similar to `SamplingMessage`, but also supports the embedding of
 /// resources from the MCP server.
 pub(all) struct PromptMessage {
-  content : &PromptMessageContent
   role : Role
+  content : &PromptMessageContent
 } derive(Show, Eq)
 
 ///|
@@ -1012,10 +1012,10 @@ pub impl Eq for &PromptMessageContent with op_equal(_self, _other) {
 /// It is up to the client how best to render embedded resources for the benefit
 /// of the LLM and/or the user.
 pub(all) struct EmbeddedResource {
+  /// JSON-RPC: "type" = "resource"
+  resource : &EmbeddedResourceResource
   /// Optional annotations for the client.
   annotations : Annotations?
-  resource : &EmbeddedResourceResource
-  /// JSON-RPC: "type" = "resource"
 } derive(Show, Eq)
 
 ///|
@@ -1031,8 +1031,8 @@ pub impl Eq for &EmbeddedResourceResource with op_equal(_self, _other) {
 ///|
 /// PromptListChangedNotification: An optional notification from the server to the client, informing it that the list of prompts it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct PromptListChangedNotification {
-  /// JSON-RPC: "method" = "notifications/prompts/list_changed"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "notifications/prompts/list_changed"
 } derive(Show, Eq)
 
 ///|
@@ -1065,8 +1065,8 @@ pub fn PromptListChangedNotification::from_message(
 ///|
 /// ListToolsRequest: Sent from the client to request a list of tools the server has.
 pub(all) struct ListToolsRequest {
-  /// JSON-RPC: "method" = "tools/list"
   params : ListToolsRequestParams?
+  /// JSON-RPC: "method" = "tools/list"
 } derive(Show, Eq)
 
 ///|
@@ -1177,8 +1177,8 @@ pub(all) struct CallToolRequest {
 
 ///|
 pub(all) struct CallToolRequestParams {
-  arguments : Map[String, Json]?
   name : String
+  arguments : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -1202,8 +1202,8 @@ pub fn CallToolRequest::from_message(
 ///|
 /// ToolListChangedNotification: An optional notification from the server to the client, informing it that the list of tools it offers has changed. This may be issued by servers without any previous subscription from the client.
 pub(all) struct ToolListChangedNotification {
-  /// JSON-RPC: "method" = "notifications/tools/list_changed"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "notifications/tools/list_changed"
 } derive(Show, Eq)
 
 ///|
@@ -1239,6 +1239,12 @@ pub fn ToolListChangedNotification::from_message(
 /// Clients should never make tool use decisions based on ToolAnnotations
 /// received from untrusted servers.
 pub(all) struct ToolAnnotations {
+  /// A human-readable title for the tool.
+  title : String?
+  /// If true, the tool does not modify its environment.
+  ///
+  /// Default: false
+  readOnlyHint : Bool?
   /// If true, the tool may perform destructive updates to its environment.
   /// If false, the tool performs only additive updates.
   ///
@@ -1260,35 +1266,29 @@ pub(all) struct ToolAnnotations {
   ///
   /// Default: true
   openWorldHint : Bool?
-  /// If true, the tool does not modify its environment.
-  ///
-  /// Default: false
-  readOnlyHint : Bool?
-  /// A human-readable title for the tool.
-  title : String?
 } derive(Show, Eq)
 
 ///|
 /// Tool: Definition for a tool the client can call.
 pub(all) struct Tool {
-  /// Optional additional tool information.
-  annotations : ToolAnnotations?
+  /// The name of the tool.
+  name : String
   /// A human-readable description of the tool.
   ///
   /// This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.
   description : String?
   /// A JSON Schema object defining the expected parameters for the tool.
   inputSchema : ToolInputSchema
-  /// The name of the tool.
-  name : String
+  /// Optional additional tool information.
+  annotations : ToolAnnotations?
 } derive(Show, Eq)
 
 ///|
 /// ToolInputSchema: A JSON Schema object defining the expected parameters for the tool.
 pub(all) struct ToolInputSchema {
+  /// JSON-RPC: "type" = "object"
   properties : Map[String, Json]?
   required : Array[String]?
-  /// JSON-RPC: "type" = "object"
 } derive(Show, Eq)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1335,12 +1335,12 @@ pub(all) struct LoggingMessageNotification {
 
 ///|
 pub(all) struct LoggingMessageNotificationParams {
-  /// The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
-  data : Json
   /// The severity of this log message.
   level : LoggingLevel
   /// An optional name of the logger issuing this message.
   logger : String?
+  /// The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
+  data : Json
 } derive(Show, Eq)
 
 ///|
@@ -1388,19 +1388,19 @@ pub(all) struct CreateMessageRequest {
 
 ///|
 pub(all) struct CreateMessageRequestParams {
-  /// A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
-  includeContext : IncludeContext?
-  /// The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
-  maxTokens : Int64
   messages : Array[SamplingMessage]
-  /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
-  metadata : Map[String, Json]?
   /// The server's preferences for which model to select. The client MAY ignore these preferences.
   modelPreferences : ModelPreferences?
-  stopSequences : Array[String]?
   /// An optional system prompt the server wants to use for sampling. The client MAY modify or omit this prompt.
   systemPrompt : String?
+  /// A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
+  includeContext : IncludeContext?
   temperature : Double?
+  /// The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
+  maxTokens : Int64
+  stopSequences : Array[String]?
+  /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
+  metadata : Map[String, Json]?
 } derive(Show, Eq)
 
 ///|
@@ -1434,9 +1434,9 @@ pub(all) struct CreateMessageResult {
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta : Map[String, Json]?
   content : &CreateMessageResultContent
+  role : Role
   /// The name of the model that generated the message.
   model : String
-  role : Role
   /// The reason why sampling stopped, if known.
   stopReason : String?
 } derive(Show, Eq)
@@ -1470,8 +1470,8 @@ pub fn CreateMessageResult::from_message(
 ///|
 /// SamplingMessage: Describes a message issued to or received from an LLM API.
 pub(all) struct SamplingMessage {
-  content : &SamplingMessageContent
   role : Role
+  content : &SamplingMessageContent
 } derive(Show, Eq)
 
 ///|
@@ -1502,35 +1502,35 @@ pub(all) struct Annotations {
 ///|
 /// TextContent: Text provided to or from an LLM.
 pub(all) struct TextContent {
-  /// Optional annotations for the client.
-  annotations : Annotations?
+  /// JSON-RPC: "type" = "text"
   /// The text content of the message.
   text : String
-  /// JSON-RPC: "type" = "text"
+  /// Optional annotations for the client.
+  annotations : Annotations?
 } derive(Show, Eq)
 
 ///|
 /// ImageContent: An image provided to or from an LLM.
 pub(all) struct ImageContent {
-  /// Optional annotations for the client.
-  annotations : Annotations?
+  /// JSON-RPC: "type" = "image"
   /// The base64-encoded image data.
   data : String
   /// The MIME type of the image. Different providers may support different image types.
   mimeType : String
-  /// JSON-RPC: "type" = "image"
+  /// Optional annotations for the client.
+  annotations : Annotations?
 } derive(Show, Eq)
 
 ///|
 /// AudioContent: Audio provided to or from an LLM.
 pub(all) struct AudioContent {
-  /// Optional annotations for the client.
-  annotations : Annotations?
+  /// JSON-RPC: "type" = "audio"
   /// The base64-encoded audio data.
   data : String
   /// The MIME type of the audio. Different providers may support different audio types.
   mimeType : String
-  /// JSON-RPC: "type" = "audio"
+  /// Optional annotations for the client.
+  annotations : Annotations?
 } derive(Show, Eq)
 
 ///|
@@ -1546,10 +1546,6 @@ pub(all) struct AudioContent {
 /// up to the client to decide how to interpret these preferences and how to
 /// balance them against other considerations.
 pub(all) struct ModelPreferences {
-  /// How much to prioritize cost when selecting a model. A value of 0 means cost
-  /// is not important, while a value of 1 means cost is the most important
-  /// factor.
-  costPriority : Double?
   /// Optional hints to use for model selection.
   ///
   /// If multiple hints are specified, the client MUST evaluate them in order
@@ -1558,14 +1554,18 @@ pub(all) struct ModelPreferences {
   /// The client SHOULD prioritize these hints over the numeric priorities, but
   /// MAY still use the priorities to select from ambiguous matches.
   hints : Array[ModelHint]?
-  /// How much to prioritize intelligence and capabilities when selecting a
-  /// model. A value of 0 means intelligence is not important, while a value of 1
-  /// means intelligence is the most important factor.
-  intelligencePriority : Double?
+  /// How much to prioritize cost when selecting a model. A value of 0 means cost
+  /// is not important, while a value of 1 means cost is the most important
+  /// factor.
+  costPriority : Double?
   /// How much to prioritize sampling speed (latency) when selecting a model. A
   /// value of 0 means speed is not important, while a value of 1 means speed is
   /// the most important factor.
   speedPriority : Double?
+  /// How much to prioritize intelligence and capabilities when selecting a
+  /// model. A value of 0 means intelligence is not important, while a value of 1
+  /// means intelligence is the most important factor.
+  intelligencePriority : Double?
 } derive(Show, Eq)
 
 ///|
@@ -1599,18 +1599,9 @@ pub(all) struct CompleteRequest {
 
 ///|
 pub(all) struct CompleteRequestParams {
+  ref_ : &CompleteRequestParamsRef
   /// The argument's information
   argument : CompleteRequestParamsArgument
-  ref_ : &CompleteRequestParamsRef
-} derive(Show, Eq)
-
-///|
-/// CompleteRequestParamsArgument: The argument's information
-pub(all) struct CompleteRequestParamsArgument {
-  /// The name of the argument
-  name : String
-  /// The value of the argument to use for completion matching.
-  value : String
 } derive(Show, Eq)
 
 ///|
@@ -1622,6 +1613,15 @@ pub trait CompleteRequestParamsRef: Show + ToJson {
 pub impl Eq for &CompleteRequestParamsRef with op_equal(_self, _other) {
   false // unused - compiler workaround
 }
+
+///|
+/// CompleteRequestParamsArgument: The argument's information
+pub(all) struct CompleteRequestParamsArgument {
+  /// The name of the argument
+  name : String
+  /// The value of the argument to use for completion matching.
+  value : String
+} derive(Show, Eq)
 
 ///|
 pub impl MCPRequest for CompleteRequest with to_call(self, id) {
@@ -1651,12 +1651,12 @@ pub(all) struct CompleteResult {
 
 ///|
 pub(all) struct CompleteResultCompletion {
-  /// Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
-  hasMore : Bool?
-  /// The total number of completion options available. This can exceed the number of values actually sent in the response.
-  total : Int64?
   /// An array of completion values. Must not exceed 100 items.
   values : Array[String]
+  /// The total number of completion options available. This can exceed the number of values actually sent in the response.
+  total : Int64?
+  /// Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
+  hasMore : Bool?
 } derive(Show, Eq)
 
 ///|
@@ -1686,9 +1686,9 @@ pub(all) struct ResourceReference {
 ///|
 /// PromptReference: Identifies a prompt.
 pub(all) struct PromptReference {
+  /// JSON-RPC: "type" = "ref/prompt"
   /// The name of the prompt or prompt template
   name : String
-  /// JSON-RPC: "type" = "ref/prompt"
 } derive(Show, Eq)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1704,8 +1704,8 @@ pub(all) struct PromptReference {
 /// This request is typically used when the server needs to understand the file system
 /// structure or access specific locations that the client has permission to read from.
 pub(all) struct ListRootsRequest {
-  /// JSON-RPC: "method" = "roots/list"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "roots/list"
 } derive(Show, Eq)
 
 ///|
@@ -1755,14 +1755,14 @@ pub fn ListRootsResult::from_message(
 ///|
 /// Root: Represents a root directory or file that the server can operate on.
 pub(all) struct Root {
-  /// An optional name for the root. This can be used to provide a human-readable
-  /// identifier for the root, which may be useful for display purposes or for
-  /// referencing the root in other parts of the application.
-  name : String?
   /// The URI identifying the root. This *must* start with file:// for now.
   /// This restriction may be relaxed in future versions of the protocol to allow
   /// other URI schemes.
   uri : String
+  /// An optional name for the root. This can be used to provide a human-readable
+  /// identifier for the root, which may be useful for display purposes or for
+  /// referencing the root in other parts of the application.
+  name : String?
 } derive(Show, Eq)
 
 ///|
@@ -1770,8 +1770,8 @@ pub(all) struct Root {
 /// This notification should be sent whenever the client adds, removes, or modifies any root.
 /// The server should then request an updated list of roots using the ListRootsRequest.
 pub(all) struct RootsListChangedNotification {
-  /// JSON-RPC: "method" = "notifications/roots/list_changed"
   params : Map[String, Json]?
+  /// JSON-RPC: "method" = "notifications/roots/list_changed"
 } derive(Show, Eq)
 
 ///|

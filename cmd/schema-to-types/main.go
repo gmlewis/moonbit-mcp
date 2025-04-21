@@ -66,18 +66,28 @@ func main() {
 	out.typesJSONFile.WriteString(fileHeader)
 	out.typesNewFile.WriteString(fileHeader)
 
-	// Generate MoonBit source from the schema
+	// The defs ordered map is altered during processing, so take
+	// a snapshot of the keys to process the top-level definitions.
+	keys := make([]string, 0, defs.Len())
 	for pair := defs.Oldest(); pair != nil; pair = pair.Next() {
-		key := pair.Key
+		keys = append(keys, pair.Key)
+	}
+
+	// Generate MoonBit source from the schema
+	for _, key := range keys {
 		def, ok := schema.Definitions[key]
 		if !ok {
 			if key == "JSONRPC_VERSION" {
 				continue
 			}
-			if !strings.HasPrefix(pair.Value, "export const ") {
-				log.Fatalf("missing schema.Definitions[%q]: %v", key, pair.Value)
+			pairValue, ok := defs.Get(key)
+			if !ok {
+				log.Fatalf("missing schema.Definitions[%q]", key)
 			}
-			out.typesFile.WriteString("\n///|\npub " + pair.Value[7:len(pair.Value)-1] + "\n")
+			if !strings.HasPrefix(pairValue, "export const ") {
+				log.Fatalf("missing schema.Definitions[%q]: %v", key, pairValue)
+			}
+			out.typesFile.WriteString("\n///|\npub " + pairValue[7:len(pairValue)-1] + "\n")
 			continue
 		}
 

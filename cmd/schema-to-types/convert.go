@@ -231,13 +231,26 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 }
 
 func (d *Definition) sortedProps(tsSource string) []string {
-	if tsSource != "" {
-		log.Printf("sortedProps:\n%v", tsSource)
-	}
 	props := make([]string, 0, len(d.Properties))
+	propIndices := make(map[string]int, len(d.Properties))
 	for key := range d.Properties {
 		props = append(props, key)
+		index := strings.Index(tsSource, "\n  "+key)
+		if index < 0 {
+			// Some properties are added in schema.ts with "extends" which
+			// appear in schema.json but not literally in schema.ts.
+			// Add these to the list in last place.
+			propIndices[key] = len(tsSource)
+		}
+		propIndices[key] = index
 	}
-	sort.Strings(props)
+	sort.Slice(props, func(i, j int) bool {
+		locI := propIndices[props[i]]
+		locJ := propIndices[props[j]]
+		if locI == locJ { // sort by name if both have same index - see above.
+			return props[i] < props[j]
+		}
+		return locI < locJ
+	})
 	return props
 }

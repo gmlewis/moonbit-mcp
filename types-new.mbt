@@ -33,14 +33,14 @@ pub fn EmptyResult::new() -> EmptyResult {
 
 ///|
 pub fn CancelledNotificationParams::new(
-  /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
-  reason? : String,
   /// The ID of the request to cancel.
   ///
   /// This MUST correspond to the ID of a request previously issued in the same direction.
-  requestId : @jsonrpc2.ID
+  requestId : @jsonrpc2.ID,
+  /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
+  reason? : String
 ) -> CancelledNotificationParams {
-  { reason, requestId }
+  { requestId, reason }
 }
 
 ///|
@@ -56,12 +56,12 @@ pub fn CancelledNotification::new(
 
 ///|
 pub fn InitializeRequestParams::new(
-  capabilities : ClientCapabilities,
-  clientInfo : Implementation,
   /// The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
-  protocolVersion : String
+  protocolVersion : String,
+  capabilities : ClientCapabilities,
+  clientInfo : Implementation
 ) -> InitializeRequestParams {
-  { capabilities, clientInfo, protocolVersion }
+  { protocolVersion, capabilities, clientInfo }
 }
 
 ///|
@@ -75,16 +75,16 @@ pub fn InitializeRequest::new(
 pub fn InitializeResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Map[String, Json],
+  /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
+  protocolVersion : String,
   capabilities : ServerCapabilities,
+  serverInfo : Implementation,
   /// Instructions describing how to use the server and its features.
   ///
   /// This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
-  instructions? : String,
-  /// The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
-  protocolVersion : String,
-  serverInfo : Implementation
+  instructions? : String
 ) -> InitializeResult {
-  { _meta, capabilities, instructions, protocolVersion, serverInfo }
+  { _meta, protocolVersion, capabilities, serverInfo, instructions }
 }
 
 ///|
@@ -142,12 +142,12 @@ pub fn ServerCapabilitiesTools::new(
 
 ///|
 pub fn ServerCapabilities::new(
-  /// Present if the server supports argument autocompletion suggestions.
-  completions? : Map[String, Json],
   /// Experimental, non-standard capabilities that the server supports.
   experimental? : Map[String, Json],
   /// Present if the server supports sending log messages to the client.
   logging? : Map[String, Json],
+  /// Present if the server supports argument autocompletion suggestions.
+  completions? : Map[String, Json],
   /// Present if the server offers any prompt templates.
   prompts? : ServerCapabilitiesPrompts,
   /// Present if the server offers any resources to read.
@@ -155,7 +155,7 @@ pub fn ServerCapabilities::new(
   /// Present if the server offers any tools to call.
   tools? : ServerCapabilitiesTools
 ) -> ServerCapabilities {
-  { completions, experimental, logging, prompts, resources, tools }
+  { experimental, logging, completions, prompts, resources, tools }
 }
 
 ///|
@@ -178,16 +178,16 @@ pub fn PingRequest::new(params? : Map[String, Json]) -> PingRequest {
 
 ///|
 pub fn ProgressNotificationParams::new(
-  /// An optional message describing the current progress.
-  message? : String,
   /// The progress thus far. This should increase every time progress is made, even if the total is unknown.
   progress : Double,
   /// The progress token which was given in the initial request, used to associate this notification with the request that is proceeding.
   progressToken : ProgressToken,
   /// Total number of items to process (or total progress required), if known.
-  total? : Double
+  total? : Double,
+  /// An optional message describing the current progress.
+  message? : String
 ) -> ProgressNotificationParams {
-  { message, progress, progressToken, total }
+  { progress, progressToken, total, message }
 }
 
 ///|
@@ -367,80 +367,80 @@ pub fn ResourceUpdatedNotification::new(
 
 ///|
 pub fn Resource::new(
-  /// Optional annotations for the client.
-  annotations? : Annotations,
+  /// The URI of this resource.
+  uri : String,
+  /// A human-readable name for this resource.
+  ///
+  /// This can be used by clients to populate UI elements.
+  name : String,
   /// A description of what this resource represents.
   ///
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description? : String,
   /// The MIME type of this resource, if known.
   mimeType? : String,
-  /// A human-readable name for this resource.
-  ///
-  /// This can be used by clients to populate UI elements.
-  name : String,
+  /// Optional annotations for the client.
+  annotations? : Annotations,
   /// The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.
   ///
   /// This can be used by Hosts to display file sizes and estimate context window usage.
-  size? : Int64,
-  /// The URI of this resource.
-  uri : String
+  size? : Int64
 ) -> Resource {
-  { annotations, description, mimeType, name, size, uri }
+  { uri, name, description, mimeType, annotations, size }
 }
 
 ///|
 pub fn ResourceTemplate::new(
-  /// Optional annotations for the client.
-  annotations? : Annotations,
+  /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
+  uriTemplate : String,
+  /// A human-readable name for the type of resource this template refers to.
+  ///
+  /// This can be used by clients to populate UI elements.
+  name : String,
   /// A description of what this template is for.
   ///
   /// This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
   description? : String,
   /// The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.
   mimeType? : String,
-  /// A human-readable name for the type of resource this template refers to.
-  ///
-  /// This can be used by clients to populate UI elements.
-  name : String,
-  /// A URI template (according to RFC 6570) that can be used to construct resource URIs.
-  uriTemplate : String
+  /// Optional annotations for the client.
+  annotations? : Annotations
 ) -> ResourceTemplate {
-  { annotations, description, mimeType, name, uriTemplate }
+  { uriTemplate, name, description, mimeType, annotations }
 }
 
 ///|
 pub fn ResourceContents::new(
-  /// The MIME type of this resource, if known.
-  mimeType? : String,
   /// The URI of this resource.
-  uri : String
+  uri : String,
+  /// The MIME type of this resource, if known.
+  mimeType? : String
 ) -> ResourceContents {
-  { mimeType, uri }
+  { uri, mimeType }
 }
 
 ///|
 pub fn TextResourceContents::new(
   /// The MIME type of this resource, if known.
   mimeType? : String,
-  /// The text of the item. This must only be set if the item can actually be represented as text (not binary data).
-  text : String,
   /// The URI of this resource.
-  uri : String
+  uri : String,
+  /// The text of the item. This must only be set if the item can actually be represented as text (not binary data).
+  text : String
 ) -> TextResourceContents {
-  { mimeType, text, uri }
+  { mimeType, uri, text }
 }
 
 ///|
 pub fn BlobResourceContents::new(
-  /// A base64-encoded string representing the binary data of the item.
-  blob : String,
   /// The MIME type of this resource, if known.
   mimeType? : String,
   /// The URI of this resource.
-  uri : String
+  uri : String,
+  /// A base64-encoded string representing the binary data of the item.
+  blob : String
 ) -> BlobResourceContents {
-  { blob, mimeType, uri }
+  { mimeType, uri, blob }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -477,12 +477,12 @@ pub fn ListPromptsResult::new(
 
 ///|
 pub fn GetPromptRequestParams::new(
-  /// Arguments to use for templating the prompt.
-  arguments? : Map[String, String],
   /// The name of the prompt or prompt template.
-  name : String
+  name : String,
+  /// Arguments to use for templating the prompt.
+  arguments? : Map[String, String]
 ) -> GetPromptRequestParams {
-  { arguments, name }
+  { name, arguments }
 }
 
 ///|
@@ -505,43 +505,43 @@ pub fn GetPromptResult::new(
 
 ///|
 pub fn Prompt::new(
-  /// A list of arguments to use for templating the prompt.
-  arguments? : Array[PromptArgument],
+  /// The name of the prompt or prompt template.
+  name : String,
   /// An optional description of what this prompt provides
   description? : String,
-  /// The name of the prompt or prompt template.
-  name : String
+  /// A list of arguments to use for templating the prompt.
+  arguments? : Array[PromptArgument]
 ) -> Prompt {
-  { arguments, description, name }
+  { name, description, arguments }
 }
 
 ///|
 pub fn PromptArgument::new(
-  /// A human-readable description of the argument.
-  description? : String,
   /// The name of the argument.
   name : String,
+  /// A human-readable description of the argument.
+  description? : String,
   /// Whether this argument must be provided.
   required? : Bool
 ) -> PromptArgument {
-  { description, name, required }
+  { name, description, required }
 }
 
 ///|
 pub fn PromptMessage::new(
-  content : &PromptMessageContent,
-  role : Role
+  role : Role,
+  content : &PromptMessageContent
 ) -> PromptMessage {
-  { content, role }
+  { role, content }
 }
 
 ///|
 pub fn EmbeddedResource::new(
+  resource : &EmbeddedResourceResource,
   /// Optional annotations for the client.
-  annotations? : Annotations,
-  resource : &EmbeddedResourceResource
+  annotations? : Annotations
 ) -> EmbeddedResource {
-  { annotations, resource }
+  { resource, annotations }
 }
 
 ///|
@@ -598,10 +598,10 @@ pub fn CallToolResult::new(
 
 ///|
 pub fn CallToolRequestParams::new(
-  arguments? : Map[String, Json],
-  name : String
+  name : String,
+  arguments? : Map[String, Json]
 ) -> CallToolRequestParams {
-  { arguments, name }
+  { name, arguments }
 }
 
 ///|
@@ -618,6 +618,12 @@ pub fn ToolListChangedNotification::new(
 
 ///|
 pub fn ToolAnnotations::new(
+  /// A human-readable title for the tool.
+  title? : String,
+  /// If true, the tool does not modify its environment.
+  ///
+  /// Default: false
+  readOnlyHint? : Bool,
   /// If true, the tool may perform destructive updates to its environment.
   /// If false, the tool performs only additive updates.
   ///
@@ -638,15 +644,9 @@ pub fn ToolAnnotations::new(
   /// of a memory tool is not.
   ///
   /// Default: true
-  openWorldHint? : Bool,
-  /// If true, the tool does not modify its environment.
-  ///
-  /// Default: false
-  readOnlyHint? : Bool,
-  /// A human-readable title for the tool.
-  title? : String
+  openWorldHint? : Bool
 ) -> ToolAnnotations {
-  { destructiveHint, idempotentHint, openWorldHint, readOnlyHint, title }
+  { title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint }
 }
 
 ///|
@@ -659,18 +659,18 @@ pub fn ToolInputSchema::new(
 
 ///|
 pub fn Tool::new(
-  /// Optional additional tool information.
-  annotations? : ToolAnnotations,
+  /// The name of the tool.
+  name : String,
   /// A human-readable description of the tool.
   ///
   /// This can be used by clients to improve the LLM's understanding of available tools. It can be thought of like a "hint" to the model.
   description? : String,
   /// A JSON Schema object defining the expected parameters for the tool.
   inputSchema : ToolInputSchema,
-  /// The name of the tool.
-  name : String
+  /// Optional additional tool information.
+  annotations? : ToolAnnotations
 ) -> Tool {
-  { annotations, description, inputSchema, name }
+  { name, description, inputSchema, annotations }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -692,14 +692,14 @@ pub fn SetLevelRequest::new(params : SetLevelRequestParams) -> SetLevelRequest {
 
 ///|
 pub fn LoggingMessageNotificationParams::new(
-  /// The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
-  data : Json,
   /// The severity of this log message.
   level : LoggingLevel,
   /// An optional name of the logger issuing this message.
-  logger? : String
+  logger? : String,
+  /// The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
+  data : Json
 ) -> LoggingMessageNotificationParams {
-  { data, level, logger }
+  { level, logger, data }
 }
 
 ///|
@@ -715,29 +715,29 @@ pub fn LoggingMessageNotification::new(
 
 ///|
 pub fn CreateMessageRequestParams::new(
-  /// A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
-  includeContext? : IncludeContext,
-  /// The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
-  maxTokens : Int64,
   messages : Array[SamplingMessage],
-  /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
-  metadata? : Map[String, Json],
   /// The server's preferences for which model to select. The client MAY ignore these preferences.
   modelPreferences? : ModelPreferences,
-  stopSequences? : Array[String],
   /// An optional system prompt the server wants to use for sampling. The client MAY modify or omit this prompt.
   systemPrompt? : String,
-  temperature? : Double
+  /// A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
+  includeContext? : IncludeContext,
+  temperature? : Double,
+  /// The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
+  maxTokens : Int64,
+  stopSequences? : Array[String],
+  /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
+  metadata? : Map[String, Json]
 ) -> CreateMessageRequestParams {
   {
-    includeContext,
-    maxTokens,
     messages,
-    metadata,
     modelPreferences,
-    stopSequences,
     systemPrompt,
+    includeContext,
     temperature,
+    maxTokens,
+    stopSequences,
+    metadata,
   }
 }
 
@@ -753,21 +753,21 @@ pub fn CreateMessageResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Map[String, Json],
   content : &CreateMessageResultContent,
+  role : Role,
   /// The name of the model that generated the message.
   model : String,
-  role : Role,
   /// The reason why sampling stopped, if known.
   stopReason? : String
 ) -> CreateMessageResult {
-  { _meta, content, model, role, stopReason }
+  { _meta, content, role, model, stopReason }
 }
 
 ///|
 pub fn SamplingMessage::new(
-  content : &SamplingMessageContent,
-  role : Role
+  role : Role,
+  content : &SamplingMessageContent
 ) -> SamplingMessage {
-  { content, role }
+  { role, content }
 }
 
 ///|
@@ -788,44 +788,40 @@ pub fn Annotations::new(
 
 ///|
 pub fn TextContent::new(
-  /// Optional annotations for the client.
-  annotations? : Annotations,
   /// The text content of the message.
-  text : String
+  text : String,
+  /// Optional annotations for the client.
+  annotations? : Annotations
 ) -> TextContent {
-  { annotations, text }
+  { text, annotations }
 }
 
 ///|
 pub fn ImageContent::new(
-  /// Optional annotations for the client.
-  annotations? : Annotations,
   /// The base64-encoded image data.
   data : String,
   /// The MIME type of the image. Different providers may support different image types.
-  mimeType : String
+  mimeType : String,
+  /// Optional annotations for the client.
+  annotations? : Annotations
 ) -> ImageContent {
-  { annotations, data, mimeType }
+  { data, mimeType, annotations }
 }
 
 ///|
 pub fn AudioContent::new(
-  /// Optional annotations for the client.
-  annotations? : Annotations,
   /// The base64-encoded audio data.
   data : String,
   /// The MIME type of the audio. Different providers may support different audio types.
-  mimeType : String
+  mimeType : String,
+  /// Optional annotations for the client.
+  annotations? : Annotations
 ) -> AudioContent {
-  { annotations, data, mimeType }
+  { data, mimeType, annotations }
 }
 
 ///|
 pub fn ModelPreferences::new(
-  /// How much to prioritize cost when selecting a model. A value of 0 means cost
-  /// is not important, while a value of 1 means cost is the most important
-  /// factor.
-  costPriority? : Double,
   /// Optional hints to use for model selection.
   ///
   /// If multiple hints are specified, the client MUST evaluate them in order
@@ -834,16 +830,20 @@ pub fn ModelPreferences::new(
   /// The client SHOULD prioritize these hints over the numeric priorities, but
   /// MAY still use the priorities to select from ambiguous matches.
   hints? : Array[ModelHint],
-  /// How much to prioritize intelligence and capabilities when selecting a
-  /// model. A value of 0 means intelligence is not important, while a value of 1
-  /// means intelligence is the most important factor.
-  intelligencePriority? : Double,
+  /// How much to prioritize cost when selecting a model. A value of 0 means cost
+  /// is not important, while a value of 1 means cost is the most important
+  /// factor.
+  costPriority? : Double,
   /// How much to prioritize sampling speed (latency) when selecting a model. A
   /// value of 0 means speed is not important, while a value of 1 means speed is
   /// the most important factor.
-  speedPriority? : Double
+  speedPriority? : Double,
+  /// How much to prioritize intelligence and capabilities when selecting a
+  /// model. A value of 0 means intelligence is not important, while a value of 1
+  /// means intelligence is the most important factor.
+  intelligencePriority? : Double
 ) -> ModelPreferences {
-  { costPriority, hints, intelligencePriority, speedPriority }
+  { hints, costPriority, speedPriority, intelligencePriority }
 }
 
 ///|
@@ -878,11 +878,11 @@ pub fn CompleteRequestParamsArgument::new(
 
 ///|
 pub fn CompleteRequestParams::new(
+  ref_ : &CompleteRequestParamsRef,
   /// The argument's information
-  argument : CompleteRequestParamsArgument,
-  ref_ : &CompleteRequestParamsRef
+  argument : CompleteRequestParamsArgument
 ) -> CompleteRequestParams {
-  { argument, ref_ }
+  { ref_, argument }
 }
 
 ///|
@@ -892,14 +892,14 @@ pub fn CompleteRequest::new(params : CompleteRequestParams) -> CompleteRequest {
 
 ///|
 pub fn CompleteResultCompletion::new(
-  /// Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
-  hasMore? : Bool,
+  /// An array of completion values. Must not exceed 100 items.
+  values : Array[String],
   /// The total number of completion options available. This can exceed the number of values actually sent in the response.
   total? : Int64,
-  /// An array of completion values. Must not exceed 100 items.
-  values : Array[String]
+  /// Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
+  hasMore? : Bool
 ) -> CompleteResultCompletion {
-  { hasMore, total, values }
+  { values, total, hasMore }
 }
 
 ///|
@@ -947,16 +947,16 @@ pub fn ListRootsResult::new(
 
 ///|
 pub fn Root::new(
-  /// An optional name for the root. This can be used to provide a human-readable
-  /// identifier for the root, which may be useful for display purposes or for
-  /// referencing the root in other parts of the application.
-  name? : String,
   /// The URI identifying the root. This *must* start with file:// for now.
   /// This restriction may be relaxed in future versions of the protocol to allow
   /// other URI schemes.
-  uri : String
+  uri : String,
+  /// An optional name for the root. This can be used to provide a human-readable
+  /// identifier for the root, which may be useful for display purposes or for
+  /// referencing the root in other parts of the application.
+  name? : String
 ) -> Root {
-  { name, uri }
+  { uri, name }
 }
 
 ///|
