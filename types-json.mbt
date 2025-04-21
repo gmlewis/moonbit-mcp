@@ -1577,7 +1577,7 @@ pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let arguments : Map[String, Json]? = match obj["arguments"] {
+  let arguments : Map[String, String]? = match obj["arguments"] {
     Some(v) =>
       match @json.from_json?(v) {
         Ok(v) => Some(v)

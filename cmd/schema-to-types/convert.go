@@ -121,8 +121,12 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 		}
 
 		if prop.AdditionalProperties != nil || prop.AdditionalPropertiesBool != nil || prop.AdditionalPropertiesSchema != nil {
-			lines = append(lines, fmt.Sprintf(prefix+"  %v : Map[String, Json]?", propName))
-			newLines = append(newLines, fmt.Sprintf(prefix+"  %v? : Map[String, Json],", propName))
+			valueType := "Json"
+			if m, ok := prop.AdditionalProperties.(map[string]any); ok && m["type"] == "string" {
+				valueType = "String"
+			}
+			lines = append(lines, fmt.Sprintf(prefix+"  %v : Map[String, %v]?", propName, valueType))
+			newLines = append(newLines, fmt.Sprintf(prefix+"  %v? : Map[String, %v],", propName, valueType))
 
 			toJSONLines = append(toJSONLines,
 				fmt.Sprintf(prefix+"  if self.%v is Some(v) {", propName),
@@ -131,7 +135,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 			)
 			fromJSONLastLineFields = append(fromJSONLastLineFields, propName)
 			fromJSONLines = append(fromJSONLines,
-				fmt.Sprintf(prefix+`  let %v : Map[String, Json]? = match obj[%[1]q] {`, propName),
+				fmt.Sprintf(prefix+`  let %v : Map[String, %v]? = match obj[%[1]q] {`, propName, valueType),
 				prefix+"    Some(v) =>",
 				prefix+"      match @json.from_json?(v) {",
 				prefix+"        Ok(v) => Some(v)",

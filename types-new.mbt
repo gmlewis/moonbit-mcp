@@ -478,7 +478,7 @@ pub fn ListPromptsResult::new(
 ///|
 pub fn GetPromptRequestParams::new(
   /// Arguments to use for templating the prompt.
-  arguments? : Map[String, Json],
+  arguments? : Map[String, String],
   /// The name of the prompt or prompt template.
   name : String
 ) -> GetPromptRequestParams {

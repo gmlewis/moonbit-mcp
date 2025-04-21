@@ -909,7 +909,7 @@ pub(all) struct GetPromptRequest {
 ///|
 pub(all) struct GetPromptRequestParams {
   /// Arguments to use for templating the prompt.
-  arguments : Map[String, Json]?
+  arguments : Map[String, String]?
   /// The name of the prompt or prompt template.
   name : String
 } derive(Show, Eq)
