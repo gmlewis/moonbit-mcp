@@ -9,17 +9,17 @@ struct SayHelloArguments {
 } derive(Show, Eq, ToJson, FromJson)
 
 ///|
-fn SayHelloTool::new() -> SayHelloTool {
+fn SayHelloTool::new(name : String) -> SayHelloTool {
   let description = "Say hello to a person"
   let properties = {
     "submitter": {
       "type": "string",
       "description": "The name of the host calling this tool (openai, google, claude, vscode, etc)",
-    },
-  }.to_json()
+    }.to_json(),
+  }
   let required = ["submitter"]
   let input_schema = @mcp.ToolInputSchema::new(properties~, required~)
-  let tool = @mcp.Tool::new(input_schema, "hello", description~)
+  let tool = @mcp.Tool::new(name, input_schema, description~)
   SayHelloTool::{ tool, }
 }
 

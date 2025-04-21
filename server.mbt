@@ -10,13 +10,13 @@ struct Server {
 
 ///|
 pub struct ServerPrompt {
-  tool : &MCPPrompt
+  prompt : &MCPPrompt
   list_changed : Bool
 }
 
 ///|
 pub struct ServerResource {
-  tool : &MCPResource
+  resource : &MCPResource
   list_changed : Bool
 }
 
@@ -38,11 +38,11 @@ pub fn Server::new(name~ : String, version~ : String) -> Server {
 ///|
 pub fn Server::tool(
   self : Server,
-  name : String,
   tool : &MCPTool,
   list_changed~ : Bool = false
 ) -> Unit {
-  self.tools[name] = ServerTool::{ tool, list_changed }
+  let t = tool.as_tool()
+  self.tools[t.name] = ServerTool::{ tool, list_changed }
 }
 
 ///|
@@ -95,18 +95,18 @@ pub fn Server::connect(self : Server, transport : &Transport) -> Unit {
 }
 
 ///|
-fn Server::close_handler(self : Server) -> Unit {
+fn Server::close_handler(_self : Server) -> Unit {
   write_stderr("close_handler called\n")
 }
 
 ///|
-fn Server::error_handler(self : Server, error : TransportError) -> Unit {
+fn Server::error_handler(_self : Server, error : TransportError) -> Unit {
   write_stderr("Error: \{error}\n")
 }
 
 ///|
 fn Server::message_handler(
-  self : Server,
+  _self : Server,
   _ctx : Context,
   message : @jsonrpc2.Message
 ) -> Unit {
