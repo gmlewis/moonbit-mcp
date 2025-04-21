@@ -7,18 +7,24 @@ fn main {
       @mcp.ToolInputSchema::new(
         properties={ "a": "number".to_json(), "b": "number" },
         required=["a", "b"],
-        // async fn(params) {
-        //   // guard params["a"] is Some(Number(a)) && params["b"] is Some(Number(b)) else {
-        //   //   return @mcp.CallToolResult::new([
-        //   //     @mcp.TextContent::new("Invalid JSON"),
-        //   //   ])
-        //   // }
-        //   @mcp.CallToolResult::new([@mcp.TextContent::new("\{a + b}")])
-        // },
       ),
     ),
+    fn(params) {
+      guard params is { "a": Number(a), "b": Number(b), .. } else {
+        return @mcp.bad_params(params)
+      }
+      @mcp.CallToolResult::new([@mcp.TextContent::new("\{a + b}")])
+    },
+    // async fn(params) {
+    //   // guard params["a"] is Some(Number(a)) && params["b"] is Some(Number(b)) else {
+    //   //   return @mcp.CallToolResult::new([
+    //   //     @mcp.TextContent::new("Invalid JSON"),
+    //   //   ])
+    //   // }
+    //   @mcp.CallToolResult::new([@mcp.TextContent::new("\{a + b}")])
+    // },
   )
-  ..tool(SayHelloTool::new("hello"))
+  // ..tool(SayHelloTool::new("hello"))
   // ..prompt("prompt_test", PromptTest::new())
   // ..resource("greeting", Resource::new("greeting://{name}"))
   // ..resource(

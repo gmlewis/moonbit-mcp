@@ -39,6 +39,7 @@ pub fn Server::new(name~ : String, version~ : String) -> Server {
 pub fn Server::tool(
   self : Server,
   tool : &MCPTool,
+  func : (Map[String, Json]) -> CallToolResult,
   list_changed~ : Bool = false
 ) -> Unit {
   let t = tool.as_tool()
@@ -111,4 +112,12 @@ fn Server::message_handler(
   message : @jsonrpc2.Message
 ) -> Unit {
   write_stderr("Message: \{message}\n")
+}
+
+///|
+pub fn bad_params(params : Map[String, Json]) -> CallToolResult {
+  let json = @json.stringify(params.to_json())
+  let msg = "Invalid JSON: \{json}"
+  write_stderr(msg)
+  CallToolResult::new([TextContent::new(msg)])
 }
