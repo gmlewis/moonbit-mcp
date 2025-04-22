@@ -15,25 +15,21 @@ fn main {
     ..with_message_handler(message_handler)
 
   //
-  let ctx = @mcp.Context::new().with_timeout(1000)
   guard stdio.start() is None else { abort("Failed to start transport") }
 
   // Send a call
-  guard stdio.send_request(ctx, @mcp.Request::new("method1")) is None else {
+  guard stdio.send_request(@mcp.Request::new("method1")) is (id, None) else {
     abort("Failed to send message")
   }
+  @mcp.write_stderr("Sent request with ID: \{id}\n")
 
   // Send a notification
-  guard stdio.send_notification(ctx, @mcp.Notification::new("method2")) is None else {
+  guard stdio.send_notification(@mcp.Notification::new("method2")) is None else {
     abort("Failed to send message")
   }
 
   // Send a response
-  guard stdio.send_response(
-      ctx,
-      @jsonrpc2.ID::number(1),
-      @mcp.EmptyResult::new(),
-    )
+  guard stdio.send_response(@jsonrpc2.ID::number(1), @mcp.EmptyResult::new())
     is None else {
     abort("Failed to send message")
   }
@@ -53,6 +49,6 @@ fn error_handler(error : @mcp.TransportError) -> Unit {
 }
 
 ///|
-fn message_handler(_ctx : @mcp.Context, message : @jsonrpc2.Message) -> Unit {
+fn message_handler(message : @jsonrpc2.Message) -> Unit {
   println("Message: \{message}")
 }

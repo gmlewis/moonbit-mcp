@@ -1117,6 +1117,10 @@ impl Server {
   prompt(Self, String, &MCPPrompt, list_changed~ : Bool = ..) -> Unit
   resource(Self, String, &MCPResource, list_changed~ : Bool = ..) -> Unit
   tool(Self, &MCPTool, ToolFunc, list_changed~ : Bool = ..) -> Unit
+  with_max_timeout(Self, Int) -> Unit
+  with_ping_period_seconds(Self, Int) -> Unit
+  with_ping_timeout_millis(Self, Int) -> Unit
+  with_timeout_millis(Self, Int) -> Unit
 }
 
 pub(all) struct ServerCapabilities {
@@ -1430,7 +1434,7 @@ pub trait EmbeddedResourceResource : Show + ToJson {
   unused(Self) -> Unit
 }
 
-pub trait MCPNotification {
+pub(open) trait MCPNotification {
   to_notification(Self) -> @jsonrpc2.Message
 }
 
@@ -1439,7 +1443,7 @@ pub(open) trait MCPPrompt {
   call_prompt(Self, Json?) -> GetPromptResult
 }
 
-pub trait MCPRequest {
+pub(open) trait MCPRequest {
   to_call(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
 }
 
@@ -1448,7 +1452,7 @@ pub(open) trait MCPResource {
   call_resource(Self, Json?) -> ReadResourceResult
 }
 
-pub trait MCPResponse {
+pub(open) trait MCPResponse {
   to_response(Self, @jsonrpc2.ID) -> @jsonrpc2.Message
 }
 
@@ -1483,16 +1487,12 @@ pub trait ServerResult : Show + ToJson {
 
 pub trait Transport {
   start(Self) -> TransportError?
-  send_request(Self, Context, &MCPRequest) -> TransportError?
-  send_notification(Self, Context, &MCPNotification) -> TransportError?
-  send_response(Self, Context, @jsonrpc2.ID, &MCPResponse) -> TransportError?
+  send_request(Self, &MCPRequest) -> (@jsonrpc2.ID, TransportError?)
+  send_notification(Self, &MCPNotification) -> TransportError?
+  send_response(Self, @jsonrpc2.ID, &MCPResponse) -> TransportError?
   close(Self) -> TransportError?
   with_close_handler(Self, () -> Unit) -> Unit
   with_error_handler(Self, (TransportError) -> Unit) -> Unit
-  with_message_handler(Self, (Context, @jsonrpc2.Message) -> Unit) -> Unit
-  with_ping_frequency_seconds(Self, Int) -> Unit
-  with_ping_timeout_millis(Self, Int) -> Unit
-  with_timeout(Self, Int) -> Unit
-  with_max_timeout(Self, Int) -> Unit
+  with_message_handler(Self, (@jsonrpc2.Message) -> Unit) -> Unit
 }
 
