@@ -7,12 +7,6 @@ import(
 // Values
 
 // Types and methods
-type Content
-impl Eq for Content
-impl Show for Content
-impl ToJson for Content
-impl @json.FromJson for Content
-
 type SayHelloArguments
 impl Eq for SayHelloArguments
 impl Show for SayHelloArguments

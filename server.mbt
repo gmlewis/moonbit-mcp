@@ -36,10 +36,13 @@ pub fn Server::new(name~ : String, version~ : String) -> Server {
 }
 
 ///|
+pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
+
+///|
 pub fn Server::tool(
   self : Server,
   tool : &MCPTool,
-  func : (Map[String, Json]) -> CallToolResult,
+  func : ToolFunc,
   list_changed~ : Bool = false
 ) -> Unit {
   let t = tool.as_tool()

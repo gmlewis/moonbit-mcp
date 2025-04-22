@@ -1277,8 +1277,8 @@ pub impl @json.FromJson for Resource with from_json(json, path) {
   }
   let size : Int64? = match obj["size"] {
     Some(v) =>
-      match @json.from_json?(v) {
-        Ok(Number(v)) => Some(v.to_int64())
+      match v {
+        Number(v) => Some(v.to_int64())
         _ => raise @json.JsonDecodeError((path, "expected number; got \{v}"))
       }
     None => None
@@ -2933,8 +2933,8 @@ pub impl @json.FromJson for CompleteResultCompletion with from_json(json, path) 
   }
   let total : Int64? = match obj["total"] {
     Some(v) =>
-      match @json.from_json?(v) {
-        Ok(Number(v)) => Some(v.to_int64())
+      match v {
+        Number(v) => Some(v.to_int64())
         _ => raise @json.JsonDecodeError((path, "expected number; got \{v}"))
       }
     None => None

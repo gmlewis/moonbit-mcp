@@ -178,19 +178,21 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 				"  }")
 			fromJSONLines = append(fromJSONLines,
 				fmt.Sprintf(prefix+"  let %v : %v = match obj[%[1]q] {", propName, mbtType),
-				prefix+"    Some(v) =>",
-				prefix+"      match @json.from_json?(v) {")
+				prefix+"    Some(v) =>")
 			if mbtType == "Int64?" {
 				fromJSONLines = append(fromJSONLines,
-					prefix+`Ok(Number(v)) => Some(v.to_int64())`,
-					prefix+`_ => raise @json.JsonDecodeError((path, "expected number; got \{v}"))`)
+					prefix+"      match v {",
+					prefix+`        Number(v) => Some(v.to_int64())`,
+					prefix+`        _ => raise @json.JsonDecodeError((path, "expected number; got \{v}"))`,
+					prefix+"      }")
 			} else {
 				fromJSONLines = append(fromJSONLines,
+					prefix+"      match @json.from_json?(v) {",
 					prefix+"        Ok(v) => Some(v)",
-					prefix+"        Err(e) => raise e")
+					prefix+"        Err(e) => raise e",
+					prefix+"      }")
 			}
 			fromJSONLines = append(fromJSONLines,
-				prefix+"      }",
 				prefix+"    None => None",
 				prefix+"  }")
 			newLines = append(newLines, fmt.Sprintf(prefix+"  %v? : %v,", safeName, strings.TrimSuffix(mbtType, "?")))
