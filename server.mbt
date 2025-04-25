@@ -96,7 +96,7 @@ pub fn Server::with_max_timeout(self : Server, millis : Int) -> Unit {
 }
 
 ///|
-pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
+pub(all) type ToolFunc (Map[String, Json]) -> CallToolResult!Async
 
 ///|
 pub fn Server::tool(

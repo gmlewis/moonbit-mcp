@@ -1,4 +1,4 @@
-package "gmlewis/mcp/examples/basic-stdio"
+package "gmlewis/mcp/examples/server/basic-stdio"
 
 // Values
 

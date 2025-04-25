@@ -1,11 +1,11 @@
 {
   "name": "gmlewis/mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "deps": {
-    "gmlewis/base64": "0.14.3",
-    "gmlewis/io": "0.22.1",
-    "gmlewis/jsonrpc2": "0.0.5",
-    "peter-jerry-ye/async": "0.1.3",
+    "gmlewis/base64": "0.14.4",
+    "gmlewis/io": "0.22.2",
+    "gmlewis/jsonrpc2": "0.0.6",
+    "peter-jerry-ye/async": "0.1.4",
     "tonyfettes/uv": "0.1.19"
   },
   "readme": "README.md",

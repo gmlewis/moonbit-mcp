@@ -1,4 +1,4 @@
-package "gmlewis/mcp/examples/basic-tool-server"
+package "gmlewis/mcp/examples/server/basic-tool-server"
 
 import(
   "moonbitlang/core/json"
