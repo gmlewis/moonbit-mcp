@@ -5,7 +5,7 @@ fn main {
     @mcp.Tool::new(
       "add",
       @mcp.ToolInputSchema::new(
-        properties={ "a": "number".to_json(), "b": "number" },
+        properties={ "a": @mcp.number, "b": @mcp.number },
         required=["a", "b"],
       ),
     ),

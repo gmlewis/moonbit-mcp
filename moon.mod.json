@@ -5,7 +5,7 @@
     "gmlewis/base64": "0.14.4",
     "gmlewis/io": "0.22.2",
     "gmlewis/jsonrpc2": "0.0.6",
-    "peter-jerry-ye/async": "0.1.4",
+    "peter-jerry-ye/async": "0.1.5",
     "tonyfettes/uv": "0.1.19"
   },
   "readme": "README.md",
