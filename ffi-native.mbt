@@ -33,7 +33,7 @@ pub fn unix_nanos() -> Int64 {
 }
 
 ///|
-fn cast[A, B](a : A) -> B = "%identity"
+fn[A, B] cast(a : A) -> B = "%identity"
 
 ///|
 priv extern type BytePtr

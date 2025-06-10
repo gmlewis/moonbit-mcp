@@ -96,7 +96,7 @@ pub fn Server::with_max_timeout(self : Server, millis : Int) -> Unit {
 }
 
 ///|
-pub(all) type ToolFunc (Map[String, Json]) -> CallToolResult!Async
+pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
 
 ///|
 pub fn Server::tool(
@@ -155,7 +155,6 @@ pub fn Server::connect(self : Server, transport : &Transport) -> Unit {
     write_stderr("Failed to start transport\n")
     return
   }
-
 }
 
 ///|

@@ -52,9 +52,7 @@ pub fn StdioTransport::new() -> StdioTransport {
   let message_handler = None
   let reader = None
   let writer = None
-  let uv = try {
-    Some(@uv.Loop::new!())
-  } catch {
+  let uv = try Some(@uv.Loop::new!()) catch {
     e => {
       write_stderr("Failed to create uv loop: \{e}\n")
       None
@@ -91,9 +89,7 @@ pub impl Transport for StdioTransport with close(self) {
     handler()
   }
   if self.uv is Some(uv) {
-    try {
-      uv.close!()
-    } catch {
+    try uv.close!() catch {
       e => write_stderr("Failed to close uv loop: \{e}\n")
     }
   }

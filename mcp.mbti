@@ -18,7 +18,17 @@ const METHOD_NOT_FOUND : Int = -32601
 
 const PARSE_ERROR : Int = -32700
 
+let array : Json
+
 fn bad_params(Map[String, Json]) -> CallToolResult
+
+let boolean : Json
+
+let integer : Json
+
+let number : Json
+
+let object : Json
 
 fn raw_audio(AudioContent) -> Bytes!
 
@@ -27,6 +37,8 @@ fn raw_data(BlobResourceContents) -> Bytes!
 fn raw_image(ImageContent) -> Bytes!
 
 fn sleep(Int) -> Unit
+
+let string : Json
 
 fn unix_nanos() -> Int64
 
@@ -39,9 +51,7 @@ pub(all) struct Annotations {
   audience : Array[Role]?
   priority : Double?
 }
-impl Annotations {
-  new(audience? : Array[Role], priority? : Double) -> Self
-}
+fn Annotations::new(audience? : Array[Role], priority? : Double) -> Self
 impl Eq for Annotations
 impl Show for Annotations
 impl ToJson for Annotations
@@ -52,10 +62,8 @@ pub(all) struct AudioContent {
   mimeType : String
   annotations : Annotations?
 }
-impl AudioContent {
-  new(String, String, annotations? : Annotations) -> Self
-  raw_audio(Self) -> Bytes!
-}
+fn AudioContent::new(String, String, annotations? : Annotations) -> Self
+fn AudioContent::raw_audio(Self) -> Bytes!
 impl CallToolResultContent for AudioContent
 impl CreateMessageResultContent for AudioContent
 impl PromptMessageContent for AudioContent
@@ -70,10 +78,8 @@ pub(all) struct BlobResourceContents {
   uri : String
   blob : String
 }
-impl BlobResourceContents {
-  new(mimeType? : String, String, String) -> Self
-  raw_data(Self) -> Bytes!
-}
+fn BlobResourceContents::new(mimeType? : String, String, String) -> Self
+fn BlobResourceContents::raw_data(Self) -> Bytes!
 impl EmbeddedResourceResource for BlobResourceContents
 impl ReadResourceResultContents for BlobResourceContents
 impl Eq for BlobResourceContents
@@ -84,10 +90,8 @@ impl @json.FromJson for BlobResourceContents
 pub(all) struct CallToolRequest {
   params : CallToolRequestParams
 }
-impl CallToolRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(CallToolRequestParams) -> Self
-}
+fn CallToolRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CallToolRequest::new(CallToolRequestParams) -> Self
 impl ClientRequest for CallToolRequest
 impl MCPRequest for CallToolRequest
 impl Eq for CallToolRequest
@@ -99,9 +103,7 @@ pub(all) struct CallToolRequestParams {
   name : String
   arguments : Map[String, Json]?
 }
-impl CallToolRequestParams {
-  new(String, arguments? : Map[String, Json]) -> Self
-}
+fn CallToolRequestParams::new(String, arguments? : Map[String, Json]) -> Self
 impl Eq for CallToolRequestParams
 impl Show for CallToolRequestParams
 impl ToJson for CallToolRequestParams
@@ -112,10 +114,8 @@ pub(all) struct CallToolResult {
   content : Array[&CallToolResultContent]
   isError : Bool?
 }
-impl CallToolResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], Array[&CallToolResultContent], isError? : Bool) -> Self
-}
+fn CallToolResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CallToolResult::new(_meta? : Map[String, Json], Array[&CallToolResultContent], isError? : Bool) -> Self
 impl MCPResponse for CallToolResult
 impl ServerResult for CallToolResult
 impl Eq for CallToolResult
@@ -126,10 +126,8 @@ impl @json.FromJson for CallToolResult
 pub(all) struct CancelledNotification {
   params : CancelledNotificationParams
 }
-impl CancelledNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(CancelledNotificationParams) -> Self
-}
+fn CancelledNotification::from_message(@jsonrpc2.Message) -> Self?
+fn CancelledNotification::new(CancelledNotificationParams) -> Self
 impl ClientNotification for CancelledNotification
 impl MCPNotification for CancelledNotification
 impl ServerNotification for CancelledNotification
@@ -142,9 +140,7 @@ pub(all) struct CancelledNotificationParams {
   requestId : @jsonrpc2.ID
   reason : String?
 }
-impl CancelledNotificationParams {
-  new(@jsonrpc2.ID, reason? : String) -> Self
-}
+fn CancelledNotificationParams::new(@jsonrpc2.ID, reason? : String) -> Self
 impl Eq for CancelledNotificationParams
 impl Show for CancelledNotificationParams
 impl ToJson for CancelledNotificationParams
@@ -155,9 +151,7 @@ pub(all) struct ClientCapabilities {
   roots : ClientCapabilitiesRoots?
   sampling : Map[String, Json]?
 }
-impl ClientCapabilities {
-  new(experimental? : Map[String, Json], roots? : ClientCapabilitiesRoots, sampling? : Map[String, Json]) -> Self
-}
+fn ClientCapabilities::new(experimental? : Map[String, Json], roots? : ClientCapabilitiesRoots, sampling? : Map[String, Json]) -> Self
 impl Eq for ClientCapabilities
 impl Show for ClientCapabilities
 impl ToJson for ClientCapabilities
@@ -166,9 +160,7 @@ impl @json.FromJson for ClientCapabilities
 pub(all) struct ClientCapabilitiesRoots {
   listChanged : Bool?
 }
-impl ClientCapabilitiesRoots {
-  new(listChanged? : Bool) -> Self
-}
+fn ClientCapabilitiesRoots::new(listChanged? : Bool) -> Self
 impl Eq for ClientCapabilitiesRoots
 impl Show for ClientCapabilitiesRoots
 impl ToJson for ClientCapabilitiesRoots
@@ -177,10 +169,8 @@ impl @json.FromJson for ClientCapabilitiesRoots
 pub(all) struct CompleteRequest {
   params : CompleteRequestParams
 }
-impl CompleteRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(CompleteRequestParams) -> Self
-}
+fn CompleteRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CompleteRequest::new(CompleteRequestParams) -> Self
 impl ClientRequest for CompleteRequest
 impl MCPRequest for CompleteRequest
 impl Eq for CompleteRequest
@@ -192,9 +182,7 @@ pub(all) struct CompleteRequestParams {
   ref_ : &CompleteRequestParamsRef
   argument : CompleteRequestParamsArgument
 }
-impl CompleteRequestParams {
-  new(&CompleteRequestParamsRef, CompleteRequestParamsArgument) -> Self
-}
+fn CompleteRequestParams::new(&CompleteRequestParamsRef, CompleteRequestParamsArgument) -> Self
 impl Eq for CompleteRequestParams
 impl Show for CompleteRequestParams
 impl ToJson for CompleteRequestParams
@@ -204,9 +192,7 @@ pub(all) struct CompleteRequestParamsArgument {
   name : String
   value : String
 }
-impl CompleteRequestParamsArgument {
-  new(String, String) -> Self
-}
+fn CompleteRequestParamsArgument::new(String, String) -> Self
 impl Eq for CompleteRequestParamsArgument
 impl Show for CompleteRequestParamsArgument
 impl ToJson for CompleteRequestParamsArgument
@@ -216,10 +202,8 @@ pub(all) struct CompleteResult {
   _meta : Map[String, Json]?
   completion : CompleteResultCompletion
 }
-impl CompleteResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], CompleteResultCompletion) -> Self
-}
+fn CompleteResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CompleteResult::new(_meta? : Map[String, Json], CompleteResultCompletion) -> Self
 impl MCPResponse for CompleteResult
 impl ServerResult for CompleteResult
 impl Eq for CompleteResult
@@ -232,9 +216,7 @@ pub(all) struct CompleteResultCompletion {
   total : Int64?
   hasMore : Bool?
 }
-impl CompleteResultCompletion {
-  new(Array[String], total? : Int64, hasMore? : Bool) -> Self
-}
+fn CompleteResultCompletion::new(Array[String], total? : Int64, hasMore? : Bool) -> Self
 impl Eq for CompleteResultCompletion
 impl Show for CompleteResultCompletion
 impl ToJson for CompleteResultCompletion
@@ -244,18 +226,14 @@ pub struct Context {
   start_time_unix_nanos : Int64
   timeout_millis : Int?
 }
-impl Context {
-  new() -> Self
-  with_timeout(Self, Int) -> Self
-}
+fn Context::new() -> Self
+fn Context::with_timeout(Self, Int) -> Self
 
 pub(all) struct CreateMessageRequest {
   params : CreateMessageRequestParams
 }
-impl CreateMessageRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(CreateMessageRequestParams) -> Self
-}
+fn CreateMessageRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CreateMessageRequest::new(CreateMessageRequestParams) -> Self
 impl MCPRequest for CreateMessageRequest
 impl ServerRequest for CreateMessageRequest
 impl Eq for CreateMessageRequest
@@ -273,9 +251,7 @@ pub(all) struct CreateMessageRequestParams {
   stopSequences : Array[String]?
   metadata : Map[String, Json]?
 }
-impl CreateMessageRequestParams {
-  new(Array[SamplingMessage], modelPreferences? : ModelPreferences, systemPrompt? : String, includeContext? : IncludeContext, temperature? : Double, Int64, stopSequences? : Array[String], metadata? : Map[String, Json]) -> Self
-}
+fn CreateMessageRequestParams::new(Array[SamplingMessage], modelPreferences? : ModelPreferences, systemPrompt? : String, includeContext? : IncludeContext, temperature? : Double, Int64, stopSequences? : Array[String], metadata? : Map[String, Json]) -> Self
 impl Eq for CreateMessageRequestParams
 impl Show for CreateMessageRequestParams
 impl ToJson for CreateMessageRequestParams
@@ -288,10 +264,8 @@ pub(all) struct CreateMessageResult {
   model : String
   stopReason : String?
 }
-impl CreateMessageResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], &CreateMessageResultContent, Role, String, stopReason? : String) -> Self
-}
+fn CreateMessageResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn CreateMessageResult::new(_meta? : Map[String, Json], &CreateMessageResultContent, Role, String, stopReason? : String) -> Self
 impl ClientResult for CreateMessageResult
 impl MCPResponse for CreateMessageResult
 impl Eq for CreateMessageResult
@@ -309,9 +283,7 @@ pub(all) struct EmbeddedResource {
   resource : &EmbeddedResourceResource
   annotations : Annotations?
 }
-impl EmbeddedResource {
-  new(&EmbeddedResourceResource, annotations? : Annotations) -> Self
-}
+fn EmbeddedResource::new(&EmbeddedResourceResource, annotations? : Annotations) -> Self
 impl CallToolResultContent for EmbeddedResource
 impl PromptMessageContent for EmbeddedResource
 impl Eq for EmbeddedResource
@@ -320,10 +292,8 @@ impl ToJson for EmbeddedResource
 impl @json.FromJson for EmbeddedResource
 
 pub type EmptyResult Result_
-impl EmptyResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new() -> Self
-}
+fn EmptyResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn EmptyResult::new() -> Self
 impl ClientResult for EmptyResult
 impl MCPResponse for EmptyResult
 impl ServerResult for EmptyResult
@@ -335,10 +305,8 @@ impl @json.FromJson for EmptyResult
 pub(all) struct GetPromptRequest {
   params : GetPromptRequestParams
 }
-impl GetPromptRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(GetPromptRequestParams) -> Self
-}
+fn GetPromptRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn GetPromptRequest::new(GetPromptRequestParams) -> Self
 impl ClientRequest for GetPromptRequest
 impl MCPRequest for GetPromptRequest
 impl Eq for GetPromptRequest
@@ -350,9 +318,7 @@ pub(all) struct GetPromptRequestParams {
   name : String
   arguments : Map[String, String]?
 }
-impl GetPromptRequestParams {
-  new(String, arguments? : Map[String, String]) -> Self
-}
+fn GetPromptRequestParams::new(String, arguments? : Map[String, String]) -> Self
 impl Eq for GetPromptRequestParams
 impl Show for GetPromptRequestParams
 impl ToJson for GetPromptRequestParams
@@ -363,10 +329,8 @@ pub(all) struct GetPromptResult {
   description : String?
   messages : Array[PromptMessage]
 }
-impl GetPromptResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], description? : String, Array[PromptMessage]) -> Self
-}
+fn GetPromptResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn GetPromptResult::new(_meta? : Map[String, Json], description? : String, Array[PromptMessage]) -> Self
 impl MCPResponse for GetPromptResult
 impl ServerResult for GetPromptResult
 impl Eq for GetPromptResult
@@ -379,10 +343,8 @@ pub(all) struct ImageContent {
   mimeType : String
   annotations : Annotations?
 }
-impl ImageContent {
-  new(String, String, annotations? : Annotations) -> Self
-  raw_image(Self) -> Bytes!
-}
+fn ImageContent::new(String, String, annotations? : Annotations) -> Self
+fn ImageContent::raw_image(Self) -> Bytes!
 impl CallToolResultContent for ImageContent
 impl CreateMessageResultContent for ImageContent
 impl PromptMessageContent for ImageContent
@@ -396,9 +358,7 @@ pub(all) struct Implementation {
   name : String
   version : String
 }
-impl Implementation {
-  new(String, String) -> Self
-}
+fn Implementation::new(String, String) -> Self
 impl Eq for Implementation
 impl Show for Implementation
 impl ToJson for Implementation
@@ -417,10 +377,8 @@ impl @json.FromJson for IncludeContext
 pub(all) struct InitializeRequest {
   params : InitializeRequestParams
 }
-impl InitializeRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(InitializeRequestParams) -> Self
-}
+fn InitializeRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn InitializeRequest::new(InitializeRequestParams) -> Self
 impl ClientRequest for InitializeRequest
 impl MCPRequest for InitializeRequest
 impl Eq for InitializeRequest
@@ -433,9 +391,7 @@ pub(all) struct InitializeRequestParams {
   capabilities : ClientCapabilities
   clientInfo : Implementation
 }
-impl InitializeRequestParams {
-  new(String, ClientCapabilities, Implementation) -> Self
-}
+fn InitializeRequestParams::new(String, ClientCapabilities, Implementation) -> Self
 impl Eq for InitializeRequestParams
 impl Show for InitializeRequestParams
 impl ToJson for InitializeRequestParams
@@ -448,10 +404,8 @@ pub(all) struct InitializeResult {
   serverInfo : Implementation
   instructions : String?
 }
-impl InitializeResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], String, ServerCapabilities, Implementation, instructions? : String) -> Self
-}
+fn InitializeResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn InitializeResult::new(_meta? : Map[String, Json], String, ServerCapabilities, Implementation, instructions? : String) -> Self
 impl MCPResponse for InitializeResult
 impl ServerResult for InitializeResult
 impl Eq for InitializeResult
@@ -462,10 +416,8 @@ impl @json.FromJson for InitializeResult
 pub(all) struct InitializedNotification {
   params : Map[String, Json]?
 }
-impl InitializedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(params? : Map[String, Json]) -> Self
-}
+fn InitializedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn InitializedNotification::new(params? : Map[String, Json]) -> Self
 impl ClientNotification for InitializedNotification
 impl MCPNotification for InitializedNotification
 impl Eq for InitializedNotification
@@ -476,10 +428,8 @@ impl @json.FromJson for InitializedNotification
 pub(all) struct ListPromptsRequest {
   params : ListPromptsRequestParams?
 }
-impl ListPromptsRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : ListPromptsRequestParams) -> Self
-}
+fn ListPromptsRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListPromptsRequest::new(params? : ListPromptsRequestParams) -> Self
 impl ClientRequest for ListPromptsRequest
 impl MCPRequest for ListPromptsRequest
 impl Eq for ListPromptsRequest
@@ -490,9 +440,7 @@ impl @json.FromJson for ListPromptsRequest
 pub(all) struct ListPromptsRequestParams {
   cursor : String?
 }
-impl ListPromptsRequestParams {
-  new(cursor? : String) -> Self
-}
+fn ListPromptsRequestParams::new(cursor? : String) -> Self
 impl Eq for ListPromptsRequestParams
 impl Show for ListPromptsRequestParams
 impl ToJson for ListPromptsRequestParams
@@ -503,10 +451,8 @@ pub(all) struct ListPromptsResult {
   nextCursor : String?
   prompts : Array[Prompt]
 }
-impl ListPromptsResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], nextCursor? : String, Array[Prompt]) -> Self
-}
+fn ListPromptsResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListPromptsResult::new(_meta? : Map[String, Json], nextCursor? : String, Array[Prompt]) -> Self
 impl MCPResponse for ListPromptsResult
 impl ServerResult for ListPromptsResult
 impl Eq for ListPromptsResult
@@ -517,10 +463,8 @@ impl @json.FromJson for ListPromptsResult
 pub(all) struct ListResourceTemplatesRequest {
   params : ListResourceTemplatesRequestParams?
 }
-impl ListResourceTemplatesRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : ListResourceTemplatesRequestParams) -> Self
-}
+fn ListResourceTemplatesRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListResourceTemplatesRequest::new(params? : ListResourceTemplatesRequestParams) -> Self
 impl MCPRequest for ListResourceTemplatesRequest
 impl Eq for ListResourceTemplatesRequest
 impl Show for ListResourceTemplatesRequest
@@ -530,9 +474,7 @@ impl @json.FromJson for ListResourceTemplatesRequest
 pub(all) struct ListResourceTemplatesRequestParams {
   cursor : String?
 }
-impl ListResourceTemplatesRequestParams {
-  new(cursor? : String) -> Self
-}
+fn ListResourceTemplatesRequestParams::new(cursor? : String) -> Self
 impl Eq for ListResourceTemplatesRequestParams
 impl Show for ListResourceTemplatesRequestParams
 impl ToJson for ListResourceTemplatesRequestParams
@@ -543,10 +485,8 @@ pub(all) struct ListResourceTemplatesResult {
   nextCursor : String?
   resourceTemplates : Array[ResourceTemplate]
 }
-impl ListResourceTemplatesResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], nextCursor? : String, Array[ResourceTemplate]) -> Self
-}
+fn ListResourceTemplatesResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListResourceTemplatesResult::new(_meta? : Map[String, Json], nextCursor? : String, Array[ResourceTemplate]) -> Self
 impl MCPResponse for ListResourceTemplatesResult
 impl Eq for ListResourceTemplatesResult
 impl Show for ListResourceTemplatesResult
@@ -556,10 +496,8 @@ impl @json.FromJson for ListResourceTemplatesResult
 pub(all) struct ListResourcesRequest {
   params : ListResourcesRequestParams?
 }
-impl ListResourcesRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : ListResourcesRequestParams) -> Self
-}
+fn ListResourcesRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListResourcesRequest::new(params? : ListResourcesRequestParams) -> Self
 impl ClientRequest for ListResourcesRequest
 impl MCPRequest for ListResourcesRequest
 impl Eq for ListResourcesRequest
@@ -570,9 +508,7 @@ impl @json.FromJson for ListResourcesRequest
 pub(all) struct ListResourcesRequestParams {
   cursor : String?
 }
-impl ListResourcesRequestParams {
-  new(cursor? : String) -> Self
-}
+fn ListResourcesRequestParams::new(cursor? : String) -> Self
 impl Eq for ListResourcesRequestParams
 impl Show for ListResourcesRequestParams
 impl ToJson for ListResourcesRequestParams
@@ -583,10 +519,8 @@ pub(all) struct ListResourcesResult {
   nextCursor : String?
   resources : Array[Resource]
 }
-impl ListResourcesResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], nextCursor? : String, Array[Resource]) -> Self
-}
+fn ListResourcesResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListResourcesResult::new(_meta? : Map[String, Json], nextCursor? : String, Array[Resource]) -> Self
 impl MCPResponse for ListResourcesResult
 impl ServerResult for ListResourcesResult
 impl Eq for ListResourcesResult
@@ -597,10 +531,8 @@ impl @json.FromJson for ListResourcesResult
 pub(all) struct ListRootsRequest {
   params : Map[String, Json]?
 }
-impl ListRootsRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : Map[String, Json]) -> Self
-}
+fn ListRootsRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListRootsRequest::new(params? : Map[String, Json]) -> Self
 impl MCPRequest for ListRootsRequest
 impl ServerRequest for ListRootsRequest
 impl Eq for ListRootsRequest
@@ -612,10 +544,8 @@ pub(all) struct ListRootsResult {
   _meta : Map[String, Json]?
   roots : Array[Root]
 }
-impl ListRootsResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], Array[Root]) -> Self
-}
+fn ListRootsResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListRootsResult::new(_meta? : Map[String, Json], Array[Root]) -> Self
 impl ClientResult for ListRootsResult
 impl MCPResponse for ListRootsResult
 impl Eq for ListRootsResult
@@ -626,10 +556,8 @@ impl @json.FromJson for ListRootsResult
 pub(all) struct ListToolsRequest {
   params : ListToolsRequestParams?
 }
-impl ListToolsRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : ListToolsRequestParams) -> Self
-}
+fn ListToolsRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListToolsRequest::new(params? : ListToolsRequestParams) -> Self
 impl ClientRequest for ListToolsRequest
 impl MCPRequest for ListToolsRequest
 impl Eq for ListToolsRequest
@@ -640,9 +568,7 @@ impl @json.FromJson for ListToolsRequest
 pub(all) struct ListToolsRequestParams {
   cursor : String?
 }
-impl ListToolsRequestParams {
-  new(cursor? : String) -> Self
-}
+fn ListToolsRequestParams::new(cursor? : String) -> Self
 impl Eq for ListToolsRequestParams
 impl Show for ListToolsRequestParams
 impl ToJson for ListToolsRequestParams
@@ -653,10 +579,8 @@ pub(all) struct ListToolsResult {
   nextCursor : String?
   tools : Array[Tool]
 }
-impl ListToolsResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], nextCursor? : String, Array[Tool]) -> Self
-}
+fn ListToolsResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ListToolsResult::new(_meta? : Map[String, Json], nextCursor? : String, Array[Tool]) -> Self
 impl MCPResponse for ListToolsResult
 impl ServerResult for ListToolsResult
 impl Eq for ListToolsResult
@@ -682,10 +606,8 @@ impl @json.FromJson for LoggingLevel
 pub(all) struct LoggingMessageNotification {
   params : LoggingMessageNotificationParams
 }
-impl LoggingMessageNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(LoggingMessageNotificationParams) -> Self
-}
+fn LoggingMessageNotification::from_message(@jsonrpc2.Message) -> Self?
+fn LoggingMessageNotification::new(LoggingMessageNotificationParams) -> Self
 impl MCPNotification for LoggingMessageNotification
 impl ServerNotification for LoggingMessageNotification
 impl Eq for LoggingMessageNotification
@@ -698,9 +620,7 @@ pub(all) struct LoggingMessageNotificationParams {
   logger : String?
   data : Json
 }
-impl LoggingMessageNotificationParams {
-  new(LoggingLevel, logger? : String, Json) -> Self
-}
+fn LoggingMessageNotificationParams::new(LoggingLevel, logger? : String, Json) -> Self
 impl Eq for LoggingMessageNotificationParams
 impl Show for LoggingMessageNotificationParams
 impl ToJson for LoggingMessageNotificationParams
@@ -709,9 +629,7 @@ impl @json.FromJson for LoggingMessageNotificationParams
 pub(all) struct ModelHint {
   name : String?
 }
-impl ModelHint {
-  new(name? : String) -> Self
-}
+fn ModelHint::new(name? : String) -> Self
 impl Eq for ModelHint
 impl Show for ModelHint
 impl ToJson for ModelHint
@@ -723,9 +641,7 @@ pub(all) struct ModelPreferences {
   speedPriority : Double?
   intelligencePriority : Double?
 }
-impl ModelPreferences {
-  new(hints? : Array[ModelHint], costPriority? : Double, speedPriority? : Double, intelligencePriority? : Double) -> Self
-}
+fn ModelPreferences::new(hints? : Array[ModelHint], costPriority? : Double, speedPriority? : Double, intelligencePriority? : Double) -> Self
 impl Eq for ModelPreferences
 impl Show for ModelPreferences
 impl ToJson for ModelPreferences
@@ -735,10 +651,8 @@ pub(all) struct Notification {
   method_ : String
   params : Map[String, Json]?
 }
-impl Notification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(String, params? : Map[String, Json]) -> Self
-}
+fn Notification::from_message(@jsonrpc2.Message) -> Self?
+fn Notification::new(String, params? : Map[String, Json]) -> Self
 impl MCPNotification for Notification
 impl Eq for Notification
 impl Show for Notification
@@ -749,10 +663,8 @@ pub(all) struct PaginatedRequest {
   method_ : String
   params : PaginatedRequestParams?
 }
-impl PaginatedRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(String, params? : PaginatedRequestParams) -> Self
-}
+fn PaginatedRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn PaginatedRequest::new(String, params? : PaginatedRequestParams) -> Self
 impl MCPRequest for PaginatedRequest
 impl Eq for PaginatedRequest
 impl Show for PaginatedRequest
@@ -762,9 +674,7 @@ impl @json.FromJson for PaginatedRequest
 pub(all) struct PaginatedRequestParams {
   cursor : String?
 }
-impl PaginatedRequestParams {
-  new(cursor? : String) -> Self
-}
+fn PaginatedRequestParams::new(cursor? : String) -> Self
 impl Eq for PaginatedRequestParams
 impl Show for PaginatedRequestParams
 impl ToJson for PaginatedRequestParams
@@ -774,10 +684,8 @@ pub(all) struct PaginatedResult {
   _meta : Map[String, Json]?
   nextCursor : String?
 }
-impl PaginatedResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], nextCursor? : String) -> Self
-}
+fn PaginatedResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn PaginatedResult::new(_meta? : Map[String, Json], nextCursor? : String) -> Self
 impl MCPResponse for PaginatedResult
 impl Eq for PaginatedResult
 impl Show for PaginatedResult
@@ -787,10 +695,8 @@ impl @json.FromJson for PaginatedResult
 pub(all) struct PingRequest {
   params : Map[String, Json]?
 }
-impl PingRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(params? : Map[String, Json]) -> Self
-}
+fn PingRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn PingRequest::new(params? : Map[String, Json]) -> Self
 impl ClientRequest for PingRequest
 impl MCPRequest for PingRequest
 impl ServerRequest for PingRequest
@@ -802,10 +708,8 @@ impl @json.FromJson for PingRequest
 pub(all) struct ProgressNotification {
   params : ProgressNotificationParams
 }
-impl ProgressNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(ProgressNotificationParams) -> Self
-}
+fn ProgressNotification::from_message(@jsonrpc2.Message) -> Self?
+fn ProgressNotification::new(ProgressNotificationParams) -> Self
 impl ClientNotification for ProgressNotification
 impl MCPNotification for ProgressNotification
 impl ServerNotification for ProgressNotification
@@ -820,9 +724,7 @@ pub(all) struct ProgressNotificationParams {
   total : Double?
   message : String?
 }
-impl ProgressNotificationParams {
-  new(Double, ProgressToken, total? : Double, message? : String) -> Self
-}
+fn ProgressNotificationParams::new(Double, ProgressToken, total? : Double, message? : String) -> Self
 impl Eq for ProgressNotificationParams
 impl Show for ProgressNotificationParams
 impl ToJson for ProgressNotificationParams
@@ -832,10 +734,8 @@ pub enum ProgressToken {
   String(String)
   Number(Int)
 }
-impl ProgressToken {
-  number(Int) -> Self
-  string(String) -> Self
-}
+fn ProgressToken::number(Int) -> Self
+fn ProgressToken::string(String) -> Self
 impl Eq for ProgressToken
 impl Show for ProgressToken
 impl ToJson for ProgressToken
@@ -846,9 +746,7 @@ pub(all) struct Prompt {
   description : String?
   arguments : Array[PromptArgument]?
 }
-impl Prompt {
-  new(String, description? : String, arguments? : Array[PromptArgument]) -> Self
-}
+fn Prompt::new(String, description? : String, arguments? : Array[PromptArgument]) -> Self
 impl Eq for Prompt
 impl Show for Prompt
 impl ToJson for Prompt
@@ -859,9 +757,7 @@ pub(all) struct PromptArgument {
   description : String?
   required : Bool?
 }
-impl PromptArgument {
-  new(String, description? : String, required? : Bool) -> Self
-}
+fn PromptArgument::new(String, description? : String, required? : Bool) -> Self
 impl Eq for PromptArgument
 impl Show for PromptArgument
 impl ToJson for PromptArgument
@@ -872,10 +768,8 @@ pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
 pub(all) struct PromptListChangedNotification {
   params : Map[String, Json]?
 }
-impl PromptListChangedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(params? : Map[String, Json]) -> Self
-}
+fn PromptListChangedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn PromptListChangedNotification::new(params? : Map[String, Json]) -> Self
 impl MCPNotification for PromptListChangedNotification
 impl ServerNotification for PromptListChangedNotification
 impl Eq for PromptListChangedNotification
@@ -887,9 +781,7 @@ pub(all) struct PromptMessage {
   role : Role
   content : &PromptMessageContent
 }
-impl PromptMessage {
-  new(Role, &PromptMessageContent) -> Self
-}
+fn PromptMessage::new(Role, &PromptMessageContent) -> Self
 impl Eq for PromptMessage
 impl Show for PromptMessage
 impl ToJson for PromptMessage
@@ -898,9 +790,7 @@ impl @json.FromJson for PromptMessage
 pub(all) struct PromptReference {
   name : String
 }
-impl PromptReference {
-  new(String) -> Self
-}
+fn PromptReference::new(String) -> Self
 impl CompleteRequestParamsRef for PromptReference
 impl Eq for PromptReference
 impl Show for PromptReference
@@ -910,10 +800,8 @@ impl @json.FromJson for PromptReference
 pub(all) struct ReadResourceRequest {
   params : ReadResourceRequestParams
 }
-impl ReadResourceRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(ReadResourceRequestParams) -> Self
-}
+fn ReadResourceRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ReadResourceRequest::new(ReadResourceRequestParams) -> Self
 impl ClientRequest for ReadResourceRequest
 impl MCPRequest for ReadResourceRequest
 impl Eq for ReadResourceRequest
@@ -924,9 +812,7 @@ impl @json.FromJson for ReadResourceRequest
 pub(all) struct ReadResourceRequestParams {
   uri : String
 }
-impl ReadResourceRequestParams {
-  new(String) -> Self
-}
+fn ReadResourceRequestParams::new(String) -> Self
 impl Eq for ReadResourceRequestParams
 impl Show for ReadResourceRequestParams
 impl ToJson for ReadResourceRequestParams
@@ -936,10 +822,8 @@ pub(all) struct ReadResourceResult {
   _meta : Map[String, Json]?
   contents : Array[&ReadResourceResultContents]
 }
-impl ReadResourceResult {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(_meta? : Map[String, Json], Array[&ReadResourceResultContents]) -> Self
-}
+fn ReadResourceResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn ReadResourceResult::new(_meta? : Map[String, Json], Array[&ReadResourceResultContents]) -> Self
 impl MCPResponse for ReadResourceResult
 impl ServerResult for ReadResourceResult
 impl Eq for ReadResourceResult
@@ -951,10 +835,8 @@ pub(all) struct Request {
   method_ : String
   params : Map[String, Json]?
 }
-impl Request {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(String, params? : Map[String, Json]) -> Self
-}
+fn Request::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn Request::new(String, params? : Map[String, Json]) -> Self
 impl MCPRequest for Request
 impl Eq for Request
 impl Show for Request
@@ -969,9 +851,7 @@ pub(all) struct Resource {
   annotations : Annotations?
   size : Int64?
 }
-impl Resource {
-  new(String, String, description? : String, mimeType? : String, annotations? : Annotations, size? : Int64) -> Self
-}
+fn Resource::new(String, String, description? : String, mimeType? : String, annotations? : Annotations, size? : Int64) -> Self
 impl Eq for Resource
 impl Show for Resource
 impl ToJson for Resource
@@ -981,9 +861,7 @@ pub(all) struct ResourceContents {
   uri : String
   mimeType : String?
 }
-impl ResourceContents {
-  new(String, mimeType? : String) -> Self
-}
+fn ResourceContents::new(String, mimeType? : String) -> Self
 impl Eq for ResourceContents
 impl Show for ResourceContents
 impl ToJson for ResourceContents
@@ -994,10 +872,8 @@ pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
 pub(all) struct ResourceListChangedNotification {
   params : Map[String, Json]?
 }
-impl ResourceListChangedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(params? : Map[String, Json]) -> Self
-}
+fn ResourceListChangedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn ResourceListChangedNotification::new(params? : Map[String, Json]) -> Self
 impl MCPNotification for ResourceListChangedNotification
 impl ServerNotification for ResourceListChangedNotification
 impl Eq for ResourceListChangedNotification
@@ -1008,9 +884,7 @@ impl @json.FromJson for ResourceListChangedNotification
 pub(all) struct ResourceReference {
   uri : String
 }
-impl ResourceReference {
-  new(String) -> Self
-}
+fn ResourceReference::new(String) -> Self
 impl CompleteRequestParamsRef for ResourceReference
 impl Eq for ResourceReference
 impl Show for ResourceReference
@@ -1024,9 +898,7 @@ pub(all) struct ResourceTemplate {
   mimeType : String?
   annotations : Annotations?
 }
-impl ResourceTemplate {
-  new(String, String, description? : String, mimeType? : String, annotations? : Annotations) -> Self
-}
+fn ResourceTemplate::new(String, String, description? : String, mimeType? : String, annotations? : Annotations) -> Self
 impl Eq for ResourceTemplate
 impl Show for ResourceTemplate
 impl ToJson for ResourceTemplate
@@ -1035,10 +907,8 @@ impl @json.FromJson for ResourceTemplate
 pub(all) struct ResourceUpdatedNotification {
   params : ResourceUpdatedNotificationParams
 }
-impl ResourceUpdatedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(ResourceUpdatedNotificationParams) -> Self
-}
+fn ResourceUpdatedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn ResourceUpdatedNotification::new(ResourceUpdatedNotificationParams) -> Self
 impl MCPNotification for ResourceUpdatedNotification
 impl ServerNotification for ResourceUpdatedNotification
 impl Eq for ResourceUpdatedNotification
@@ -1049,9 +919,7 @@ impl @json.FromJson for ResourceUpdatedNotification
 pub(all) struct ResourceUpdatedNotificationParams {
   uri : String
 }
-impl ResourceUpdatedNotificationParams {
-  new(String) -> Self
-}
+fn ResourceUpdatedNotificationParams::new(String) -> Self
 impl Eq for ResourceUpdatedNotificationParams
 impl Show for ResourceUpdatedNotificationParams
 impl ToJson for ResourceUpdatedNotificationParams
@@ -1076,9 +944,7 @@ pub(all) struct Root {
   uri : String
   name : String?
 }
-impl Root {
-  new(String, name? : String) -> Self
-}
+fn Root::new(String, name? : String) -> Self
 impl Eq for Root
 impl Show for Root
 impl ToJson for Root
@@ -1087,10 +953,8 @@ impl @json.FromJson for Root
 pub(all) struct RootsListChangedNotification {
   params : Map[String, Json]?
 }
-impl RootsListChangedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(params? : Map[String, Json]) -> Self
-}
+fn RootsListChangedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn RootsListChangedNotification::new(params? : Map[String, Json]) -> Self
 impl ClientNotification for RootsListChangedNotification
 impl MCPNotification for RootsListChangedNotification
 impl Eq for RootsListChangedNotification
@@ -1102,26 +966,22 @@ pub(all) struct SamplingMessage {
   role : Role
   content : &SamplingMessageContent
 }
-impl SamplingMessage {
-  new(Role, &SamplingMessageContent) -> Self
-}
+fn SamplingMessage::new(Role, &SamplingMessageContent) -> Self
 impl Eq for SamplingMessage
 impl Show for SamplingMessage
 impl ToJson for SamplingMessage
 impl @json.FromJson for SamplingMessage
 
 type Server
-impl Server {
-  connect(Self, &Transport) -> Unit
-  new(name~ : String, version~ : String) -> Self
-  prompt(Self, String, &MCPPrompt, list_changed~ : Bool = ..) -> Unit
-  resource(Self, String, &MCPResource, list_changed~ : Bool = ..) -> Unit
-  tool(Self, &MCPTool, ToolFunc, list_changed~ : Bool = ..) -> Unit
-  with_max_timeout(Self, Int) -> Unit
-  with_ping_period_seconds(Self, Int) -> Unit
-  with_ping_timeout_millis(Self, Int) -> Unit
-  with_timeout_millis(Self, Int) -> Unit
-}
+fn Server::connect(Self, &Transport) -> Unit
+fn Server::new(name~ : String, version~ : String) -> Self
+fn Server::prompt(Self, String, &MCPPrompt, list_changed~ : Bool = ..) -> Unit
+fn Server::resource(Self, String, &MCPResource, list_changed~ : Bool = ..) -> Unit
+fn Server::tool(Self, &MCPTool, ToolFunc, list_changed~ : Bool = ..) -> Unit
+fn Server::with_max_timeout(Self, Int) -> Unit
+fn Server::with_ping_period_seconds(Self, Int) -> Unit
+fn Server::with_ping_timeout_millis(Self, Int) -> Unit
+fn Server::with_timeout_millis(Self, Int) -> Unit
 
 pub(all) struct ServerCapabilities {
   experimental : Map[String, Json]?
@@ -1131,9 +991,7 @@ pub(all) struct ServerCapabilities {
   resources : ServerCapabilitiesResources?
   tools : ServerCapabilitiesTools?
 }
-impl ServerCapabilities {
-  new(experimental? : Map[String, Json], logging? : Map[String, Json], completions? : Map[String, Json], prompts? : ServerCapabilitiesPrompts, resources? : ServerCapabilitiesResources, tools? : ServerCapabilitiesTools) -> Self
-}
+fn ServerCapabilities::new(experimental? : Map[String, Json], logging? : Map[String, Json], completions? : Map[String, Json], prompts? : ServerCapabilitiesPrompts, resources? : ServerCapabilitiesResources, tools? : ServerCapabilitiesTools) -> Self
 impl Eq for ServerCapabilities
 impl Show for ServerCapabilities
 impl ToJson for ServerCapabilities
@@ -1142,9 +1000,7 @@ impl @json.FromJson for ServerCapabilities
 pub(all) struct ServerCapabilitiesPrompts {
   listChanged : Bool?
 }
-impl ServerCapabilitiesPrompts {
-  new(listChanged? : Bool) -> Self
-}
+fn ServerCapabilitiesPrompts::new(listChanged? : Bool) -> Self
 impl Eq for ServerCapabilitiesPrompts
 impl Show for ServerCapabilitiesPrompts
 impl ToJson for ServerCapabilitiesPrompts
@@ -1154,9 +1010,7 @@ pub(all) struct ServerCapabilitiesResources {
   listChanged : Bool?
   subscribe : Bool?
 }
-impl ServerCapabilitiesResources {
-  new(listChanged? : Bool, subscribe? : Bool) -> Self
-}
+fn ServerCapabilitiesResources::new(listChanged? : Bool, subscribe? : Bool) -> Self
 impl Eq for ServerCapabilitiesResources
 impl Show for ServerCapabilitiesResources
 impl ToJson for ServerCapabilitiesResources
@@ -1165,9 +1019,7 @@ impl @json.FromJson for ServerCapabilitiesResources
 pub(all) struct ServerCapabilitiesTools {
   listChanged : Bool?
 }
-impl ServerCapabilitiesTools {
-  new(listChanged? : Bool) -> Self
-}
+fn ServerCapabilitiesTools::new(listChanged? : Bool) -> Self
 impl Eq for ServerCapabilitiesTools
 impl Show for ServerCapabilitiesTools
 impl ToJson for ServerCapabilitiesTools
@@ -1191,10 +1043,8 @@ pub struct ServerTool {
 pub(all) struct SetLevelRequest {
   params : SetLevelRequestParams
 }
-impl SetLevelRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(SetLevelRequestParams) -> Self
-}
+fn SetLevelRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn SetLevelRequest::new(SetLevelRequestParams) -> Self
 impl ClientRequest for SetLevelRequest
 impl MCPRequest for SetLevelRequest
 impl Eq for SetLevelRequest
@@ -1205,18 +1055,14 @@ impl @json.FromJson for SetLevelRequest
 pub(all) struct SetLevelRequestParams {
   level : LoggingLevel
 }
-impl SetLevelRequestParams {
-  new(LoggingLevel) -> Self
-}
+fn SetLevelRequestParams::new(LoggingLevel) -> Self
 impl Eq for SetLevelRequestParams
 impl Show for SetLevelRequestParams
 impl ToJson for SetLevelRequestParams
 impl @json.FromJson for SetLevelRequestParams
 
 type StdioTransport
-impl StdioTransport {
-  new() -> Self
-}
+fn StdioTransport::new() -> Self
 impl @gmlewis/io.ByteReader for StdioTransport
 impl @gmlewis/io.Writer for StdioTransport
 impl Transport for StdioTransport
@@ -1224,10 +1070,8 @@ impl Transport for StdioTransport
 pub(all) struct SubscribeRequest {
   params : SubscribeRequestParams
 }
-impl SubscribeRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(SubscribeRequestParams) -> Self
-}
+fn SubscribeRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn SubscribeRequest::new(SubscribeRequestParams) -> Self
 impl ClientRequest for SubscribeRequest
 impl MCPRequest for SubscribeRequest
 impl Eq for SubscribeRequest
@@ -1238,9 +1082,7 @@ impl @json.FromJson for SubscribeRequest
 pub(all) struct SubscribeRequestParams {
   uri : String
 }
-impl SubscribeRequestParams {
-  new(String) -> Self
-}
+fn SubscribeRequestParams::new(String) -> Self
 impl Eq for SubscribeRequestParams
 impl Show for SubscribeRequestParams
 impl ToJson for SubscribeRequestParams
@@ -1250,9 +1092,7 @@ pub(all) struct TextContent {
   text : String
   annotations : Annotations?
 }
-impl TextContent {
-  new(String, annotations? : Annotations) -> Self
-}
+fn TextContent::new(String, annotations? : Annotations) -> Self
 impl CallToolResultContent for TextContent
 impl CreateMessageResultContent for TextContent
 impl PromptMessageContent for TextContent
@@ -1267,9 +1107,7 @@ pub(all) struct TextResourceContents {
   uri : String
   text : String
 }
-impl TextResourceContents {
-  new(mimeType? : String, String, String) -> Self
-}
+fn TextResourceContents::new(mimeType? : String, String, String) -> Self
 impl EmbeddedResourceResource for TextResourceContents
 impl ReadResourceResultContents for TextResourceContents
 impl Eq for TextResourceContents
@@ -1283,9 +1121,7 @@ pub(all) struct Tool {
   inputSchema : ToolInputSchema
   annotations : ToolAnnotations?
 }
-impl Tool {
-  new(String, description? : String, ToolInputSchema, annotations? : ToolAnnotations) -> Self
-}
+fn Tool::new(String, description? : String, ToolInputSchema, annotations? : ToolAnnotations) -> Self
 impl MCPTool for Tool
 impl Eq for Tool
 impl Show for Tool
@@ -1299,9 +1135,7 @@ pub(all) struct ToolAnnotations {
   idempotentHint : Bool?
   openWorldHint : Bool?
 }
-impl ToolAnnotations {
-  new(title? : String, readOnlyHint? : Bool, destructiveHint? : Bool, idempotentHint? : Bool, openWorldHint? : Bool) -> Self
-}
+fn ToolAnnotations::new(title? : String, readOnlyHint? : Bool, destructiveHint? : Bool, idempotentHint? : Bool, openWorldHint? : Bool) -> Self
 impl Eq for ToolAnnotations
 impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
@@ -1313,9 +1147,7 @@ pub(all) struct ToolInputSchema {
   properties : Map[String, Json]?
   required : Array[String]?
 }
-impl ToolInputSchema {
-  new(properties? : Map[String, Json], required? : Array[String]) -> Self
-}
+fn ToolInputSchema::new(properties? : Map[String, Json], required? : Array[String]) -> Self
 impl Eq for ToolInputSchema
 impl Show for ToolInputSchema
 impl ToJson for ToolInputSchema
@@ -1324,10 +1156,8 @@ impl @json.FromJson for ToolInputSchema
 pub(all) struct ToolListChangedNotification {
   params : Map[String, Json]?
 }
-impl ToolListChangedNotification {
-  from_message(@jsonrpc2.Message) -> Self?
-  new(params? : Map[String, Json]) -> Self
-}
+fn ToolListChangedNotification::from_message(@jsonrpc2.Message) -> Self?
+fn ToolListChangedNotification::new(params? : Map[String, Json]) -> Self
 impl MCPNotification for ToolListChangedNotification
 impl ServerNotification for ToolListChangedNotification
 impl Eq for ToolListChangedNotification
@@ -1342,10 +1172,8 @@ impl Show for TransportError
 pub(all) struct UnsubscribeRequest {
   params : UnsubscribeRequestParams
 }
-impl UnsubscribeRequest {
-  from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
-  new(UnsubscribeRequestParams) -> Self
-}
+fn UnsubscribeRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn UnsubscribeRequest::new(UnsubscribeRequestParams) -> Self
 impl ClientRequest for UnsubscribeRequest
 impl MCPRequest for UnsubscribeRequest
 impl Eq for UnsubscribeRequest
@@ -1356,9 +1184,7 @@ impl @json.FromJson for UnsubscribeRequest
 pub(all) struct UnsubscribeRequestParams {
   uri : String
 }
-impl UnsubscribeRequestParams {
-  new(String) -> Self
-}
+fn UnsubscribeRequestParams::new(String) -> Self
 impl Eq for UnsubscribeRequestParams
 impl Show for UnsubscribeRequestParams
 impl ToJson for UnsubscribeRequestParams
