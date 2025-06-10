@@ -1,6 +1,6 @@
 {
   "name": "gmlewis/mcp",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "deps": {
     "gmlewis/base64": "0.14.6",
     "gmlewis/io": "0.22.4",
