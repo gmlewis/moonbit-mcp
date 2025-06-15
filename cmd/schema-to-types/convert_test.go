@@ -48,7 +48,7 @@ pub impl MCPResponse for EmptyResult with to_response(self, id) {
 pub fn EmptyResult::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID, EmptyResult)?  {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[EmptyResult, _] = @json.from_json?(json)
+  let v : Result[EmptyResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }`},
@@ -114,7 +114,7 @@ pub fn GetPromptRequest::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID,
   guard req.id is Some(id) else { return None }
   guard req.method_ == "prompts/get" else { return None }
   let json = { "params" : req.params }.to_json()
-  let v : Result[GetPromptRequest, _] = @json.from_json?(json)
+  let v : Result[GetPromptRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }`,
@@ -136,18 +136,20 @@ pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let arguments : Map[String, String]? = match obj["arguments"] {
-    Some(v) =>
-      match @json.from_json?(v) {
-        Ok(v) => Some(v)
-        Err(e) => raise e
+  let arguments : Map[String, String]? = match obj.get("arguments") {
+    Some(v) => {
+        let v = try? @json.from_json(v)
+        match v {
+          Ok(v) => Some(v)
+          Err(e) => raise e
+        }
       }
     None => None
   }
@@ -166,10 +168,10 @@ pub impl @json.FromJson for GetPromptRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[GetPromptRequestParams, _] = @json.from_json?(json)
+  let v : Result[GetPromptRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }

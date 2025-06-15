@@ -135,11 +135,13 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 			)
 			fromJSONLastLineFields = append(fromJSONLastLineFields, propName)
 			fromJSONLines = append(fromJSONLines,
-				fmt.Sprintf(prefix+`  let %v : Map[String, %v]? = match obj[%[1]q] {`, propName, valueType),
-				prefix+"    Some(v) =>",
-				prefix+"      match @json.from_json?(v) {",
-				prefix+"        Ok(v) => Some(v)",
-				prefix+"        Err(e) => raise e",
+				fmt.Sprintf(prefix+`  let %v : Map[String, %v]? = match obj.get(%[1]q) {`, propName, valueType),
+				prefix+"    Some(v) => {",
+				prefix+"        let v = try? @json.from_json(v)",
+				prefix+"        match v {",
+				prefix+"          Ok(v) => Some(v)",
+				prefix+"          Err(e) => raise e",
+				prefix+"        }",
 				prefix+"      }",
 				prefix+"    None => None",
 				prefix+"  }",
@@ -154,7 +156,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 			if propName != "method" {
 				toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"  obj[%q] = %s.to_json()", propName, value))
 				fromJSONLines = append(fromJSONLines,
-					fmt.Sprintf(prefix+"  guard obj[%q] == Some(String(%s)) else {", propName, value),
+					fmt.Sprintf(prefix+"  guard obj.get(%q) == Some(String(%s)) else {", propName, value),
 					fmt.Sprintf(prefix+`    raise @json.JsonDecodeError((path, "expected '%v'='%v'"))`, propName, strings.ReplaceAll(string(value), `"`, "")),
 					prefix+"  }")
 			}
@@ -177,7 +179,7 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 				fmt.Sprintf(prefix+"    obj[%q] = v%v.to_json()", propName, injectToDouble),
 				"  }")
 			fromJSONLines = append(fromJSONLines,
-				fmt.Sprintf(prefix+"  let %v : %v = match obj[%[1]q] {", propName, mbtType),
+				fmt.Sprintf(prefix+"  let %v : %v = match obj.get(%[1]q) {", propName, mbtType),
 				prefix+"    Some(v) =>")
 			if mbtType == "Int64?" {
 				fromJSONLines = append(fromJSONLines,
@@ -187,9 +189,12 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 					prefix+"      }")
 			} else {
 				fromJSONLines = append(fromJSONLines,
-					prefix+"      match @json.from_json?(v) {",
-					prefix+"        Ok(v) => Some(v)",
-					prefix+"        Err(e) => raise e",
+					prefix+"      {",
+					prefix+"        let v = try? @json.from_json(v)",
+					prefix+"        match v {",
+					prefix+"          Ok(v) => Some(v)",
+					prefix+"          Err(e) => raise e",
+					prefix+"        }",
 					prefix+"      }")
 			}
 			fromJSONLines = append(fromJSONLines,
@@ -199,10 +204,10 @@ func (s *Schema) convert(d *Definition, out *outBufsT, name string) string {
 		} else {
 			toJSONLines = append(toJSONLines, fmt.Sprintf(prefix+"  obj[%q] = self.%v.to_json()", propName, safeName))
 			fromJSONLines = append(fromJSONLines,
-				fmt.Sprintf(prefix+"  guard obj[%q] is Some(json) else {", propName),
+				fmt.Sprintf(prefix+"  guard obj.get(%q) is Some(json) else {", propName),
 				fmt.Sprintf(prefix+`    raise @json.JsonDecodeError((path, "expected field '%v'"))`, propName),
 				prefix+"  }",
-				fmt.Sprintf(prefix+"  let v : Result[%v, _] = @json.from_json?(json)", mbtType),
+				fmt.Sprintf(prefix+"  let v : Result[%v, _] = try? @json.from_json(json)", mbtType),
 				fmt.Sprintf(prefix+"  guard v is Ok(%v) else {", safeName),
 				fmt.Sprintf(prefix+`    raise @json.JsonDecodeError((path, "expected field '%v'"))`, propName),
 				prefix+"  }",

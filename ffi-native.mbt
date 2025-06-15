@@ -12,7 +12,8 @@ extern "C" fn set_raw_mode() -> Unit = "set_raw_mode"
 extern "C" fn restore_terminal() -> Unit = "restore_terminal"
 
 ///|
-priv extern type TimeSpec
+#external
+priv type TimeSpec
 
 ///|
 extern "C" fn clock_gettime(clk_id : Int, tp : TimeSpec) -> Int = "clock_gettime"
@@ -36,7 +37,8 @@ pub fn unix_nanos() -> Int64 {
 fn[A, B] cast(a : A) -> B = "%identity"
 
 ///|
-priv extern type BytePtr
+#external
+priv type BytePtr
 
 ///|
 extern "C" fn write(fd : Int, buf : BytePtr, count : Int) -> Int = "write"

@@ -9,7 +9,7 @@ test "serialize CompleteResultCompletion to JSON" {
   let json = completion.to_json()
 
   // Verify the resulting JSON has the expected structure
-  inspect!(
+  inspect(
     json,
     content=
       #|Object({"values": Array([String("option1"), String("option2"), String("option3")]), "total": Number(100), "hasMore": True})
@@ -26,7 +26,7 @@ test "serialize CompleteResultCompletion with only required fields" {
   let json = completion.to_json()
 
   // Verify the resulting JSON has the expected structure
-  inspect!(
+  inspect(
     json,
     content=
       #|Object({"values": Array([String("single_value")])})
@@ -43,8 +43,8 @@ test "parse CompleteResultCompletion from JSON" {
     #|  "total": 42,
     #|  "values": ["completion1", "completion2", "completion3"]
     #|}
-  let json = @json.parse!(json_string)
-  inspect!(
+  let json = @json.parse(json_string)
+  inspect(
     json,
     content=
       #|Object({"hasMore": True, "total": Number(42), "values": Array([String("completion1"), String("completion2"), String("completion3")])})
@@ -52,10 +52,10 @@ test "parse CompleteResultCompletion from JSON" {
   )
 
   // Parse the JSON into a CompleteResultCompletion
-  let result : CompleteResultCompletion = @json.from_json!(json)
+  let result : CompleteResultCompletion = @json.from_json(json)
 
   // Test that the values were correctly parsed
-  inspect!(
+  inspect(
     result,
     content=
       #|{values: ["completion1", "completion2", "completion3"], total: Some(42), hasMore: Some(true)}
@@ -72,13 +72,13 @@ test "parse CompleteResultCompletion from JSON with bad number" {
     #|  "total": "42",
     #|  "values": ["completion1", "completion2", "completion3"]
     #|}
-  let json = @json.parse!(json_string)
+  let json = @json.parse(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
-  let result : Result[CompleteResultCompletion, _] = @json.from_json?(json)
+  let result : Result[CompleteResultCompletion, _] = try? @json.from_json(json)
 
   // Test that the values were correctly parsed
-  inspect!(
+  inspect(
     result,
     content=
       #|Err(JsonDecodeError(($, "expected number; got String(\"42\")")))
@@ -92,13 +92,13 @@ test "parse CompleteResultCompletion with missing optional fields" {
     #|{
     #|  "values": ["only", "required", "field"]
     #|}
-  let json = @json.parse!(json_string)
+  let json = @json.parse(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
-  let result : CompleteResultCompletion = @json.from_json!(json)
+  let result : CompleteResultCompletion = @json.from_json(json)
 
   // Test that the values were correctly parsed and optional fields are None
-  inspect!(
+  inspect(
     result,
     content=
       #|{values: ["only", "required", "field"], total: None, hasMore: None}
@@ -113,13 +113,13 @@ test "error when required field is missing" {
     #|  "hasMore": true,
     #|  "total": 42
     #|}
-  let json = @json.parse!(json_string)
+  let json = @json.parse(json_string)
 
   // Parse the JSON into a CompleteResultCompletion
-  let result : Result[CompleteResultCompletion, _] = @json.from_json?(json)
+  let result : Result[CompleteResultCompletion, _] = try? @json.from_json(json)
 
   //
-  inspect!(
+  inspect(
     result,
     content=
       #|Err(JsonDecodeError(($, "expected field 'values'")))
@@ -134,7 +134,7 @@ test "serialize CancelledNotificationParams to JSON" {
     reason="test_reason",
   )
   let json = params.to_json()
-  inspect!(
+  inspect(
     json,
     content=
       #|Object({"requestId": Number(123), "reason": String("test_reason")})
@@ -146,7 +146,7 @@ test "serialize CancelledNotificationParams to JSON" {
 test "serialize CancelledNotificationParams with only required fields" {
   let params = CancelledNotificationParams::new(@jsonrpc2.ID::number(456))
   let json = params.to_json()
-  inspect!(
+  inspect(
     json,
     content=
       #|Object({"requestId": Number(456)})
@@ -158,12 +158,13 @@ test "serialize CancelledNotificationParams with only required fields" {
 test "parse CancelledNotificationParams from JSON" {
   let json_string =
     #|{"requestId":789,"reason":"cancelled"}
-  let json = match @json.parse?(json_string) {
+  let json = try? @json.parse(json_string)
+  let json = match json {
     Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
+    Err(e) => fail("Failed to parse test JSON: \{e}")
   }
-  let result : CancelledNotificationParams = @json.from_json!(json)
-  inspect!(
+  let result : CancelledNotificationParams = @json.from_json(json)
+  inspect(
     result,
     content=
       #|{requestId: Number(789), reason: Some("cancelled")}
@@ -175,24 +176,28 @@ test "parse CancelledNotificationParams from JSON" {
 test "parse CancelledNotificationParams with missing reason" {
   let json_string =
     #|{"requestId":42}
-  let json = match @json.parse?(json_string) {
+  let json = try? @json.parse(json_string)
+  let json = match json {
     Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
+    Err(e) => fail("Failed to parse test JSON: \{e}")
   }
-  let result : CancelledNotificationParams = @json.from_json!(json)
-  inspect!(result, content="{requestId: Number(42), reason: None}")
+  let result : CancelledNotificationParams = @json.from_json(json)
+  inspect(result, content="{requestId: Number(42), reason: None}")
 }
 
 ///|
 test "error when requestId field missing" {
   let json_string =
     #|{"reason":"oops"}
-  let json = match @json.parse?(json_string) {
+  let json = try? @json.parse(json_string)
+  let json = match json {
     Ok(v) => v
-    Err(e) => fail!("Failed to parse test JSON: \{e}")
+    Err(e) => fail("Failed to parse test JSON: \{e}")
   }
-  let result : Result[CancelledNotificationParams, _] = @json.from_json?(json)
-  inspect!(
+  let result : Result[CancelledNotificationParams, _] = try? @json.from_json(
+      json,
+    )
+  inspect(
     result,
     content=
       #|Err(JsonDecodeError(($, "expected field 'requestId'")))

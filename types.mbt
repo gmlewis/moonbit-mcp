@@ -47,7 +47,7 @@ pub fn Request::from_message(
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
   let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
-  let v : Result[Request, _] = @json.from_json?(json)
+  let v : Result[Request, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -68,7 +68,7 @@ pub fn Notification::from_message(msg : @jsonrpc2.Message) -> Notification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
   let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
-  let v : Result[Notification, _] = @json.from_json?(json)
+  let v : Result[Notification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -111,7 +111,7 @@ pub fn EmptyResult::from_message(
 ) -> (@jsonrpc2.ID, EmptyResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[EmptyResult, _] = @json.from_json?(json)
+  let v : Result[EmptyResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -156,7 +156,7 @@ pub fn CancelledNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/cancelled" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[CancelledNotification, _] = @json.from_json?(json)
+  let v : Result[CancelledNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -193,7 +193,7 @@ pub fn InitializeRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "initialize" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[InitializeRequest, _] = @json.from_json?(json)
+  let v : Result[InitializeRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -224,7 +224,7 @@ pub fn InitializeResult::from_message(
 ) -> (@jsonrpc2.ID, InitializeResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[InitializeResult, _] = @json.from_json?(json)
+  let v : Result[InitializeResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -249,7 +249,7 @@ pub fn InitializedNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/initialized" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[InitializedNotification, _] = @json.from_json?(json)
+  let v : Result[InitializedNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -343,7 +343,7 @@ pub fn PingRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "ping" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[PingRequest, _] = @json.from_json?(json)
+  let v : Result[PingRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -384,7 +384,7 @@ pub fn ProgressNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/progress" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ProgressNotification, _] = @json.from_json?(json)
+  let v : Result[ProgressNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -418,7 +418,7 @@ pub fn PaginatedRequest::from_message(
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
   let json = { "method_": req.method_.to_json(), "params": req.params }.to_json()
-  let v : Result[PaginatedRequest, _] = @json.from_json?(json)
+  let v : Result[PaginatedRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -443,7 +443,7 @@ pub fn PaginatedResult::from_message(
 ) -> (@jsonrpc2.ID, PaginatedResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[PaginatedResult, _] = @json.from_json?(json)
+  let v : Result[PaginatedResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -479,7 +479,7 @@ pub fn ListResourcesRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "resources/list" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ListResourcesRequest, _] = @json.from_json?(json)
+  let v : Result[ListResourcesRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -506,7 +506,7 @@ pub fn ListResourcesResult::from_message(
 ) -> (@jsonrpc2.ID, ListResourcesResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ListResourcesResult, _] = @json.from_json?(json)
+  let v : Result[ListResourcesResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -538,7 +538,7 @@ pub fn ListResourceTemplatesRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "resources/templates/list" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ListResourceTemplatesRequest, _] = @json.from_json?(json)
+  let v : Result[ListResourceTemplatesRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -565,7 +565,7 @@ pub fn ListResourceTemplatesResult::from_message(
 ) -> (@jsonrpc2.ID, ListResourceTemplatesResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ListResourceTemplatesResult, _] = @json.from_json?(json)
+  let v : Result[ListResourceTemplatesResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -596,7 +596,7 @@ pub fn ReadResourceRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "resources/read" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ReadResourceRequest, _] = @json.from_json?(json)
+  let v : Result[ReadResourceRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -630,7 +630,7 @@ pub fn ReadResourceResult::from_message(
 ) -> (@jsonrpc2.ID, ReadResourceResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ReadResourceResult, _] = @json.from_json?(json)
+  let v : Result[ReadResourceResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -662,7 +662,9 @@ pub fn ResourceListChangedNotification::from_message(
     return None
   }
   let json = { "params": req.params }.to_json()
-  let v : Result[ResourceListChangedNotification, _] = @json.from_json?(json)
+  let v : Result[ResourceListChangedNotification, _] = try? @json.from_json(
+      json,
+    )
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -693,7 +695,7 @@ pub fn SubscribeRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "resources/subscribe" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[SubscribeRequest, _] = @json.from_json?(json)
+  let v : Result[SubscribeRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -724,7 +726,7 @@ pub fn UnsubscribeRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "resources/unsubscribe" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[UnsubscribeRequest, _] = @json.from_json?(json)
+  let v : Result[UnsubscribeRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -760,7 +762,7 @@ pub fn ResourceUpdatedNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/resources/updated" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ResourceUpdatedNotification, _] = @json.from_json?(json)
+  let v : Result[ResourceUpdatedNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -867,7 +869,7 @@ pub fn ListPromptsRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "prompts/list" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ListPromptsRequest, _] = @json.from_json?(json)
+  let v : Result[ListPromptsRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -894,7 +896,7 @@ pub fn ListPromptsResult::from_message(
 ) -> (@jsonrpc2.ID, ListPromptsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ListPromptsResult, _] = @json.from_json?(json)
+  let v : Result[ListPromptsResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -927,7 +929,7 @@ pub fn GetPromptRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "prompts/get" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[GetPromptRequest, _] = @json.from_json?(json)
+  let v : Result[GetPromptRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -953,7 +955,7 @@ pub fn GetPromptResult::from_message(
 ) -> (@jsonrpc2.ID, GetPromptResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[GetPromptResult, _] = @json.from_json?(json)
+  let v : Result[GetPromptResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1053,7 +1055,7 @@ pub fn PromptListChangedNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/prompts/list_changed" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[PromptListChangedNotification, _] = @json.from_json?(json)
+  let v : Result[PromptListChangedNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -1089,7 +1091,7 @@ pub fn ListToolsRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "tools/list" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ListToolsRequest, _] = @json.from_json?(json)
+  let v : Result[ListToolsRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1116,7 +1118,7 @@ pub fn ListToolsResult::from_message(
 ) -> (@jsonrpc2.ID, ListToolsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ListToolsResult, _] = @json.from_json?(json)
+  let v : Result[ListToolsResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1163,7 +1165,7 @@ pub fn CallToolResult::from_message(
 ) -> (@jsonrpc2.ID, CallToolResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[CallToolResult, _] = @json.from_json?(json)
+  let v : Result[CallToolResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1194,7 +1196,7 @@ pub fn CallToolRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "tools/call" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[CallToolRequest, _] = @json.from_json?(json)
+  let v : Result[CallToolRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1224,7 +1226,7 @@ pub fn ToolListChangedNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/tools/list_changed" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ToolListChangedNotification, _] = @json.from_json?(json)
+  let v : Result[ToolListChangedNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -1321,7 +1323,7 @@ pub fn SetLevelRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "logging/setLevel" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[SetLevelRequest, _] = @json.from_json?(json)
+  let v : Result[SetLevelRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1358,7 +1360,7 @@ pub fn LoggingMessageNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/message" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[LoggingMessageNotification, _] = @json.from_json?(json)
+  let v : Result[LoggingMessageNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }
@@ -1423,7 +1425,7 @@ pub fn CreateMessageRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "sampling/createMessage" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[CreateMessageRequest, _] = @json.from_json?(json)
+  let v : Result[CreateMessageRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1462,7 +1464,7 @@ pub fn CreateMessageResult::from_message(
 ) -> (@jsonrpc2.ID, CreateMessageResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[CreateMessageResult, _] = @json.from_json?(json)
+  let v : Result[CreateMessageResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1636,7 +1638,7 @@ pub fn CompleteRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "completion/complete" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[CompleteRequest, _] = @json.from_json?(json)
+  let v : Result[CompleteRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1670,7 +1672,7 @@ pub fn CompleteResult::from_message(
 ) -> (@jsonrpc2.ID, CompleteResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[CompleteResult, _] = @json.from_json?(json)
+  let v : Result[CompleteResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1721,7 +1723,7 @@ pub fn ListRootsRequest::from_message(
   guard req.id is Some(id) else { return None }
   guard req.method_ == "roots/list" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[ListRootsRequest, _] = @json.from_json?(json)
+  let v : Result[ListRootsRequest, _] = try? @json.from_json(json)
   guard v is Ok(request) else { return None }
   Some((id, request))
 }
@@ -1747,7 +1749,7 @@ pub fn ListRootsResult::from_message(
 ) -> (@jsonrpc2.ID, ListRootsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
-  let v : Result[ListRootsResult, _] = @json.from_json?(json)
+  let v : Result[ListRootsResult, _] = try? @json.from_json(json)
   guard v is Ok(result) else { return None }
   Some((res.id, result))
 }
@@ -1792,7 +1794,7 @@ pub fn RootsListChangedNotification::from_message(
   guard req.id is None else { return None }
   guard req.method_ == "notifications/roots/list_changed" else { return None }
   let json = { "params": req.params }.to_json()
-  let v : Result[RootsListChangedNotification, _] = @json.from_json?(json)
+  let v : Result[RootsListChangedNotification, _] = try? @json.from_json(json)
   guard v is Ok(notification) else { return None }
   Some(notification)
 }

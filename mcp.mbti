@@ -30,11 +30,11 @@ let number : Json
 
 let object : Json
 
-fn raw_audio(AudioContent) -> Bytes!
+fn raw_audio(AudioContent) -> Bytes raise
 
-fn raw_data(BlobResourceContents) -> Bytes!
+fn raw_data(BlobResourceContents) -> Bytes raise
 
-fn raw_image(ImageContent) -> Bytes!
+fn raw_image(ImageContent) -> Bytes raise
 
 fn sleep(Int) -> Unit
 
@@ -63,7 +63,7 @@ pub(all) struct AudioContent {
   annotations : Annotations?
 }
 fn AudioContent::new(String, String, annotations? : Annotations) -> Self
-fn AudioContent::raw_audio(Self) -> Bytes!
+fn AudioContent::raw_audio(Self) -> Bytes raise
 impl CallToolResultContent for AudioContent
 impl CreateMessageResultContent for AudioContent
 impl PromptMessageContent for AudioContent
@@ -79,7 +79,7 @@ pub(all) struct BlobResourceContents {
   blob : String
 }
 fn BlobResourceContents::new(mimeType? : String, String, String) -> Self
-fn BlobResourceContents::raw_data(Self) -> Bytes!
+fn BlobResourceContents::raw_data(Self) -> Bytes raise
 impl EmbeddedResourceResource for BlobResourceContents
 impl ReadResourceResultContents for BlobResourceContents
 impl Eq for BlobResourceContents
@@ -344,7 +344,7 @@ pub(all) struct ImageContent {
   annotations : Annotations?
 }
 fn ImageContent::new(String, String, annotations? : Annotations) -> Self
-fn ImageContent::raw_image(Self) -> Bytes!
+fn ImageContent::raw_image(Self) -> Bytes raise
 impl CallToolResultContent for ImageContent
 impl CreateMessageResultContent for ImageContent
 impl PromptMessageContent for ImageContent
@@ -465,6 +465,7 @@ pub(all) struct ListResourceTemplatesRequest {
 }
 fn ListResourceTemplatesRequest::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
 fn ListResourceTemplatesRequest::new(params? : ListResourceTemplatesRequestParams) -> Self
+impl ClientRequest for ListResourceTemplatesRequest
 impl MCPRequest for ListResourceTemplatesRequest
 impl Eq for ListResourceTemplatesRequest
 impl Show for ListResourceTemplatesRequest
@@ -488,6 +489,7 @@ pub(all) struct ListResourceTemplatesResult {
 fn ListResourceTemplatesResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
 fn ListResourceTemplatesResult::new(_meta? : Map[String, Json], nextCursor? : String, Array[ResourceTemplate]) -> Self
 impl MCPResponse for ListResourceTemplatesResult
+impl ServerResult for ListResourceTemplatesResult
 impl Eq for ListResourceTemplatesResult
 impl Show for ListResourceTemplatesResult
 impl ToJson for ListResourceTemplatesResult
@@ -1165,7 +1167,7 @@ impl Show for ToolListChangedNotification
 impl ToJson for ToolListChangedNotification
 impl @json.FromJson for ToolListChangedNotification
 
-pub type! TransportError String
+pub suberror TransportError String
 impl Eq for TransportError
 impl Show for TransportError
 

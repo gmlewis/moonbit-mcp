@@ -10,9 +10,10 @@ fn main {
 
   //
   let stdio = @mcp.StdioTransport::new()
-    ..with_close_handler(close_handler)
-    ..with_error_handler(error_handler)
-    ..with_message_handler(message_handler)
+  stdio
+  ..with_close_handler(close_handler)
+  ..with_error_handler(error_handler)
+  ..with_message_handler(message_handler)
 
   //
   guard stdio.start() is None else { abort("Failed to start transport") }

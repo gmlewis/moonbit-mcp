@@ -42,7 +42,7 @@ func (d *Definition) convertEnumAnyOf(out *outBufsT, name, prefix string) string
 		out.typesJSONEnumsFile.WriteString("\n" + strings.Join(implLines, "\n") + "\n")
 		fromJSONOptions = append(fromJSONOptions, refType)
 		fromJSONLines = append(fromJSONLines,
-			fmt.Sprintf(prefix+"  let v : Result[%v, _] = @json.from_json?(json)", refType),
+			fmt.Sprintf(prefix+"  let v : Result[%v, _] = try? @json.from_json(json)", refType),
 			prefix+"  if v is Ok(v) {",
 			prefix+"    return v",
 			prefix+"  }",

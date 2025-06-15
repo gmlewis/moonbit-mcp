@@ -20,19 +20,21 @@ pub impl @json.FromJson for Request with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["method"] is Some(json) else {
+  guard obj.get("method") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(method_) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { method_, params }
@@ -53,19 +55,21 @@ pub impl @json.FromJson for Notification with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["method"] is Some(json) else {
+  guard obj.get("method") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(method_) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { method_, params }
@@ -97,19 +101,21 @@ pub impl @json.FromJson for CancelledNotificationParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["requestId"] is Some(json) else {
+  guard obj.get("requestId") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'requestId'"))
   }
-  let v : Result[@jsonrpc2.ID, _] = @json.from_json?(json)
+  let v : Result[@jsonrpc2.ID, _] = try? @json.from_json(json)
   guard v is Ok(requestId) else {
     raise @json.JsonDecodeError((path, "expected field 'requestId'"))
   }
-  let reason : String? = match obj["reason"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let reason : String? = match obj.get("reason") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { requestId, reason }
@@ -127,10 +133,10 @@ pub impl @json.FromJson for CancelledNotification with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[CancelledNotificationParams, _] = @json.from_json?(json)
+  let v : Result[CancelledNotificationParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -155,24 +161,24 @@ pub impl @json.FromJson for InitializeRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["protocolVersion"] is Some(json) else {
+  guard obj.get("protocolVersion") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'protocolVersion'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(protocolVersion) else {
     raise @json.JsonDecodeError((path, "expected field 'protocolVersion'"))
   }
-  guard obj["capabilities"] is Some(json) else {
+  guard obj.get("capabilities") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'capabilities'"))
   }
-  let v : Result[ClientCapabilities, _] = @json.from_json?(json)
+  let v : Result[ClientCapabilities, _] = try? @json.from_json(json)
   guard v is Ok(capabilities) else {
     raise @json.JsonDecodeError((path, "expected field 'capabilities'"))
   }
-  guard obj["clientInfo"] is Some(json) else {
+  guard obj.get("clientInfo") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'clientInfo'"))
   }
-  let v : Result[Implementation, _] = @json.from_json?(json)
+  let v : Result[Implementation, _] = try? @json.from_json(json)
   guard v is Ok(clientInfo) else {
     raise @json.JsonDecodeError((path, "expected field 'clientInfo'"))
   }
@@ -191,10 +197,10 @@ pub impl @json.FromJson for InitializeRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[InitializeRequestParams, _] = @json.from_json?(json)
+  let v : Result[InitializeRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -221,41 +227,45 @@ pub impl @json.FromJson for InitializeResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["protocolVersion"] is Some(json) else {
+  guard obj.get("protocolVersion") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'protocolVersion'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(protocolVersion) else {
     raise @json.JsonDecodeError((path, "expected field 'protocolVersion'"))
   }
-  guard obj["capabilities"] is Some(json) else {
+  guard obj.get("capabilities") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'capabilities'"))
   }
-  let v : Result[ServerCapabilities, _] = @json.from_json?(json)
+  let v : Result[ServerCapabilities, _] = try? @json.from_json(json)
   guard v is Ok(capabilities) else {
     raise @json.JsonDecodeError((path, "expected field 'capabilities'"))
   }
-  guard obj["serverInfo"] is Some(json) else {
+  guard obj.get("serverInfo") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'serverInfo'"))
   }
-  let v : Result[Implementation, _] = @json.from_json?(json)
+  let v : Result[Implementation, _] = try? @json.from_json(json)
   guard v is Ok(serverInfo) else {
     raise @json.JsonDecodeError((path, "expected field 'serverInfo'"))
   }
-  let instructions : String? = match obj["instructions"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let instructions : String? = match obj.get("instructions") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { _meta, protocolVersion, capabilities, serverInfo, instructions }
@@ -275,12 +285,14 @@ pub impl @json.FromJson for InitializedNotification with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -300,12 +312,14 @@ pub impl @json.FromJson for ClientCapabilitiesRoots with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let listChanged : Bool? = match obj["listChanged"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let listChanged : Bool? = match obj.get("listChanged") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { listChanged, }
@@ -331,28 +345,34 @@ pub impl @json.FromJson for ClientCapabilities with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let experimental : Map[String, Json]? = match obj["experimental"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let experimental : Map[String, Json]? = match obj.get("experimental") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let roots : ClientCapabilitiesRoots? = match obj["roots"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let roots : ClientCapabilitiesRoots? = match obj.get("roots") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let sampling : Map[String, Json]? = match obj["sampling"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let sampling : Map[String, Json]? = match obj.get("sampling") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { experimental, roots, sampling }
@@ -372,12 +392,14 @@ pub impl @json.FromJson for ServerCapabilitiesPrompts with from_json(json, path)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let listChanged : Bool? = match obj["listChanged"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let listChanged : Bool? = match obj.get("listChanged") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { listChanged, }
@@ -403,20 +425,24 @@ pub impl @json.FromJson for ServerCapabilitiesResources with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let listChanged : Bool? = match obj["listChanged"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let listChanged : Bool? = match obj.get("listChanged") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let subscribe : Bool? = match obj["subscribe"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let subscribe : Bool? = match obj.get("subscribe") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { listChanged, subscribe }
@@ -436,12 +462,14 @@ pub impl @json.FromJson for ServerCapabilitiesTools with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let listChanged : Bool? = match obj["listChanged"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let listChanged : Bool? = match obj.get("listChanged") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { listChanged, }
@@ -476,52 +504,64 @@ pub impl @json.FromJson for ServerCapabilities with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let experimental : Map[String, Json]? = match obj["experimental"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let experimental : Map[String, Json]? = match obj.get("experimental") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let logging : Map[String, Json]? = match obj["logging"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let logging : Map[String, Json]? = match obj.get("logging") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let completions : Map[String, Json]? = match obj["completions"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let completions : Map[String, Json]? = match obj.get("completions") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let prompts : ServerCapabilitiesPrompts? = match obj["prompts"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let prompts : ServerCapabilitiesPrompts? = match obj.get("prompts") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let resources : ServerCapabilitiesResources? = match obj["resources"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let resources : ServerCapabilitiesResources? = match obj.get("resources") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let tools : ServerCapabilitiesTools? = match obj["tools"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let tools : ServerCapabilitiesTools? = match obj.get("tools") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { experimental, logging, completions, prompts, resources, tools }
@@ -540,17 +580,17 @@ pub impl @json.FromJson for Implementation with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  guard obj["version"] is Some(json) else {
+  guard obj.get("version") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'version'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(version) else {
     raise @json.JsonDecodeError((path, "expected field 'version'"))
   }
@@ -575,12 +615,14 @@ pub impl @json.FromJson for PingRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -612,34 +654,38 @@ pub impl @json.FromJson for ProgressNotificationParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["progress"] is Some(json) else {
+  guard obj.get("progress") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'progress'"))
   }
-  let v : Result[Double, _] = @json.from_json?(json)
+  let v : Result[Double, _] = try? @json.from_json(json)
   guard v is Ok(progress) else {
     raise @json.JsonDecodeError((path, "expected field 'progress'"))
   }
-  guard obj["progressToken"] is Some(json) else {
+  guard obj.get("progressToken") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'progressToken'"))
   }
-  let v : Result[ProgressToken, _] = @json.from_json?(json)
+  let v : Result[ProgressToken, _] = try? @json.from_json(json)
   guard v is Ok(progressToken) else {
     raise @json.JsonDecodeError((path, "expected field 'progressToken'"))
   }
-  let total : Double? = match obj["total"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let total : Double? = match obj.get("total") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let message : String? = match obj["message"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let message : String? = match obj.get("message") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { progress, progressToken, total, message }
@@ -657,10 +703,10 @@ pub impl @json.FromJson for ProgressNotification with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[ProgressNotificationParams, _] = @json.from_json?(json)
+  let v : Result[ProgressNotificationParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -685,12 +731,14 @@ pub impl @json.FromJson for PaginatedRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let cursor : String? = match obj["cursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let cursor : String? = match obj.get("cursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { cursor, }
@@ -711,19 +759,21 @@ pub impl @json.FromJson for PaginatedRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["method"] is Some(json) else {
+  guard obj.get("method") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(method_) else {
     raise @json.JsonDecodeError((path, "expected field 'method'"))
   }
-  let params : PaginatedRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : PaginatedRequestParams? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { method_, params }
@@ -746,20 +796,24 @@ pub impl @json.FromJson for PaginatedResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let nextCursor : String? = match obj["nextCursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let nextCursor : String? = match obj.get("nextCursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { _meta, nextCursor }
@@ -786,12 +840,14 @@ pub impl @json.FromJson for ListResourcesRequestParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let cursor : String? = match obj["cursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let cursor : String? = match obj.get("cursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { cursor, }
@@ -811,12 +867,14 @@ pub impl @json.FromJson for ListResourcesRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : ListResourcesRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : ListResourcesRequestParams? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -840,26 +898,30 @@ pub impl @json.FromJson for ListResourcesResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let nextCursor : String? = match obj["nextCursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let nextCursor : String? = match obj.get("nextCursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["resources"] is Some(json) else {
+  guard obj.get("resources") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'resources'"))
   }
-  let v : Result[Array[Resource], _] = @json.from_json?(json)
+  let v : Result[Array[Resource], _] = try? @json.from_json(json)
   guard v is Ok(resources) else {
     raise @json.JsonDecodeError((path, "expected field 'resources'"))
   }
@@ -883,12 +945,14 @@ pub impl @json.FromJson for ListResourceTemplatesRequestParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let cursor : String? = match obj["cursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let cursor : String? = match obj.get("cursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { cursor, }
@@ -911,12 +975,14 @@ pub impl @json.FromJson for ListResourceTemplatesRequest with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : ListResourceTemplatesRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : ListResourceTemplatesRequestParams? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -943,26 +1009,30 @@ pub impl @json.FromJson for ListResourceTemplatesResult with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let nextCursor : String? = match obj["nextCursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let nextCursor : String? = match obj.get("nextCursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["resourceTemplates"] is Some(json) else {
+  guard obj.get("resourceTemplates") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'resourceTemplates'"))
   }
-  let v : Result[Array[ResourceTemplate], _] = @json.from_json?(json)
+  let v : Result[Array[ResourceTemplate], _] = try? @json.from_json(json)
   guard v is Ok(resourceTemplates) else {
     raise @json.JsonDecodeError((path, "expected field 'resourceTemplates'"))
   }
@@ -981,10 +1051,10 @@ pub impl @json.FromJson for ReadResourceRequestParams with from_json(json, path)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
@@ -1003,10 +1073,10 @@ pub impl @json.FromJson for ReadResourceRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[ReadResourceRequestParams, _] = @json.from_json?(json)
+  let v : Result[ReadResourceRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -1028,18 +1098,22 @@ pub impl @json.FromJson for ReadResourceResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["contents"] is Some(json) else {
+  guard obj.get("contents") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'contents'"))
   }
-  let v : Result[Array[&ReadResourceResultContents], _] = @json.from_json?(json)
+  let v : Result[Array[&ReadResourceResultContents], _] = try? @json.from_json(
+      json,
+    )
   guard v is Ok(contents) else {
     raise @json.JsonDecodeError((path, "expected field 'contents'"))
   }
@@ -1063,12 +1137,14 @@ pub impl @json.FromJson for ResourceListChangedNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -1086,10 +1162,10 @@ pub impl @json.FromJson for SubscribeRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
@@ -1108,10 +1184,10 @@ pub impl @json.FromJson for SubscribeRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[SubscribeRequestParams, _] = @json.from_json?(json)
+  let v : Result[SubscribeRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -1130,10 +1206,10 @@ pub impl @json.FromJson for UnsubscribeRequestParams with from_json(json, path) 
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
@@ -1152,10 +1228,10 @@ pub impl @json.FromJson for UnsubscribeRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[UnsubscribeRequestParams, _] = @json.from_json?(json)
+  let v : Result[UnsubscribeRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -1177,10 +1253,10 @@ pub impl @json.FromJson for ResourceUpdatedNotificationParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
@@ -1202,10 +1278,12 @@ pub impl @json.FromJson for ResourceUpdatedNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[ResourceUpdatedNotificationParams, _] = @json.from_json?(json)
+  let v : Result[ResourceUpdatedNotificationParams, _] = try? @json.from_json(
+      json,
+    )
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -1237,45 +1315,51 @@ pub impl @json.FromJson for Resource with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let mimeType : String? = match obj["mimeType"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let mimeType : String? = match obj.get("mimeType") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let size : Int64? = match obj["size"] {
+  let size : Int64? = match obj.get("size") {
     Some(v) =>
       match v {
         Number(v) => Some(v.to_int64())
@@ -1308,42 +1392,48 @@ pub impl @json.FromJson for ResourceTemplate with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uriTemplate"] is Some(json) else {
+  guard obj.get("uriTemplate") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uriTemplate'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uriTemplate) else {
     raise @json.JsonDecodeError((path, "expected field 'uriTemplate'"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let mimeType : String? = match obj["mimeType"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let mimeType : String? = match obj.get("mimeType") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { uriTemplate, name, description, mimeType, annotations }
@@ -1364,19 +1454,21 @@ pub impl @json.FromJson for ResourceContents with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let mimeType : String? = match obj["mimeType"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let mimeType : String? = match obj.get("mimeType") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { uri, mimeType }
@@ -1398,25 +1490,27 @@ pub impl @json.FromJson for TextResourceContents with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let mimeType : String? = match obj["mimeType"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let mimeType : String? = match obj.get("mimeType") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  guard obj["text"] is Some(json) else {
+  guard obj.get("text") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'text'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(text) else {
     raise @json.JsonDecodeError((path, "expected field 'text'"))
   }
@@ -1439,25 +1533,27 @@ pub impl @json.FromJson for BlobResourceContents with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let mimeType : String? = match obj["mimeType"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let mimeType : String? = match obj.get("mimeType") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  guard obj["blob"] is Some(json) else {
+  guard obj.get("blob") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'blob'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(blob) else {
     raise @json.JsonDecodeError((path, "expected field 'blob'"))
   }
@@ -1482,12 +1578,14 @@ pub impl @json.FromJson for ListPromptsRequestParams with from_json(json, path) 
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let cursor : String? = match obj["cursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let cursor : String? = match obj.get("cursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { cursor, }
@@ -1507,12 +1605,14 @@ pub impl @json.FromJson for ListPromptsRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : ListPromptsRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : ListPromptsRequestParams? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -1536,26 +1636,30 @@ pub impl @json.FromJson for ListPromptsResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let nextCursor : String? = match obj["nextCursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let nextCursor : String? = match obj.get("nextCursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["prompts"] is Some(json) else {
+  guard obj.get("prompts") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'prompts'"))
   }
-  let v : Result[Array[Prompt], _] = @json.from_json?(json)
+  let v : Result[Array[Prompt], _] = try? @json.from_json(json)
   guard v is Ok(prompts) else {
     raise @json.JsonDecodeError((path, "expected field 'prompts'"))
   }
@@ -1577,19 +1681,21 @@ pub impl @json.FromJson for GetPromptRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let arguments : Map[String, String]? = match obj["arguments"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let arguments : Map[String, String]? = match obj.get("arguments") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, arguments }
@@ -1607,10 +1713,10 @@ pub impl @json.FromJson for GetPromptRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[GetPromptRequestParams, _] = @json.from_json?(json)
+  let v : Result[GetPromptRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -1635,26 +1741,30 @@ pub impl @json.FromJson for GetPromptResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["messages"] is Some(json) else {
+  guard obj.get("messages") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'messages'"))
   }
-  let v : Result[Array[PromptMessage], _] = @json.from_json?(json)
+  let v : Result[Array[PromptMessage], _] = try? @json.from_json(json)
   guard v is Ok(messages) else {
     raise @json.JsonDecodeError((path, "expected field 'messages'"))
   }
@@ -1679,27 +1789,31 @@ pub impl @json.FromJson for Prompt with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let arguments : Array[PromptArgument]? = match obj["arguments"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let arguments : Array[PromptArgument]? = match obj.get("arguments") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, description, arguments }
@@ -1723,27 +1837,31 @@ pub impl @json.FromJson for PromptArgument with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let required : Bool? = match obj["required"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let required : Bool? = match obj.get("required") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, description, required }
@@ -1762,17 +1880,17 @@ pub impl @json.FromJson for PromptMessage with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["role"] is Some(json) else {
+  guard obj.get("role") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  let v : Result[Role, _] = @json.from_json?(json)
+  let v : Result[Role, _] = try? @json.from_json(json)
   guard v is Ok(role) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  guard obj["content"] is Some(json) else {
+  guard obj.get("content") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[&PromptMessageContent, _] = @json.from_json?(json)
+  let v : Result[&PromptMessageContent, _] = try? @json.from_json(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
@@ -1795,22 +1913,24 @@ pub impl @json.FromJson for EmbeddedResource with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("resource")) else {
+  guard obj.get("type") == Some(Json::string("resource")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='resource'"))
   }
-  guard obj["resource"] is Some(json) else {
+  guard obj.get("resource") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'resource'"))
   }
-  let v : Result[&EmbeddedResourceResource, _] = @json.from_json?(json)
+  let v : Result[&EmbeddedResourceResource, _] = try? @json.from_json(json)
   guard v is Ok(resource) else {
     raise @json.JsonDecodeError((path, "expected field 'resource'"))
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { resource, annotations }
@@ -1833,12 +1953,14 @@ pub impl @json.FromJson for PromptListChangedNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -1862,12 +1984,14 @@ pub impl @json.FromJson for ListToolsRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let cursor : String? = match obj["cursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let cursor : String? = match obj.get("cursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { cursor, }
@@ -1887,12 +2011,14 @@ pub impl @json.FromJson for ListToolsRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : ListToolsRequestParams? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : ListToolsRequestParams? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -1916,26 +2042,30 @@ pub impl @json.FromJson for ListToolsResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let nextCursor : String? = match obj["nextCursor"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let nextCursor : String? = match obj.get("nextCursor") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["tools"] is Some(json) else {
+  guard obj.get("tools") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'tools'"))
   }
-  let v : Result[Array[Tool], _] = @json.from_json?(json)
+  let v : Result[Array[Tool], _] = try? @json.from_json(json)
   guard v is Ok(tools) else {
     raise @json.JsonDecodeError((path, "expected field 'tools'"))
   }
@@ -1960,27 +2090,31 @@ pub impl @json.FromJson for CallToolResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["content"] is Some(json) else {
+  guard obj.get("content") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[Array[&CallToolResultContent], _] = @json.from_json?(json)
+  let v : Result[Array[&CallToolResultContent], _] = try? @json.from_json(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let isError : Bool? = match obj["isError"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let isError : Bool? = match obj.get("isError") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { _meta, content, isError }
@@ -2001,19 +2135,21 @@ pub impl @json.FromJson for CallToolRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let arguments : Map[String, Json]? = match obj["arguments"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let arguments : Map[String, Json]? = match obj.get("arguments") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, arguments }
@@ -2031,10 +2167,10 @@ pub impl @json.FromJson for CallToolRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[CallToolRequestParams, _] = @json.from_json?(json)
+  let v : Result[CallToolRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -2058,12 +2194,14 @@ pub impl @json.FromJson for ToolListChangedNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -2095,44 +2233,54 @@ pub impl @json.FromJson for ToolAnnotations with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let title : String? = match obj["title"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let title : String? = match obj.get("title") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let readOnlyHint : Bool? = match obj["readOnlyHint"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let readOnlyHint : Bool? = match obj.get("readOnlyHint") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let destructiveHint : Bool? = match obj["destructiveHint"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let destructiveHint : Bool? = match obj.get("destructiveHint") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let idempotentHint : Bool? = match obj["idempotentHint"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let idempotentHint : Bool? = match obj.get("idempotentHint") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let openWorldHint : Bool? = match obj["openWorldHint"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let openWorldHint : Bool? = match obj.get("openWorldHint") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint }
@@ -2156,23 +2304,27 @@ pub impl @json.FromJson for ToolInputSchema with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("object")) else {
+  guard obj.get("type") == Some(Json::string("object")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='object'"))
   }
-  let properties : Map[String, Json]? = match obj["properties"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let properties : Map[String, Json]? = match obj.get("properties") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let required : Array[String]? = match obj["required"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let required : Array[String]? = match obj.get("required") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { properties, required }
@@ -2197,34 +2349,38 @@ pub impl @json.FromJson for Tool with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let description : String? = match obj["description"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let description : String? = match obj.get("description") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["inputSchema"] is Some(json) else {
+  guard obj.get("inputSchema") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'inputSchema'"))
   }
-  let v : Result[ToolInputSchema, _] = @json.from_json?(json)
+  let v : Result[ToolInputSchema, _] = try? @json.from_json(json)
   guard v is Ok(inputSchema) else {
     raise @json.JsonDecodeError((path, "expected field 'inputSchema'"))
   }
-  let annotations : ToolAnnotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : ToolAnnotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, description, inputSchema, annotations }
@@ -2246,10 +2402,10 @@ pub impl @json.FromJson for SetLevelRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["level"] is Some(json) else {
+  guard obj.get("level") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'level'"))
   }
-  let v : Result[LoggingLevel, _] = @json.from_json?(json)
+  let v : Result[LoggingLevel, _] = try? @json.from_json(json)
   guard v is Ok(level) else {
     raise @json.JsonDecodeError((path, "expected field 'level'"))
   }
@@ -2268,10 +2424,10 @@ pub impl @json.FromJson for SetLevelRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[SetLevelRequestParams, _] = @json.from_json?(json)
+  let v : Result[SetLevelRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -2297,25 +2453,27 @@ pub impl @json.FromJson for LoggingMessageNotificationParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["level"] is Some(json) else {
+  guard obj.get("level") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'level'"))
   }
-  let v : Result[LoggingLevel, _] = @json.from_json?(json)
+  let v : Result[LoggingLevel, _] = try? @json.from_json(json)
   guard v is Ok(level) else {
     raise @json.JsonDecodeError((path, "expected field 'level'"))
   }
-  let logger : String? = match obj["logger"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let logger : String? = match obj.get("logger") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["data"] is Some(json) else {
+  guard obj.get("data") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
-  let v : Result[Json, _] = @json.from_json?(json)
+  let v : Result[Json, _] = try? @json.from_json(json)
   guard v is Ok(data) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
@@ -2337,10 +2495,12 @@ pub impl @json.FromJson for LoggingMessageNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[LoggingMessageNotificationParams, _] = @json.from_json?(json)
+  let v : Result[LoggingMessageNotificationParams, _] = try? @json.from_json(
+      json,
+    )
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -2385,66 +2545,78 @@ pub impl @json.FromJson for CreateMessageRequestParams with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["messages"] is Some(json) else {
+  guard obj.get("messages") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'messages'"))
   }
-  let v : Result[Array[SamplingMessage], _] = @json.from_json?(json)
+  let v : Result[Array[SamplingMessage], _] = try? @json.from_json(json)
   guard v is Ok(messages) else {
     raise @json.JsonDecodeError((path, "expected field 'messages'"))
   }
-  let modelPreferences : ModelPreferences? = match obj["modelPreferences"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let modelPreferences : ModelPreferences? = match obj.get("modelPreferences") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let systemPrompt : String? = match obj["systemPrompt"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let systemPrompt : String? = match obj.get("systemPrompt") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let includeContext : IncludeContext? = match obj["includeContext"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let includeContext : IncludeContext? = match obj.get("includeContext") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let temperature : Double? = match obj["temperature"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let temperature : Double? = match obj.get("temperature") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["maxTokens"] is Some(json) else {
+  guard obj.get("maxTokens") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'maxTokens'"))
   }
-  let v : Result[Int64, _] = @json.from_json?(json)
+  let v : Result[Int64, _] = try? @json.from_json(json)
   guard v is Ok(maxTokens) else {
     raise @json.JsonDecodeError((path, "expected field 'maxTokens'"))
   }
-  let stopSequences : Array[String]? = match obj["stopSequences"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let stopSequences : Array[String]? = match obj.get("stopSequences") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let metadata : Map[String, Json]? = match obj["metadata"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let metadata : Map[String, Json]? = match obj.get("metadata") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   {
@@ -2471,10 +2643,10 @@ pub impl @json.FromJson for CreateMessageRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[CreateMessageRequestParams, _] = @json.from_json?(json)
+  let v : Result[CreateMessageRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -2501,41 +2673,45 @@ pub impl @json.FromJson for CreateMessageResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["content"] is Some(json) else {
+  guard obj.get("content") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[&CreateMessageResultContent, _] = @json.from_json?(json)
+  let v : Result[&CreateMessageResultContent, _] = try? @json.from_json(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  guard obj["role"] is Some(json) else {
+  guard obj.get("role") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  let v : Result[Role, _] = @json.from_json?(json)
+  let v : Result[Role, _] = try? @json.from_json(json)
   guard v is Ok(role) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  guard obj["model"] is Some(json) else {
+  guard obj.get("model") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'model'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(model) else {
     raise @json.JsonDecodeError((path, "expected field 'model'"))
   }
-  let stopReason : String? = match obj["stopReason"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let stopReason : String? = match obj.get("stopReason") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { _meta, content, role, model, stopReason }
@@ -2554,17 +2730,17 @@ pub impl @json.FromJson for SamplingMessage with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["role"] is Some(json) else {
+  guard obj.get("role") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  let v : Result[Role, _] = @json.from_json?(json)
+  let v : Result[Role, _] = try? @json.from_json(json)
   guard v is Ok(role) else {
     raise @json.JsonDecodeError((path, "expected field 'role'"))
   }
-  guard obj["content"] is Some(json) else {
+  guard obj.get("content") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
-  let v : Result[&SamplingMessageContent, _] = @json.from_json?(json)
+  let v : Result[&SamplingMessageContent, _] = try? @json.from_json(json)
   guard v is Ok(content) else {
     raise @json.JsonDecodeError((path, "expected field 'content'"))
   }
@@ -2588,20 +2764,24 @@ pub impl @json.FromJson for Annotations with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let audience : Array[Role]? = match obj["audience"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let audience : Array[Role]? = match obj.get("audience") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let priority : Double? = match obj["priority"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let priority : Double? = match obj.get("priority") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { audience, priority }
@@ -2623,22 +2803,24 @@ pub impl @json.FromJson for TextContent with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("text")) else {
+  guard obj.get("type") == Some(Json::string("text")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='text'"))
   }
-  guard obj["text"] is Some(json) else {
+  guard obj.get("text") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'text'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(text) else {
     raise @json.JsonDecodeError((path, "expected field 'text'"))
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { text, annotations }
@@ -2661,29 +2843,31 @@ pub impl @json.FromJson for ImageContent with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("image")) else {
+  guard obj.get("type") == Some(Json::string("image")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='image'"))
   }
-  guard obj["data"] is Some(json) else {
+  guard obj.get("data") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(data) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
-  guard obj["mimeType"] is Some(json) else {
+  guard obj.get("mimeType") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(mimeType) else {
     raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { data, mimeType, annotations }
@@ -2706,29 +2890,31 @@ pub impl @json.FromJson for AudioContent with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("audio")) else {
+  guard obj.get("type") == Some(Json::string("audio")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='audio'"))
   }
-  guard obj["data"] is Some(json) else {
+  guard obj.get("data") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(data) else {
     raise @json.JsonDecodeError((path, "expected field 'data'"))
   }
-  guard obj["mimeType"] is Some(json) else {
+  guard obj.get("mimeType") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(mimeType) else {
     raise @json.JsonDecodeError((path, "expected field 'mimeType'"))
   }
-  let annotations : Annotations? = match obj["annotations"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let annotations : Annotations? = match obj.get("annotations") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { data, mimeType, annotations }
@@ -2757,36 +2943,44 @@ pub impl @json.FromJson for ModelPreferences with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let hints : Array[ModelHint]? = match obj["hints"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let hints : Array[ModelHint]? = match obj.get("hints") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let costPriority : Double? = match obj["costPriority"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let costPriority : Double? = match obj.get("costPriority") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let speedPriority : Double? = match obj["speedPriority"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let speedPriority : Double? = match obj.get("speedPriority") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  let intelligencePriority : Double? = match obj["intelligencePriority"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let intelligencePriority : Double? = match obj.get("intelligencePriority") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { hints, costPriority, speedPriority, intelligencePriority }
@@ -2806,12 +3000,14 @@ pub impl @json.FromJson for ModelHint with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let name : String? = match obj["name"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let name : String? = match obj.get("name") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { name, }
@@ -2837,17 +3033,17 @@ pub impl @json.FromJson for CompleteRequestParamsArgument with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  guard obj["value"] is Some(json) else {
+  guard obj.get("value") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'value'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(value) else {
     raise @json.JsonDecodeError((path, "expected field 'value'"))
   }
@@ -2867,17 +3063,17 @@ pub impl @json.FromJson for CompleteRequestParams with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["ref"] is Some(json) else {
+  guard obj.get("ref") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'ref'"))
   }
-  let v : Result[&CompleteRequestParamsRef, _] = @json.from_json?(json)
+  let v : Result[&CompleteRequestParamsRef, _] = try? @json.from_json(json)
   guard v is Ok(ref_) else {
     raise @json.JsonDecodeError((path, "expected field 'ref'"))
   }
-  guard obj["argument"] is Some(json) else {
+  guard obj.get("argument") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'argument'"))
   }
-  let v : Result[CompleteRequestParamsArgument, _] = @json.from_json?(json)
+  let v : Result[CompleteRequestParamsArgument, _] = try? @json.from_json(json)
   guard v is Ok(argument) else {
     raise @json.JsonDecodeError((path, "expected field 'argument'"))
   }
@@ -2896,10 +3092,10 @@ pub impl @json.FromJson for CompleteRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["params"] is Some(json) else {
+  guard obj.get("params") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
-  let v : Result[CompleteRequestParams, _] = @json.from_json?(json)
+  let v : Result[CompleteRequestParams, _] = try? @json.from_json(json)
   guard v is Ok(params) else {
     raise @json.JsonDecodeError((path, "expected field 'params'"))
   }
@@ -2924,14 +3120,14 @@ pub impl @json.FromJson for CompleteResultCompletion with from_json(json, path) 
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["values"] is Some(json) else {
+  guard obj.get("values") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'values'"))
   }
-  let v : Result[Array[String], _] = @json.from_json?(json)
+  let v : Result[Array[String], _] = try? @json.from_json(json)
   guard v is Ok(values) else {
     raise @json.JsonDecodeError((path, "expected field 'values'"))
   }
-  let total : Int64? = match obj["total"] {
+  let total : Int64? = match obj.get("total") {
     Some(v) =>
       match v {
         Number(v) => Some(v.to_int64())
@@ -2939,12 +3135,14 @@ pub impl @json.FromJson for CompleteResultCompletion with from_json(json, path) 
       }
     None => None
   }
-  let hasMore : Bool? = match obj["hasMore"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let hasMore : Bool? = match obj.get("hasMore") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { values, total, hasMore }
@@ -2965,18 +3163,20 @@ pub impl @json.FromJson for CompleteResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["completion"] is Some(json) else {
+  guard obj.get("completion") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'completion'"))
   }
-  let v : Result[CompleteResultCompletion, _] = @json.from_json?(json)
+  let v : Result[CompleteResultCompletion, _] = try? @json.from_json(json)
   guard v is Ok(completion) else {
     raise @json.JsonDecodeError((path, "expected field 'completion'"))
   }
@@ -2996,13 +3196,13 @@ pub impl @json.FromJson for ResourceReference with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("ref/resource")) else {
+  guard obj.get("type") == Some(Json::string("ref/resource")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='ref/resource'"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
@@ -3022,13 +3222,13 @@ pub impl @json.FromJson for PromptReference with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["type"] == Some(String("ref/prompt")) else {
+  guard obj.get("type") == Some(Json::string("ref/prompt")) else {
     raise @json.JsonDecodeError((path, "expected 'type'='ref/prompt'"))
   }
-  guard obj["name"] is Some(json) else {
+  guard obj.get("name") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(name) else {
     raise @json.JsonDecodeError((path, "expected field 'name'"))
   }
@@ -3053,12 +3253,14 @@ pub impl @json.FromJson for ListRootsRequest with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }
@@ -3079,18 +3281,20 @@ pub impl @json.FromJson for ListRootsResult with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let _meta : Map[String, Json]? = match obj["_meta"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let _meta : Map[String, Json]? = match obj.get("_meta") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
-  guard obj["roots"] is Some(json) else {
+  guard obj.get("roots") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'roots'"))
   }
-  let v : Result[Array[Root], _] = @json.from_json?(json)
+  let v : Result[Array[Root], _] = try? @json.from_json(json)
   guard v is Ok(roots) else {
     raise @json.JsonDecodeError((path, "expected field 'roots'"))
   }
@@ -3112,19 +3316,21 @@ pub impl @json.FromJson for Root with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  guard obj["uri"] is Some(json) else {
+  guard obj.get("uri") is Some(json) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let v : Result[String, _] = @json.from_json?(json)
+  let v : Result[String, _] = try? @json.from_json(json)
   guard v is Ok(uri) else {
     raise @json.JsonDecodeError((path, "expected field 'uri'"))
   }
-  let name : String? = match obj["name"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let name : String? = match obj.get("name") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { uri, name }
@@ -3147,12 +3353,14 @@ pub impl @json.FromJson for RootsListChangedNotification with from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let params : Map[String, Json]? = match obj["params"] {
-    Some(v) =>
-      match @json.from_json?(v) {
+  let params : Map[String, Json]? = match obj.get("params") {
+    Some(v) => {
+      let v = try? @json.from_json(v)
+      match v {
         Ok(v) => Some(v)
         Err(e) => raise e
       }
+    }
     None => None
   }
   { params, }

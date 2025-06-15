@@ -20,7 +20,8 @@ fn restore_terminal() -> Unit {
 }
 
 ///|
-priv extern type TimeSpec
+#external
+priv type TimeSpec
 
 ///|
 fn clock_gettime(_clk_id : Int, _tp : TimeSpec) -> Int {
@@ -46,7 +47,8 @@ pub fn unix_nanos() -> Int64 {
 fn[A, B] cast(a : A) -> B = "%identity"
 
 ///|
-priv extern type BytePtr
+#external
+priv type BytePtr
 
 ///|
 fn write(_fd : Int, _buf : BytePtr, _count : Int) -> Int {

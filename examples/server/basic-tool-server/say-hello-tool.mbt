@@ -38,7 +38,7 @@ fn say_hello(json : Json?) -> @mcp.CallToolResult {
   guard json is Some(json) else {
     return @mcp.CallToolResult::new([@mcp.TextContent::new("Invalid JSON")])
   }
-  let args : Result[SayHelloArguments, _] = @json.from_json?(json)
+  let args : Result[SayHelloArguments, _] = try? @json.from_json(json)
   guard args is Ok(args) else {
     return @mcp.CallToolResult::new([@mcp.TextContent::new("Invalid arguments")])
   }

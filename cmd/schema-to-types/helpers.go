@@ -45,7 +45,7 @@ func (d *Definition) genRequestHelperMethods(jsonRPCConsts map[string]string) {
 	}
 
 	lines = append(lines,
-		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		fmt.Sprintf("  let v : Result[%v, _] = try? @json.from_json(json)", d.name),
 		"  guard v is Ok(request) else { return None }",
 		"  Some((id, request))",
 		"}",
@@ -82,7 +82,7 @@ func (d *Definition) genNotificationHelperMethods(jsonRPCConsts map[string]strin
 	}
 
 	lines = append(lines,
-		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		fmt.Sprintf("  let v : Result[%v, _] = try? @json.from_json(json)", d.name),
 		"  guard v is Ok(notification) else { return None }",
 		"  Some(notification)",
 		"}",
@@ -102,7 +102,7 @@ func (d *Definition) genResultHelperMethods() {
 		fmt.Sprintf("pub fn %v::from_message(msg : @jsonrpc2.Message) -> (@jsonrpc2.ID, %[1]v)?  {", d.name),
 		"  guard msg is Response(res) else { return None }",
 		"  guard res.result is Ok(json) else { return None }",
-		fmt.Sprintf("  let v : Result[%v, _] = @json.from_json?(json)", d.name),
+		fmt.Sprintf("  let v : Result[%v, _] = try? @json.from_json(json)", d.name),
 		"  guard v is Ok(result) else { return None }",
 		"  Some((res.id, result))",
 		"}",

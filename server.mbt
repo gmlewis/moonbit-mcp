@@ -174,7 +174,7 @@ fn Server::message_handler(_self : Server, message : @jsonrpc2.Message) -> Unit 
 
 ///|
 pub fn bad_params(params : Map[String, Json]) -> CallToolResult {
-  let json = @json.stringify(params.to_json())
+  let json = params.to_json().stringify()
   let msg = "Invalid JSON: \{json}"
   write_stderr(msg)
   CallToolResult::new([TextContent::new(msg)])
