@@ -1,4 +1,5 @@
 // Define the C FFI bindings
+
 ///|
 extern "C" fn put_char(c : Byte) -> Unit = "putchar"
 

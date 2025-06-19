@@ -30,12 +30,6 @@ let number : Json
 
 let object : Json
 
-fn raw_audio(AudioContent) -> Bytes raise
-
-fn raw_data(BlobResourceContents) -> Bytes raise
-
-fn raw_image(ImageContent) -> Bytes raise
-
 fn sleep(Int) -> Unit
 
 let string : Json
@@ -274,6 +268,7 @@ impl ToJson for CreateMessageResult
 impl @json.FromJson for CreateMessageResult
 
 pub type Cursor String
+fn Cursor::inner(Self) -> String
 impl Eq for Cursor
 impl Show for Cursor
 impl ToJson for Cursor
@@ -293,6 +288,7 @@ impl @json.FromJson for EmbeddedResource
 
 pub type EmptyResult Result_
 fn EmptyResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
+fn EmptyResult::inner(Self) -> Result_
 fn EmptyResult::new() -> Self
 impl ClientResult for EmptyResult
 impl MCPResponse for EmptyResult
@@ -766,6 +762,7 @@ impl ToJson for PromptArgument
 impl @json.FromJson for PromptArgument
 
 pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
+fn PromptFunc::inner(Self) -> (PromptMessage) -> GetPromptResult
 
 pub(all) struct PromptListChangedNotification {
   params : Map[String, Json]?
@@ -870,6 +867,7 @@ impl ToJson for ResourceContents
 impl @json.FromJson for ResourceContents
 
 pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
+fn ResourceFunc::inner(Self) -> (ReadResourceRequest) -> ReadResourceResult
 
 pub(all) struct ResourceListChangedNotification {
   params : Map[String, Json]?
@@ -928,6 +926,7 @@ impl ToJson for ResourceUpdatedNotificationParams
 impl @json.FromJson for ResourceUpdatedNotificationParams
 
 pub type Result_ Map[String, Json]
+fn Result_::inner(Self) -> Map[String, Json]
 impl Eq for Result_
 impl Show for Result_
 impl ToJson for Result_
@@ -1144,6 +1143,7 @@ impl ToJson for ToolAnnotations
 impl @json.FromJson for ToolAnnotations
 
 pub(all) type ToolFunc (Map[String, Json]) -> CallToolResult
+fn ToolFunc::inner(Self) -> (Map[String, Json]) -> CallToolResult
 
 pub(all) struct ToolInputSchema {
   properties : Map[String, Json]?
