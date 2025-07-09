@@ -1142,8 +1142,8 @@ impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
 impl @json.FromJson for ToolAnnotations
 
-pub(all) type ToolFunc (Map[String, Json]) -> CallToolResult
-fn ToolFunc::inner(Self) -> (Map[String, Json]) -> CallToolResult
+pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
+fn ToolFunc::inner(Self) -> async (Map[String, Json]) -> CallToolResult
 
 pub(all) struct ToolInputSchema {
   properties : Map[String, Json]?

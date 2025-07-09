@@ -11,9 +11,9 @@ test "serialize CompleteResultCompletion to JSON" {
   // Verify the resulting JSON has the expected structure
   inspect(
     json,
-    content=
+    content=(
       #|Object({"values": Array([String("option1"), String("option2"), String("option3")]), "total": Number(100), "hasMore": True})
-    ,
+    ),
   )
 }
 
@@ -28,9 +28,9 @@ test "serialize CompleteResultCompletion with only required fields" {
   // Verify the resulting JSON has the expected structure
   inspect(
     json,
-    content=
+    content=(
       #|Object({"values": Array([String("single_value")])})
-    ,
+    ),
   )
 }
 
@@ -46,9 +46,9 @@ test "parse CompleteResultCompletion from JSON" {
   let json = @json.parse(json_string)
   inspect(
     json,
-    content=
+    content=(
       #|Object({"hasMore": True, "total": Number(42), "values": Array([String("completion1"), String("completion2"), String("completion3")])})
-    ,
+    ),
   )
 
   // Parse the JSON into a CompleteResultCompletion
@@ -57,9 +57,9 @@ test "parse CompleteResultCompletion from JSON" {
   // Test that the values were correctly parsed
   inspect(
     result,
-    content=
+    content=(
       #|{values: ["completion1", "completion2", "completion3"], total: Some(42), hasMore: Some(true)}
-    ,
+    ),
   )
 }
 
@@ -80,9 +80,9 @@ test "parse CompleteResultCompletion from JSON with bad number" {
   // Test that the values were correctly parsed
   inspect(
     result,
-    content=
+    content=(
       #|Err(JsonDecodeError(($, "expected number; got String(\"42\")")))
-    ,
+    ),
   )
 }
 
@@ -100,9 +100,9 @@ test "parse CompleteResultCompletion with missing optional fields" {
   // Test that the values were correctly parsed and optional fields are None
   inspect(
     result,
-    content=
+    content=(
       #|{values: ["only", "required", "field"], total: None, hasMore: None}
-    ,
+    ),
   )
 }
 
@@ -121,9 +121,9 @@ test "error when required field is missing" {
   //
   inspect(
     result,
-    content=
+    content=(
       #|Err(JsonDecodeError(($, "expected field 'values'")))
-    ,
+    ),
   )
 }
 
@@ -136,9 +136,9 @@ test "serialize CancelledNotificationParams to JSON" {
   let json = params.to_json()
   inspect(
     json,
-    content=
+    content=(
       #|Object({"requestId": Number(123), "reason": String("test_reason")})
-    ,
+    ),
   )
 }
 
@@ -148,9 +148,9 @@ test "serialize CancelledNotificationParams with only required fields" {
   let json = params.to_json()
   inspect(
     json,
-    content=
+    content=(
       #|Object({"requestId": Number(456)})
-    ,
+    ),
   )
 }
 
@@ -166,9 +166,9 @@ test "parse CancelledNotificationParams from JSON" {
   let result : CancelledNotificationParams = @json.from_json(json)
   inspect(
     result,
-    content=
+    content=(
       #|{requestId: Number(789), reason: Some("cancelled")}
-    ,
+    ),
   )
 }
 
@@ -199,8 +199,8 @@ test "error when requestId field missing" {
     )
   inspect(
     result,
-    content=
+    content=(
       #|Err(JsonDecodeError(($, "expected field 'requestId'")))
-    ,
+    ),
   )
 }
