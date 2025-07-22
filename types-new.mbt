@@ -13,7 +13,7 @@ pub fn Request::new(method_ : String, params? : Map[String, Json]) -> Request {
 ///|
 pub fn Notification::new(
   method_ : String,
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> Notification {
   { method_, params }
 }
@@ -38,14 +38,14 @@ pub fn CancelledNotificationParams::new(
   /// This MUST correspond to the ID of a request previously issued in the same direction.
   requestId : @jsonrpc2.ID,
   /// An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
-  reason? : String
+  reason? : String,
 ) -> CancelledNotificationParams {
   { requestId, reason }
 }
 
 ///|
 pub fn CancelledNotification::new(
-  params : CancelledNotificationParams
+  params : CancelledNotificationParams,
 ) -> CancelledNotification {
   { params, }
 }
@@ -59,14 +59,14 @@ pub fn InitializeRequestParams::new(
   /// The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
   protocolVersion : String,
   capabilities : ClientCapabilities,
-  clientInfo : Implementation
+  clientInfo : Implementation,
 ) -> InitializeRequestParams {
   { protocolVersion, capabilities, clientInfo }
 }
 
 ///|
 pub fn InitializeRequest::new(
-  params : InitializeRequestParams
+  params : InitializeRequestParams,
 ) -> InitializeRequest {
   { params, }
 }
@@ -82,14 +82,14 @@ pub fn InitializeResult::new(
   /// Instructions describing how to use the server and its features.
   ///
   /// This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
-  instructions? : String
+  instructions? : String,
 ) -> InitializeResult {
   { _meta, protocolVersion, capabilities, serverInfo, instructions }
 }
 
 ///|
 pub fn InitializedNotification::new(
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> InitializedNotification {
   { params, }
 }
@@ -97,7 +97,7 @@ pub fn InitializedNotification::new(
 ///|
 pub fn ClientCapabilitiesRoots::new(
   /// Whether the client supports notifications for changes to the roots list.
-  listChanged? : Bool
+  listChanged? : Bool,
 ) -> ClientCapabilitiesRoots {
   { listChanged, }
 }
@@ -109,7 +109,7 @@ pub fn ClientCapabilities::new(
   /// Present if the client supports listing roots.
   roots? : ClientCapabilitiesRoots,
   /// Present if the client supports sampling from an LLM.
-  sampling? : Map[String, Json]
+  sampling? : Map[String, Json],
 ) -> ClientCapabilities {
   { experimental, roots, sampling }
 }
@@ -117,7 +117,7 @@ pub fn ClientCapabilities::new(
 ///|
 pub fn ServerCapabilitiesPrompts::new(
   /// Whether this server supports notifications for changes to the prompt list.
-  listChanged? : Bool
+  listChanged? : Bool,
 ) -> ServerCapabilitiesPrompts {
   { listChanged, }
 }
@@ -127,7 +127,7 @@ pub fn ServerCapabilitiesResources::new(
   /// Whether this server supports notifications for changes to the resource list.
   listChanged? : Bool,
   /// Whether this server supports subscribing to resource updates.
-  subscribe? : Bool
+  subscribe? : Bool,
 ) -> ServerCapabilitiesResources {
   { listChanged, subscribe }
 }
@@ -135,7 +135,7 @@ pub fn ServerCapabilitiesResources::new(
 ///|
 pub fn ServerCapabilitiesTools::new(
   /// Whether this server supports notifications for changes to the tool list.
-  listChanged? : Bool
+  listChanged? : Bool,
 ) -> ServerCapabilitiesTools {
   { listChanged, }
 }
@@ -153,7 +153,7 @@ pub fn ServerCapabilities::new(
   /// Present if the server offers any resources to read.
   resources? : ServerCapabilitiesResources,
   /// Present if the server offers any tools to call.
-  tools? : ServerCapabilitiesTools
+  tools? : ServerCapabilitiesTools,
 ) -> ServerCapabilities {
   { experimental, logging, completions, prompts, resources, tools }
 }
@@ -185,14 +185,14 @@ pub fn ProgressNotificationParams::new(
   /// Total number of items to process (or total progress required), if known.
   total? : Double,
   /// An optional message describing the current progress.
-  message? : String
+  message? : String,
 ) -> ProgressNotificationParams {
   { progress, progressToken, total, message }
 }
 
 ///|
 pub fn ProgressNotification::new(
-  params : ProgressNotificationParams
+  params : ProgressNotificationParams,
 ) -> ProgressNotification {
   { params, }
 }
@@ -205,7 +205,7 @@ pub fn ProgressNotification::new(
 pub fn PaginatedRequestParams::new(
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor? : String
+  cursor? : String,
 ) -> PaginatedRequestParams {
   { cursor, }
 }
@@ -213,7 +213,7 @@ pub fn PaginatedRequestParams::new(
 ///|
 pub fn PaginatedRequest::new(
   method_ : String,
-  params? : PaginatedRequestParams
+  params? : PaginatedRequestParams,
 ) -> PaginatedRequest {
   { method_, params }
 }
@@ -224,7 +224,7 @@ pub fn PaginatedResult::new(
   _meta? : Map[String, Json],
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
-  nextCursor? : String
+  nextCursor? : String,
 ) -> PaginatedResult {
   { _meta, nextCursor }
 }
@@ -237,14 +237,14 @@ pub fn PaginatedResult::new(
 pub fn ListResourcesRequestParams::new(
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor? : String
+  cursor? : String,
 ) -> ListResourcesRequestParams {
   { cursor, }
 }
 
 ///|
 pub fn ListResourcesRequest::new(
-  params? : ListResourcesRequestParams
+  params? : ListResourcesRequestParams,
 ) -> ListResourcesRequest {
   { params, }
 }
@@ -256,7 +256,7 @@ pub fn ListResourcesResult::new(
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
-  resources : Array[Resource]
+  resources : Array[Resource],
 ) -> ListResourcesResult {
   { _meta, nextCursor, resources }
 }
@@ -265,14 +265,14 @@ pub fn ListResourcesResult::new(
 pub fn ListResourceTemplatesRequestParams::new(
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor? : String
+  cursor? : String,
 ) -> ListResourceTemplatesRequestParams {
   { cursor, }
 }
 
 ///|
 pub fn ListResourceTemplatesRequest::new(
-  params? : ListResourceTemplatesRequestParams
+  params? : ListResourceTemplatesRequestParams,
 ) -> ListResourceTemplatesRequest {
   { params, }
 }
@@ -284,7 +284,7 @@ pub fn ListResourceTemplatesResult::new(
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
-  resourceTemplates : Array[ResourceTemplate]
+  resourceTemplates : Array[ResourceTemplate],
 ) -> ListResourceTemplatesResult {
   { _meta, nextCursor, resourceTemplates }
 }
@@ -292,14 +292,14 @@ pub fn ListResourceTemplatesResult::new(
 ///|
 pub fn ReadResourceRequestParams::new(
   /// The URI of the resource to read. The URI can use any protocol; it is up to the server how to interpret it.
-  uri : String
+  uri : String,
 ) -> ReadResourceRequestParams {
   { uri, }
 }
 
 ///|
 pub fn ReadResourceRequest::new(
-  params : ReadResourceRequestParams
+  params : ReadResourceRequestParams,
 ) -> ReadResourceRequest {
   { params, }
 }
@@ -308,14 +308,14 @@ pub fn ReadResourceRequest::new(
 pub fn ReadResourceResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Map[String, Json],
-  contents : Array[&ReadResourceResultContents]
+  contents : Array[&ReadResourceResultContents],
 ) -> ReadResourceResult {
   { _meta, contents }
 }
 
 ///|
 pub fn ResourceListChangedNotification::new(
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> ResourceListChangedNotification {
   { params, }
 }
@@ -323,14 +323,14 @@ pub fn ResourceListChangedNotification::new(
 ///|
 pub fn SubscribeRequestParams::new(
   /// The URI of the resource to subscribe to. The URI can use any protocol; it is up to the server how to interpret it.
-  uri : String
+  uri : String,
 ) -> SubscribeRequestParams {
   { uri, }
 }
 
 ///|
 pub fn SubscribeRequest::new(
-  params : SubscribeRequestParams
+  params : SubscribeRequestParams,
 ) -> SubscribeRequest {
   { params, }
 }
@@ -338,14 +338,14 @@ pub fn SubscribeRequest::new(
 ///|
 pub fn UnsubscribeRequestParams::new(
   /// The URI of the resource to unsubscribe from.
-  uri : String
+  uri : String,
 ) -> UnsubscribeRequestParams {
   { uri, }
 }
 
 ///|
 pub fn UnsubscribeRequest::new(
-  params : UnsubscribeRequestParams
+  params : UnsubscribeRequestParams,
 ) -> UnsubscribeRequest {
   { params, }
 }
@@ -353,14 +353,14 @@ pub fn UnsubscribeRequest::new(
 ///|
 pub fn ResourceUpdatedNotificationParams::new(
   /// The URI of the resource that has been updated. This might be a sub-resource of the one that the client actually subscribed to.
-  uri : String
+  uri : String,
 ) -> ResourceUpdatedNotificationParams {
   { uri, }
 }
 
 ///|
 pub fn ResourceUpdatedNotification::new(
-  params : ResourceUpdatedNotificationParams
+  params : ResourceUpdatedNotificationParams,
 ) -> ResourceUpdatedNotification {
   { params, }
 }
@@ -384,7 +384,7 @@ pub fn Resource::new(
   /// The size of the raw resource content, in bytes (i.e., before base64 encoding or any tokenization), if known.
   ///
   /// This can be used by Hosts to display file sizes and estimate context window usage.
-  size? : Int64
+  size? : Int64,
 ) -> Resource {
   { uri, name, description, mimeType, annotations, size }
 }
@@ -404,7 +404,7 @@ pub fn ResourceTemplate::new(
   /// The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.
   mimeType? : String,
   /// Optional annotations for the client.
-  annotations? : Annotations
+  annotations? : Annotations,
 ) -> ResourceTemplate {
   { uriTemplate, name, description, mimeType, annotations }
 }
@@ -414,7 +414,7 @@ pub fn ResourceContents::new(
   /// The URI of this resource.
   uri : String,
   /// The MIME type of this resource, if known.
-  mimeType? : String
+  mimeType? : String,
 ) -> ResourceContents {
   { uri, mimeType }
 }
@@ -426,7 +426,7 @@ pub fn TextResourceContents::new(
   /// The URI of this resource.
   uri : String,
   /// The text of the item. This must only be set if the item can actually be represented as text (not binary data).
-  text : String
+  text : String,
 ) -> TextResourceContents {
   { mimeType, uri, text }
 }
@@ -438,7 +438,7 @@ pub fn BlobResourceContents::new(
   /// The URI of this resource.
   uri : String,
   /// A base64-encoded string representing the binary data of the item.
-  blob : String
+  blob : String,
 ) -> BlobResourceContents {
   { mimeType, uri, blob }
 }
@@ -451,14 +451,14 @@ pub fn BlobResourceContents::new(
 pub fn ListPromptsRequestParams::new(
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor? : String
+  cursor? : String,
 ) -> ListPromptsRequestParams {
   { cursor, }
 }
 
 ///|
 pub fn ListPromptsRequest::new(
-  params? : ListPromptsRequestParams
+  params? : ListPromptsRequestParams,
 ) -> ListPromptsRequest {
   { params, }
 }
@@ -470,7 +470,7 @@ pub fn ListPromptsResult::new(
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
-  prompts : Array[Prompt]
+  prompts : Array[Prompt],
 ) -> ListPromptsResult {
   { _meta, nextCursor, prompts }
 }
@@ -480,14 +480,14 @@ pub fn GetPromptRequestParams::new(
   /// The name of the prompt or prompt template.
   name : String,
   /// Arguments to use for templating the prompt.
-  arguments? : Map[String, String]
+  arguments? : Map[String, String],
 ) -> GetPromptRequestParams {
   { name, arguments }
 }
 
 ///|
 pub fn GetPromptRequest::new(
-  params : GetPromptRequestParams
+  params : GetPromptRequestParams,
 ) -> GetPromptRequest {
   { params, }
 }
@@ -498,7 +498,7 @@ pub fn GetPromptResult::new(
   _meta? : Map[String, Json],
   /// An optional description for the prompt.
   description? : String,
-  messages : Array[PromptMessage]
+  messages : Array[PromptMessage],
 ) -> GetPromptResult {
   { _meta, description, messages }
 }
@@ -510,7 +510,7 @@ pub fn Prompt::new(
   /// An optional description of what this prompt provides
   description? : String,
   /// A list of arguments to use for templating the prompt.
-  arguments? : Array[PromptArgument]
+  arguments? : Array[PromptArgument],
 ) -> Prompt {
   { name, description, arguments }
 }
@@ -522,7 +522,7 @@ pub fn PromptArgument::new(
   /// A human-readable description of the argument.
   description? : String,
   /// Whether this argument must be provided.
-  required? : Bool
+  required? : Bool,
 ) -> PromptArgument {
   { name, description, required }
 }
@@ -530,7 +530,7 @@ pub fn PromptArgument::new(
 ///|
 pub fn PromptMessage::new(
   role : Role,
-  content : &PromptMessageContent
+  content : &PromptMessageContent,
 ) -> PromptMessage {
   { role, content }
 }
@@ -539,14 +539,14 @@ pub fn PromptMessage::new(
 pub fn EmbeddedResource::new(
   resource : &EmbeddedResourceResource,
   /// Optional annotations for the client.
-  annotations? : Annotations
+  annotations? : Annotations,
 ) -> EmbeddedResource {
   { resource, annotations }
 }
 
 ///|
 pub fn PromptListChangedNotification::new(
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> PromptListChangedNotification {
   { params, }
 }
@@ -559,14 +559,14 @@ pub fn PromptListChangedNotification::new(
 pub fn ListToolsRequestParams::new(
   /// An opaque token representing the current pagination position.
   /// If provided, the server should return results starting after this cursor.
-  cursor? : String
+  cursor? : String,
 ) -> ListToolsRequestParams {
   { cursor, }
 }
 
 ///|
 pub fn ListToolsRequest::new(
-  params? : ListToolsRequestParams
+  params? : ListToolsRequestParams,
 ) -> ListToolsRequest {
   { params, }
 }
@@ -578,7 +578,7 @@ pub fn ListToolsResult::new(
   /// An opaque token representing the pagination position after the last returned result.
   /// If present, there may be more results available.
   nextCursor? : String,
-  tools : Array[Tool]
+  tools : Array[Tool],
 ) -> ListToolsResult {
   { _meta, nextCursor, tools }
 }
@@ -591,7 +591,7 @@ pub fn CallToolResult::new(
   /// Whether the tool call ended in an error.
   ///
   /// If not set, this is assumed to be false (the call was successful).
-  isError? : Bool
+  isError? : Bool,
 ) -> CallToolResult {
   { _meta, content, isError }
 }
@@ -599,7 +599,7 @@ pub fn CallToolResult::new(
 ///|
 pub fn CallToolRequestParams::new(
   name : String,
-  arguments? : Map[String, Json]
+  arguments? : Map[String, Json],
 ) -> CallToolRequestParams {
   { name, arguments }
 }
@@ -611,7 +611,7 @@ pub fn CallToolRequest::new(params : CallToolRequestParams) -> CallToolRequest {
 
 ///|
 pub fn ToolListChangedNotification::new(
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> ToolListChangedNotification {
   { params, }
 }
@@ -644,7 +644,7 @@ pub fn ToolAnnotations::new(
   /// of a memory tool is not.
   ///
   /// Default: true
-  openWorldHint? : Bool
+  openWorldHint? : Bool,
 ) -> ToolAnnotations {
   { title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint }
 }
@@ -652,7 +652,7 @@ pub fn ToolAnnotations::new(
 ///|
 pub fn ToolInputSchema::new(
   properties? : Map[String, Json],
-  required? : Array[String]
+  required? : Array[String],
 ) -> ToolInputSchema {
   { properties, required }
 }
@@ -668,7 +668,7 @@ pub fn Tool::new(
   /// A JSON Schema object defining the expected parameters for the tool.
   inputSchema : ToolInputSchema,
   /// Optional additional tool information.
-  annotations? : ToolAnnotations
+  annotations? : ToolAnnotations,
 ) -> Tool {
   { name, description, inputSchema, annotations }
 }
@@ -680,7 +680,7 @@ pub fn Tool::new(
 ///|
 pub fn SetLevelRequestParams::new(
   /// The level of logging that the client wants to receive from the server. The server should send all logs at this level and higher (i.e., more severe) to the client as notifications/message.
-  level : LoggingLevel
+  level : LoggingLevel,
 ) -> SetLevelRequestParams {
   { level, }
 }
@@ -697,14 +697,14 @@ pub fn LoggingMessageNotificationParams::new(
   /// An optional name of the logger issuing this message.
   logger? : String,
   /// The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
-  data : Json
+  data : Json,
 ) -> LoggingMessageNotificationParams {
   { level, logger, data }
 }
 
 ///|
 pub fn LoggingMessageNotification::new(
-  params : LoggingMessageNotificationParams
+  params : LoggingMessageNotificationParams,
 ) -> LoggingMessageNotification {
   { params, }
 }
@@ -727,7 +727,7 @@ pub fn CreateMessageRequestParams::new(
   maxTokens : Int64,
   stopSequences? : Array[String],
   /// Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
-  metadata? : Map[String, Json]
+  metadata? : Map[String, Json],
 ) -> CreateMessageRequestParams {
   {
     messages,
@@ -743,7 +743,7 @@ pub fn CreateMessageRequestParams::new(
 
 ///|
 pub fn CreateMessageRequest::new(
-  params : CreateMessageRequestParams
+  params : CreateMessageRequestParams,
 ) -> CreateMessageRequest {
   { params, }
 }
@@ -757,7 +757,7 @@ pub fn CreateMessageResult::new(
   /// The name of the model that generated the message.
   model : String,
   /// The reason why sampling stopped, if known.
-  stopReason? : String
+  stopReason? : String,
 ) -> CreateMessageResult {
   { _meta, content, role, model, stopReason }
 }
@@ -765,7 +765,7 @@ pub fn CreateMessageResult::new(
 ///|
 pub fn SamplingMessage::new(
   role : Role,
-  content : &SamplingMessageContent
+  content : &SamplingMessageContent,
 ) -> SamplingMessage {
   { role, content }
 }
@@ -781,7 +781,7 @@ pub fn Annotations::new(
   /// A value of 1 means "most important," and indicates that the data is
   /// effectively required, while 0 means "least important," and indicates that
   /// the data is entirely optional.
-  priority? : Double
+  priority? : Double,
 ) -> Annotations {
   { audience, priority }
 }
@@ -791,7 +791,7 @@ pub fn TextContent::new(
   /// The text content of the message.
   text : String,
   /// Optional annotations for the client.
-  annotations? : Annotations
+  annotations? : Annotations,
 ) -> TextContent {
   { text, annotations }
 }
@@ -803,7 +803,7 @@ pub fn ImageContent::new(
   /// The MIME type of the image. Different providers may support different image types.
   mimeType : String,
   /// Optional annotations for the client.
-  annotations? : Annotations
+  annotations? : Annotations,
 ) -> ImageContent {
   { data, mimeType, annotations }
 }
@@ -815,7 +815,7 @@ pub fn AudioContent::new(
   /// The MIME type of the audio. Different providers may support different audio types.
   mimeType : String,
   /// Optional annotations for the client.
-  annotations? : Annotations
+  annotations? : Annotations,
 ) -> AudioContent {
   { data, mimeType, annotations }
 }
@@ -841,7 +841,7 @@ pub fn ModelPreferences::new(
   /// How much to prioritize intelligence and capabilities when selecting a
   /// model. A value of 0 means intelligence is not important, while a value of 1
   /// means intelligence is the most important factor.
-  intelligencePriority? : Double
+  intelligencePriority? : Double,
 ) -> ModelPreferences {
   { hints, costPriority, speedPriority, intelligencePriority }
 }
@@ -857,7 +857,7 @@ pub fn ModelHint::new(
   ///
   /// The client MAY also map the string to a different provider's model name or a different model family, as long as it fills a similar niche; for example:
   ///  - `gemini-1.5-flash` could match `claude-3-haiku-20240307`
-  name? : String
+  name? : String,
 ) -> ModelHint {
   { name, }
 }
@@ -871,7 +871,7 @@ pub fn CompleteRequestParamsArgument::new(
   /// The name of the argument
   name : String,
   /// The value of the argument to use for completion matching.
-  value : String
+  value : String,
 ) -> CompleteRequestParamsArgument {
   { name, value }
 }
@@ -880,7 +880,7 @@ pub fn CompleteRequestParamsArgument::new(
 pub fn CompleteRequestParams::new(
   ref_ : &CompleteRequestParamsRef,
   /// The argument's information
-  argument : CompleteRequestParamsArgument
+  argument : CompleteRequestParamsArgument,
 ) -> CompleteRequestParams {
   { ref_, argument }
 }
@@ -897,7 +897,7 @@ pub fn CompleteResultCompletion::new(
   /// The total number of completion options available. This can exceed the number of values actually sent in the response.
   total? : Int64,
   /// Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
-  hasMore? : Bool
+  hasMore? : Bool,
 ) -> CompleteResultCompletion {
   { values, total, hasMore }
 }
@@ -906,7 +906,7 @@ pub fn CompleteResultCompletion::new(
 pub fn CompleteResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Map[String, Json],
-  completion : CompleteResultCompletion
+  completion : CompleteResultCompletion,
 ) -> CompleteResult {
   { _meta, completion }
 }
@@ -914,7 +914,7 @@ pub fn CompleteResult::new(
 ///|
 pub fn ResourceReference::new(
   /// The URI or URI template of the resource.
-  uri : String
+  uri : String,
 ) -> ResourceReference {
   { uri, }
 }
@@ -922,7 +922,7 @@ pub fn ResourceReference::new(
 ///|
 pub fn PromptReference::new(
   /// The name of the prompt or prompt template
-  name : String
+  name : String,
 ) -> PromptReference {
   { name, }
 }
@@ -940,7 +940,7 @@ pub fn ListRootsRequest::new(params? : Map[String, Json]) -> ListRootsRequest {
 pub fn ListRootsResult::new(
   /// This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
   _meta? : Map[String, Json],
-  roots : Array[Root]
+  roots : Array[Root],
 ) -> ListRootsResult {
   { _meta, roots }
 }
@@ -954,14 +954,14 @@ pub fn Root::new(
   /// An optional name for the root. This can be used to provide a human-readable
   /// identifier for the root, which may be useful for display purposes or for
   /// referencing the root in other parts of the application.
-  name? : String
+  name? : String,
 ) -> Root {
   { uri, name }
 }
 
 ///|
 pub fn RootsListChangedNotification::new(
-  params? : Map[String, Json]
+  params? : Map[String, Json],
 ) -> RootsListChangedNotification {
   { params, }
 }

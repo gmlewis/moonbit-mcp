@@ -42,7 +42,7 @@ pub impl MCPRequest for Request with to_call(self, id) {
 
 ///|
 pub fn Request::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, Request)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -107,7 +107,7 @@ pub impl MCPResponse for EmptyResult with to_response(self, id) {
 
 ///|
 pub fn EmptyResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, EmptyResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -150,7 +150,7 @@ pub impl MCPNotification for CancelledNotification with to_notification(self) {
 
 ///|
 pub fn CancelledNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> CancelledNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -187,7 +187,7 @@ pub impl MCPRequest for InitializeRequest with to_call(self, id) {
 
 ///|
 pub fn InitializeRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, InitializeRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -220,7 +220,7 @@ pub impl MCPResponse for InitializeResult with to_response(self, id) {
 
 ///|
 pub fn InitializeResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, InitializeResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -243,7 +243,7 @@ pub impl MCPNotification for InitializedNotification with to_notification(self) 
 
 ///|
 pub fn InitializedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> InitializedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -337,7 +337,7 @@ pub impl MCPRequest for PingRequest with to_call(self, id) {
 
 ///|
 pub fn PingRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, PingRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -378,7 +378,7 @@ pub impl MCPNotification for ProgressNotification with to_notification(self) {
 
 ///|
 pub fn ProgressNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> ProgressNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -413,7 +413,7 @@ pub impl MCPRequest for PaginatedRequest with to_call(self, id) {
 
 ///|
 pub fn PaginatedRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, PaginatedRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -439,7 +439,7 @@ pub impl MCPResponse for PaginatedResult with to_response(self, id) {
 
 ///|
 pub fn PaginatedResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, PaginatedResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -473,7 +473,7 @@ pub impl MCPRequest for ListResourcesRequest with to_call(self, id) {
 
 ///|
 pub fn ListResourcesRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListResourcesRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -502,7 +502,7 @@ pub impl MCPResponse for ListResourcesResult with to_response(self, id) {
 
 ///|
 pub fn ListResourcesResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListResourcesResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -532,7 +532,7 @@ pub impl MCPRequest for ListResourceTemplatesRequest with to_call(self, id) {
 
 ///|
 pub fn ListResourceTemplatesRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListResourceTemplatesRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -561,7 +561,7 @@ pub impl MCPResponse for ListResourceTemplatesResult with to_response(self, id) 
 
 ///|
 pub fn ListResourceTemplatesResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListResourceTemplatesResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -590,7 +590,7 @@ pub impl MCPRequest for ReadResourceRequest with to_call(self, id) {
 
 ///|
 pub fn ReadResourceRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ReadResourceRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -626,7 +626,7 @@ pub impl MCPResponse for ReadResourceResult with to_response(self, id) {
 
 ///|
 pub fn ReadResourceResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ReadResourceResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -644,7 +644,7 @@ pub(all) struct ResourceListChangedNotification {
 
 ///|
 pub impl MCPNotification for ResourceListChangedNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification(
     "notifications/resources/list_changed",
@@ -654,7 +654,7 @@ pub impl MCPNotification for ResourceListChangedNotification with to_notificatio
 
 ///|
 pub fn ResourceListChangedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> ResourceListChangedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -689,7 +689,7 @@ pub impl MCPRequest for SubscribeRequest with to_call(self, id) {
 
 ///|
 pub fn SubscribeRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, SubscribeRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -720,7 +720,7 @@ pub impl MCPRequest for UnsubscribeRequest with to_call(self, id) {
 
 ///|
 pub fn UnsubscribeRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, UnsubscribeRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -746,7 +746,7 @@ pub(all) struct ResourceUpdatedNotificationParams {
 
 ///|
 pub impl MCPNotification for ResourceUpdatedNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification(
     "notifications/resources/updated",
@@ -756,7 +756,7 @@ pub impl MCPNotification for ResourceUpdatedNotification with to_notification(
 
 ///|
 pub fn ResourceUpdatedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> ResourceUpdatedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -863,7 +863,7 @@ pub impl MCPRequest for ListPromptsRequest with to_call(self, id) {
 
 ///|
 pub fn ListPromptsRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListPromptsRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -892,7 +892,7 @@ pub impl MCPResponse for ListPromptsResult with to_response(self, id) {
 
 ///|
 pub fn ListPromptsResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListPromptsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -923,7 +923,7 @@ pub impl MCPRequest for GetPromptRequest with to_call(self, id) {
 
 ///|
 pub fn GetPromptRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, GetPromptRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -951,7 +951,7 @@ pub impl MCPResponse for GetPromptResult with to_response(self, id) {
 
 ///|
 pub fn GetPromptResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, GetPromptResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1039,7 +1039,7 @@ pub(all) struct PromptListChangedNotification {
 
 ///|
 pub impl MCPNotification for PromptListChangedNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification(
     "notifications/prompts/list_changed",
@@ -1049,7 +1049,7 @@ pub impl MCPNotification for PromptListChangedNotification with to_notification(
 
 ///|
 pub fn PromptListChangedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> PromptListChangedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -1085,7 +1085,7 @@ pub impl MCPRequest for ListToolsRequest with to_call(self, id) {
 
 ///|
 pub fn ListToolsRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListToolsRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1114,7 +1114,7 @@ pub impl MCPResponse for ListToolsResult with to_response(self, id) {
 
 ///|
 pub fn ListToolsResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListToolsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1161,7 +1161,7 @@ pub impl MCPResponse for CallToolResult with to_response(self, id) {
 
 ///|
 pub fn CallToolResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CallToolResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1190,7 +1190,7 @@ pub impl MCPRequest for CallToolRequest with to_call(self, id) {
 
 ///|
 pub fn CallToolRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CallToolRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1210,7 +1210,7 @@ pub(all) struct ToolListChangedNotification {
 
 ///|
 pub impl MCPNotification for ToolListChangedNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification(
     "notifications/tools/list_changed",
@@ -1220,7 +1220,7 @@ pub impl MCPNotification for ToolListChangedNotification with to_notification(
 
 ///|
 pub fn ToolListChangedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> ToolListChangedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -1317,7 +1317,7 @@ pub impl MCPRequest for SetLevelRequest with to_call(self, id) {
 
 ///|
 pub fn SetLevelRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, SetLevelRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1347,14 +1347,14 @@ pub(all) struct LoggingMessageNotificationParams {
 
 ///|
 pub impl MCPNotification for LoggingMessageNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification("notifications/message", self.params.to_json())
 }
 
 ///|
 pub fn LoggingMessageNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> LoggingMessageNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }
@@ -1419,7 +1419,7 @@ pub impl MCPRequest for CreateMessageRequest with to_call(self, id) {
 
 ///|
 pub fn CreateMessageRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CreateMessageRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1460,7 +1460,7 @@ pub impl MCPResponse for CreateMessageResult with to_response(self, id) {
 
 ///|
 pub fn CreateMessageResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CreateMessageResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1632,7 +1632,7 @@ pub impl MCPRequest for CompleteRequest with to_call(self, id) {
 
 ///|
 pub fn CompleteRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CompleteRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1668,7 +1668,7 @@ pub impl MCPResponse for CompleteResult with to_response(self, id) {
 
 ///|
 pub fn CompleteResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, CompleteResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1717,7 +1717,7 @@ pub impl MCPRequest for ListRootsRequest with to_call(self, id) {
 
 ///|
 pub fn ListRootsRequest::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListRootsRequest)? {
   guard msg is Request(req) else { return None }
   guard req.id is Some(id) else { return None }
@@ -1745,7 +1745,7 @@ pub impl MCPResponse for ListRootsResult with to_response(self, id) {
 
 ///|
 pub fn ListRootsResult::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> (@jsonrpc2.ID, ListRootsResult)? {
   guard msg is Response(res) else { return None }
   guard res.result is Ok(json) else { return None }
@@ -1778,7 +1778,7 @@ pub(all) struct RootsListChangedNotification {
 
 ///|
 pub impl MCPNotification for RootsListChangedNotification with to_notification(
-  self
+  self,
 ) {
   @jsonrpc2.new_notification(
     "notifications/roots/list_changed",
@@ -1788,7 +1788,7 @@ pub impl MCPNotification for RootsListChangedNotification with to_notification(
 
 ///|
 pub fn RootsListChangedNotification::from_message(
-  msg : @jsonrpc2.Message
+  msg : @jsonrpc2.Message,
 ) -> RootsListChangedNotification? {
   guard msg is Request(req) else { return None }
   guard req.id is None else { return None }

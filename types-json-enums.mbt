@@ -46,7 +46,7 @@ pub impl ReadResourceResultContents for BlobResourceContents with unused(_self) 
 ///|
 pub impl @json.FromJson for &ReadResourceResultContents with from_json(
   json,
-  path
+  path,
 ) {
   let v : Result[TextResourceContents, _] = try? @json.from_json(json)
   if v is Ok(v) {
@@ -307,7 +307,7 @@ pub impl CreateMessageResultContent for AudioContent with unused(_self) {
 ///|
 pub impl @json.FromJson for &CreateMessageResultContent with from_json(
   json,
-  path
+  path,
 ) {
   let v : Result[TextContent, _] = try? @json.from_json(json)
   if v is Ok(v) {
@@ -669,7 +669,7 @@ pub impl ServerNotification for ProgressNotification with unused(_self) {
 
 ///|
 pub impl ServerNotification for ResourceListChangedNotification with unused(
-  _self
+  _self,
 ) {
 
 }

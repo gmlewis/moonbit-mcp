@@ -96,14 +96,14 @@ pub fn Server::with_max_timeout(self : Server, millis : Int) -> Unit {
 }
 
 ///|
-pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
+pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult noraise
 
 ///|
 pub fn Server::tool(
   self : Server,
   tool : &MCPTool,
   func : ToolFunc,
-  list_changed~ : Bool = false
+  list_changed~ : Bool = false,
 ) -> Unit {
   let t = tool.as_tool()
   self.tools[t.name] = ServerTool::{ tool, list_changed }
@@ -117,7 +117,7 @@ pub fn Server::prompt(
   self : Server,
   name : String,
   prompt : &MCPPrompt,
-  list_changed~ : Bool = false
+  list_changed~ : Bool = false,
   // description : String,
 ) -> Unit {
   self.prompts[name] = ServerPrompt::{ prompt, list_changed }
@@ -131,7 +131,7 @@ pub fn Server::resource(
   self : Server,
   name : String,
   resource : &MCPResource,
-  list_changed~ : Bool = false
+  list_changed~ : Bool = false,
   // uri : String,
   // description : String,
   // mime_type : String,

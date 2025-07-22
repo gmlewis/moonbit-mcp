@@ -147,7 +147,7 @@ pub impl Transport for StdioTransport with send_response(self, id, message) {
 ///|
 fn StdioTransport::send(
   self : StdioTransport,
-  message : @jsonrpc2.Message
+  message : @jsonrpc2.Message,
 ) -> TransportError? {
   let result = self.writer.unwrap().write(message)
   guard result is (_, None) else {

@@ -96,7 +96,7 @@ pub impl ToJson for CancelledNotificationParams with to_json(self) {
 ///|
 pub impl @json.FromJson for CancelledNotificationParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -420,7 +420,7 @@ pub impl ToJson for ServerCapabilitiesResources with to_json(self) {
 ///|
 pub impl @json.FromJson for ServerCapabilitiesResources with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -649,7 +649,7 @@ pub impl ToJson for ProgressNotificationParams with to_json(self) {
 ///|
 pub impl @json.FromJson for ProgressNotificationParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -835,7 +835,7 @@ pub impl ToJson for ListResourcesRequestParams with to_json(self) {
 ///|
 pub impl @json.FromJson for ListResourcesRequestParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -940,7 +940,7 @@ pub impl ToJson for ListResourceTemplatesRequestParams with to_json(self) {
 ///|
 pub impl @json.FromJson for ListResourceTemplatesRequestParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -970,7 +970,7 @@ pub impl ToJson for ListResourceTemplatesRequest with to_json(self) {
 ///|
 pub impl @json.FromJson for ListResourceTemplatesRequest with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -1004,7 +1004,7 @@ pub impl ToJson for ListResourceTemplatesResult with to_json(self) {
 ///|
 pub impl @json.FromJson for ListResourceTemplatesResult with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -1132,7 +1132,7 @@ pub impl ToJson for ResourceListChangedNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for ResourceListChangedNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -1248,7 +1248,7 @@ pub impl ToJson for ResourceUpdatedNotificationParams with to_json(self) {
 ///|
 pub impl @json.FromJson for ResourceUpdatedNotificationParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -1273,7 +1273,7 @@ pub impl ToJson for ResourceUpdatedNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for ResourceUpdatedNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -1948,7 +1948,7 @@ pub impl ToJson for PromptListChangedNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for PromptListChangedNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -2189,7 +2189,7 @@ pub impl ToJson for ToolListChangedNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for ToolListChangedNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -2448,7 +2448,7 @@ pub impl ToJson for LoggingMessageNotificationParams with to_json(self) {
 ///|
 pub impl @json.FromJson for LoggingMessageNotificationParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -2490,7 +2490,7 @@ pub impl ToJson for LoggingMessageNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for LoggingMessageNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -2540,7 +2540,7 @@ pub impl ToJson for CreateMessageRequestParams with to_json(self) {
 ///|
 pub impl @json.FromJson for CreateMessageRequestParams with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -3028,7 +3028,7 @@ pub impl ToJson for CompleteRequestParamsArgument with to_json(self) {
 ///|
 pub impl @json.FromJson for CompleteRequestParamsArgument with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -3348,7 +3348,7 @@ pub impl ToJson for RootsListChangedNotification with to_json(self) {
 ///|
 pub impl @json.FromJson for RootsListChangedNotification with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
