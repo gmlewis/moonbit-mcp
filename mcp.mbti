@@ -41,6 +41,11 @@ fn write_stderr(String) -> Unit
 
 fn write_stdout(String) -> Unit
 
+// Errors
+pub suberror TransportError String
+impl Eq for TransportError
+impl Show for TransportError
+
 // Types and methods
 pub(all) struct Annotations {
   audience : Array[Role]?
@@ -1167,10 +1172,6 @@ impl Eq for ToolListChangedNotification
 impl Show for ToolListChangedNotification
 impl ToJson for ToolListChangedNotification
 impl @json.FromJson for ToolListChangedNotification
-
-pub suberror TransportError String
-impl Eq for TransportError
-impl Show for TransportError
 
 pub(all) struct UnsubscribeRequest {
   params : UnsubscribeRequestParams
