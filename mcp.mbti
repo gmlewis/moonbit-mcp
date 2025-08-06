@@ -273,7 +273,7 @@ impl Show for CreateMessageResult
 impl ToJson for CreateMessageResult
 impl @json.FromJson for CreateMessageResult
 
-pub type Cursor String
+pub struct Cursor(String)
 fn Cursor::inner(Self) -> String
 impl Eq for Cursor
 impl Show for Cursor
@@ -292,7 +292,7 @@ impl Show for EmbeddedResource
 impl ToJson for EmbeddedResource
 impl @json.FromJson for EmbeddedResource
 
-pub type EmptyResult Result_
+pub struct EmptyResult(Result_)
 fn EmptyResult::from_message(@jsonrpc2.Message) -> (@jsonrpc2.ID, Self)?
 fn EmptyResult::inner(Self) -> Result_
 fn EmptyResult::new() -> Self
@@ -767,7 +767,7 @@ impl Show for PromptArgument
 impl ToJson for PromptArgument
 impl @json.FromJson for PromptArgument
 
-pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
+pub(all) struct PromptFunc((PromptMessage) -> GetPromptResult)
 fn PromptFunc::inner(Self) -> (PromptMessage) -> GetPromptResult
 
 pub(all) struct PromptListChangedNotification {
@@ -872,7 +872,7 @@ impl Show for ResourceContents
 impl ToJson for ResourceContents
 impl @json.FromJson for ResourceContents
 
-pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
+pub(all) struct ResourceFunc((ReadResourceRequest) -> ReadResourceResult)
 fn ResourceFunc::inner(Self) -> (ReadResourceRequest) -> ReadResourceResult
 
 pub(all) struct ResourceListChangedNotification {
@@ -931,7 +931,7 @@ impl Show for ResourceUpdatedNotificationParams
 impl ToJson for ResourceUpdatedNotificationParams
 impl @json.FromJson for ResourceUpdatedNotificationParams
 
-pub type Result_ Map[String, Json]
+pub struct Result_(Map[String, Json])
 fn Result_::inner(Self) -> Map[String, Json]
 impl Eq for Result_
 impl Show for Result_
@@ -982,9 +982,9 @@ impl @json.FromJson for SamplingMessage
 type Server
 fn Server::connect(Self, &Transport) -> Unit
 fn Server::new(name~ : String, version~ : String) -> Self
-fn Server::prompt(Self, String, &MCPPrompt, list_changed~ : Bool = ..) -> Unit
-fn Server::resource(Self, String, &MCPResource, list_changed~ : Bool = ..) -> Unit
-fn Server::tool(Self, &MCPTool, ToolFunc, list_changed~ : Bool = ..) -> Unit
+fn Server::prompt(Self, String, &MCPPrompt, list_changed? : Bool) -> Unit
+fn Server::resource(Self, String, &MCPResource, list_changed? : Bool) -> Unit
+fn Server::tool(Self, &MCPTool, ToolFunc, list_changed? : Bool) -> Unit
 fn Server::with_max_timeout(Self, Int) -> Unit
 fn Server::with_ping_period_seconds(Self, Int) -> Unit
 fn Server::with_ping_timeout_millis(Self, Int) -> Unit
@@ -1148,7 +1148,7 @@ impl Show for ToolAnnotations
 impl ToJson for ToolAnnotations
 impl @json.FromJson for ToolAnnotations
 
-pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult
+pub(all) struct ToolFunc(async (Map[String, Json]) -> CallToolResult)
 fn ToolFunc::inner(Self) -> async (Map[String, Json]) -> CallToolResult
 
 pub(all) struct ToolInputSchema {

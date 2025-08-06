@@ -27,7 +27,7 @@ pub fn ProgressToken::number(n : Int) -> ProgressToken {
 
 ///|
 /// An opaque token used to represent a cursor for pagination.
-pub type Cursor String derive(Show, Eq, FromJson, ToJson)
+pub struct Cursor(String) derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub(all) struct Request {
@@ -75,7 +75,7 @@ pub fn Notification::from_message(msg : @jsonrpc2.Message) -> Notification? {
 
 ///|
 /// _meta? : Json - This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
-pub type Result_ Map[String, Json] derive(Show, Eq, FromJson, ToJson)
+pub struct Result_(Map[String, Json]) derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub const PARSE_ERROR = -32700
@@ -98,7 +98,7 @@ pub const INTERNAL_ERROR = -32603
 
 ///|
 /// A response that indicates success but carries no data.
-pub type EmptyResult Result_ derive(Show, Eq, FromJson, ToJson)
+pub struct EmptyResult(Result_) derive(Show, Eq, FromJson, ToJson)
 
 ///|
 pub impl MCPResponse for EmptyResult with to_response(self, id) {

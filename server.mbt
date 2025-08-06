@@ -96,7 +96,7 @@ pub fn Server::with_max_timeout(self : Server, millis : Int) -> Unit {
 }
 
 ///|
-pub(all) type ToolFunc async (Map[String, Json]) -> CallToolResult noraise
+pub(all) struct ToolFunc(async (Map[String, Json]) -> CallToolResult noraise)
 
 ///|
 pub fn Server::tool(
@@ -110,7 +110,7 @@ pub fn Server::tool(
 }
 
 ///|
-pub(all) type PromptFunc (PromptMessage) -> GetPromptResult
+pub(all) struct PromptFunc((PromptMessage) -> GetPromptResult)
 
 ///|
 pub fn Server::prompt(
@@ -124,7 +124,7 @@ pub fn Server::prompt(
 }
 
 ///|
-pub(all) type ResourceFunc (ReadResourceRequest) -> ReadResourceResult
+pub(all) struct ResourceFunc((ReadResourceRequest) -> ReadResourceResult)
 
 ///|
 pub fn Server::resource(
