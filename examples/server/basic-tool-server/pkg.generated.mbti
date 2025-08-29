@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gmlewis/mcp/examples/server/basic-tool-server"
+
+import(
+  "moonbitlang/core/json"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+type SayHelloArguments
+impl Eq for SayHelloArguments
+impl Show for SayHelloArguments
+impl ToJson for SayHelloArguments
+impl @json.FromJson for SayHelloArguments
+
+type SayHelloTool
+
+// Type aliases
+
+// Traits
+

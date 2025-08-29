@@ -1,7 +1,8 @@
 ///|
 pub suberror TransportError String derive(Show, Eq)
 
-///| Transport describes the minimal contract for a MCP transport that a client or server can communicate over.
+///|
+/// Transport describes the minimal contract for a MCP transport that a client or server can communicate over.
 pub trait Transport {
   /// Starts processing messages on the transport, including any connection steps that might need to be taken.
   ///
